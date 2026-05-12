@@ -71,8 +71,13 @@
   .btn-disabled { background: rgba(150,140,130,0.08); border: 1px solid rgba(150,140,130,0.2); color: #9a8878; cursor: default; pointer-events: none; opacity: 0.5; }
   .btn-disabled .btn-dot { background: #9a8878; }
 
-  .site-footer { background: var(--dark); padding: 28px 40px; text-align: center; }
-  .site-footer p { font-family: 'Lato', sans-serif; font-size: 11px; color: #5a5248; letter-spacing: 0.08em; }
+  .quizlet-card { background: var(--mid); border-radius: 3px; padding: 32px 36px; margin-bottom: 48px; display: flex; flex-direction: column; gap: 16px; }
+  .quizlet-kicker { font-family: 'Lato', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .quizlet-card p { font-size: 16px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .quizlet-btn { display: inline-block; background: var(--gold); color: var(--dark); font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border-radius: 2px; text-decoration: none; align-self: flex-start; transition: background 0.15s; }
+  .quizlet-btn:hover { background: #c49a4e; }
+  .site-footer { background: var(--dark); padding: 32px 40px; text-align: center; border-top: 3px solid var(--gold); }
+  .site-footer p { font-family: 'Lato', sans-serif; font-size: 15px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
 </style>
 </head>
 <body>
@@ -101,6 +106,7 @@
       </svg>
     </div>
     <div class="masthead-title">The English Class<br><em>Dispatch</em></div>
+    <div style="font-family:'Lato',sans-serif;font-size:15px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:20px;margin-top:-12px;">Business English in the Polish Context</div>
     <div class="definition-block">
       <div><span class="definition-word">dispatch</span><span class="definition-pron">/d&#618;&#712;sp&aelig;t&#643;/</span></div>
       <div class="definition-pos">noun</div>
@@ -126,9 +132,16 @@
       <div class="stat-label">Lessons completed</div>
     </div>
     <div class="stat-card">
-      <div class="stat-number">6</div>
-      <div class="stat-label">Phrases covered</div>
+      <div class="stat-number">35</div>
+      <div class="stat-label">Vocab entries covered</div>
     </div>
+  </div>
+
+  <!-- QUIZLET -->
+  <div class="quizlet-card">
+    <div class="quizlet-kicker">Your Quizlet Class</div>
+    <p>Your vocabulary is growing. After every lesson, new words and phrases are added to your Quizlet class. Go back, test yourself, and make them stick.</p>
+    <a class="quizlet-btn" href="https://quizlet.com/class/32631940/members" target="_blank">Open your Quizlet class &rarr;</a>
   </div>
 
   <!-- INTRO -->
