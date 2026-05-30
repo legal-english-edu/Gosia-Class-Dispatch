@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After-Class Dispatch &ndash; Lesson 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f7f4ef;
+    --rust: #b5421a;
+    --gold: #D9AF62;
+    --cream: #ede9e0;
+    --dark: #1E2650;
+    --mid: #2a3060;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; font-size: 17px; line-height: 1.7; }
+
+  .masthead { background-color: var(--dark); padding: 48px 40px 36px; position: relative; overflow: hidden; }
+  .masthead::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
+  .masthead-inner { max-width: 680px; margin: 0 auto; }
+  .masthead-logo { display: block; width: 148px; margin-bottom: 28px; }
+  .masthead-logo svg { width: 100%; height: auto; display: block; }
+  .masthead-label { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .masthead-course { font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; margin-bottom: 20px; text-transform: uppercase; }
+  .masthead-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 46px); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .masthead-title em { font-style: italic; color: var(--gold); }
+
+  .meta-bar { background-color: var(--rust); padding: 10px 40px; }
+  .meta-bar-inner { max-width: 680px; margin: 0 auto; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .meta-item { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+  .meta-item span { color: rgba(255,255,255,0.5); margin-right: 6px; }
+
+  .back-nav { background: var(--gold); padding: 14px 40px; }
+  .back-nav a { font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark); text-decoration: none; }
+  .back-nav a:hover { color: var(--ink); }
+
+  .body-wrap { max-width: 680px; margin: 0 auto; padding: 56px 40px 80px; }
+
+  .section-kicker { font-family: 'Lato', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--rust); margin-bottom: 8px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 32px; padding-bottom: 20px; border-bottom: 2px solid var(--gold); }
+
+  .cat-heading { display: flex; align-items: center; gap: 10px; margin: 36px 0 16px; }
+  .cat-label { font-family: 'Lato', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dark); }
+
+  .entry { padding: 22px 0; border-bottom: 1px solid var(--cream); }
+  .entry:last-child { border-bottom: none; }
+  .entry-en { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--dark); margin-bottom: 3px; }
+  .entry-en strong { color: var(--rust); }
+  .entry-pl { font-family: 'Lato', sans-serif; font-size: 15px; font-style: italic; color: #7a6e62; margin-bottom: 10px; }
+  .entry-example { font-family: 'Lato', sans-serif; font-size: 16px; color: var(--ink); line-height: 1.6; margin-bottom: 3px; }
+  .entry-example strong { font-weight: 700; color: var(--rust); }
+  .entry-example-pl { font-family: 'Lato', sans-serif; font-size: 15px; font-style: italic; color: #9a8878; line-height: 1.5; margin-bottom: 8px; }
+  .entry-example + .entry-example { margin-top: 10px; }
+  .usage { margin-top: 10px; background: var(--cream); border-radius: 2px; padding: 12px 16px; font-family: 'Lato', sans-serif; font-size: 15px; line-height: 1.65; color: var(--ink); }
+  .usage .ok { color: #2a6e2a; font-weight: 600; }
+  .usage .no { color: var(--rust); font-weight: 600; }
+  .usage-note { margin-top: 6px; color: #666; font-size: 14px; }
+
+  .vocab-section { margin-bottom: 56px; }
+
+  .site-footer { background: var(--dark); padding: 32px 40px; text-align: center; border-top: 3px solid var(--gold); }
+  .site-footer p { font-family: 'Lato', sans-serif; font-size: 15px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 187.17 64.8">
+        <path d="M75.73.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M91.17.35h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21V.35Z" fill="#fff"/>
+        <path d="M107.17,9.15v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M133.04.23h4.68l7.45,17.63h-5.2l-1.25-3.15h-6.78l-1.25,3.15h-5.08L133.04.23ZM137.29,10.93l-1.95-4.95-1.98,4.95h3.93Z" fill="#fff"/>
+        <path d="M146.87.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M75.73,23.84h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,23.84h4.53l7.2,9.25v-9.25h4.8v17.51h-4.23l-7.5-9.6v9.6h-4.8v-17.51Z" fill="#fff"/>
+        <path d="M111.5,32.64v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M131.31,23.84h4.85v13.25h8.48v4.25h-13.33v-17.51Z" fill="#fff"/>
+        <path d="M146.87,23.84h4.85v17.51h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M153.6,38.74l2.7-3.23c1.75,1.38,3.65,2.1,5.68,2.1,1.33,0,2.03-.45,2.03-1.2v-.05c0-.75-.58-1.12-2.98-1.7-3.73-.85-6.6-1.9-6.6-5.48v-.05c0-3.25,2.58-5.6,6.78-5.6,2.98,0,5.3.8,7.2,2.33l-2.43,3.43c-1.6-1.15-3.35-1.73-4.9-1.73-1.18,0-1.75.48-1.75,1.13v.05c0,.8.6,1.15,3.05,1.7,4,.88,6.5,2.18,6.5,5.45v.05c0,3.58-2.83,5.7-7.08,5.7-3.1,0-6.03-.98-8.2-2.9Z" fill="#fff"/>
+        <path d="M171.24,23.84h4.85v6.55h6.23v-6.55h4.85v17.51h-4.85v-6.65h-6.23v6.65h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M75.73,46.97h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,46.97h6.78c6.23,0,9.85,3.6,9.85,8.65v.05c0,5.05-3.68,8.8-9.95,8.8h-6.68v-17.51ZM97.29,51.25v8.93h1.98c2.93,0,4.85-1.6,4.85-4.43v-.05c0-2.8-1.93-4.45-4.85-4.45h-1.98Z" fill="#fff"/>
+        <path d="M111.4,56.8v-9.83h4.9v9.73c0,2.53,1.28,3.73,3.23,3.73s3.25-1.15,3.25-3.6v-9.85h4.9v9.7c0,5.63-3.23,8.13-8.2,8.13s-8.08-2.53-8.08-8Z" fill="#fff"/>
+        <path d="M47.97,14.89c1.86,0,2.98-.12,4.72-.25-7.71,11.93-9.32,13.55-19.14,15.66,2.73,0,5.72-.62,8.2-.87-4.35,4.47-7.21,9.2-10.56,12.8-1.12,1.24-2.98,2.86-5.34,3.23-2.61.5-4.6.62-7.58,1.12,2.98.37,5.84.37,8.7.37-.37.36-.73.7-1.08,1.01-5.36,4.79-9.99,5.45-17.68,5.45-3.11,3.23-4.1,6.21-5.97,11.06h49.09c7.46,0,12.8-4.85,12.8-12.8V.35c-8.7,10.07-5.47,11.56-16.16,14.54Z" fill="#fff"/>
+        <path d="M64.13.35c-9.82,2.98-22.37,3.85-28.96,10.44-1.74,1.74-3.23,5.84-3.48,9.07-.37-2.11-.62-4.23-.12-6.96-6.71,3.85-13.42,8.33-18.14,13.79-2.49,2.86-2.36,7.08-2.49,10.69-.87-2.73-.99-4.6-.87-7.21-2.98,3.36-6.34,6.21-6.71,10.69-.37,3.48.62,6.59,1.12,10.44-1.12,2.49-3.36,5.84-4.47,9.32v3.85c2.86-9.57,8.95-19.14,18.52-29.08C29.21,24.34,43,12.53,64.13.35Z" fill="#D9AF62"/>
+      </svg>
+    </div>
+    <div class="masthead-label">After-Class Dispatch &ndash; Lesson 1</div>
+    <div class="masthead-course">Business English in the Polish Context</div>
+    <div class="masthead-title">Speaking Up at Work:<br><em>Vocabulary from Lesson 1</em></div>
+  </div>
+</header>
+
+<div class="meta-bar">
+  <div class="meta-bar-inner">
+    <div class="meta-item"><span>Lesson</span>1</div>
+    <div class="meta-item"><span>Date</span>27 May 2026</div>
+    <div class="meta-item"><span>Topic</span>Speaking Up at Work</div>
+  </div>
+</div>
+
+<div class="back-nav">
+  <a href="index.html">&larr; Back to all lessons</a>
+</div>
+
+<div class="body-wrap">
+
+  <div class="vocab-section">
+    <div class="section-kicker">Class Notes</div>
+    <div class="section-title">Lesson 1 &ndash; Vocabulary</div>
+
+    <div class="cat-heading">
+      <span>🟠</span>
+      <span class="cat-label">Work, Role, and Responsibilities</span>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to be <strong>responsible for</strong> sth</div>
+      <div class="entry-pl">być odpowiedzialnym za coś</div>
+      <div class="entry-example">I am <strong>responsible for</strong> the work of my team.</div>
+      <div class="entry-example-pl">Jestem odpowiedzialna za pracę mojego zespołu.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>involve</strong> sth</div>
+      <div class="entry-pl">obejmować coś; wiązać się z czymś</div>
+      <div class="entry-example">My role <strong>involves</strong> a lot of meetings with different teams.</div>
+      <div class="entry-example-pl">Moja rola obejmuje wiele spotkań z różnymi zespołami.</div>
+      <div class="entry-example">My role <strong>involves</strong> checking reports before they are sent to clients.</div>
+      <div class="entry-example-pl">Moja rola obejmuje sprawdzanie raportów, zanim zostaną wysłane do klientów.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to be <strong>involved in</strong> sth</div>
+      <div class="entry-pl">być zaangażowanym w coś; brać w czymś udział</div>
+      <div class="entry-example">I am <strong>involved in</strong> several international projects.</div>
+      <div class="entry-example-pl">Jestem zaangażowana w kilka międzynarodowych projektów.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>My team handles&hellip;</strong></div>
+      <div class="entry-pl">Mój zespół zajmuje się&hellip;</div>
+      <div class="entry-example"><strong>My team handles</strong> communication with clients.</div>
+      <div class="entry-example-pl">Mój zespół zajmuje się komunikacją z klientami.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>My team deals with&hellip;</strong></div>
+      <div class="entry-pl">Mój zespół zajmuje się&hellip;</div>
+      <div class="entry-example"><strong>My team deals with</strong> overdue payments.</div>
+      <div class="entry-example-pl">Mój zespół zajmuje się zaległymi płatnościami.</div>
+
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>My team contacts our clients</strong></div>
+      <div class="entry-pl">Mój zespół kontaktuje się z naszymi klientami</div>
+      <div class="entry-example"><strong>My team contacts our clients</strong> when payments are overdue.</div>
+      <div class="entry-example-pl">Mój zespół kontaktuje się z naszymi klientami, kiedy płatności są zaległe.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>make sure that&hellip;</strong></div>
+      <div class="entry-pl">dopilnować, żeby&hellip;; upewnić się, że&hellip;</div>
+      <div class="entry-example">I try to <strong>make sure that</strong> people enjoy their work.</div>
+      <div class="entry-example-pl">Staram się dopilnować, żeby ludzie lubili swoją pracę.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>in a typical week</strong></div>
+      <div class="entry-pl">w typowym tygodniu</div>
+      <div class="entry-example"><strong>In a typical week</strong>, I have several team meetings.</div>
+      <div class="entry-example-pl">W typowym tygodniu mam kilka spotkań zespołowych.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>most of my team meetings</strong></div>
+      <div class="entry-pl">większość moich spotkań zespołowych</div>
+      <div class="entry-example"><strong>Most of my team meetings</strong> are held online.</div>
+      <div class="entry-example-pl">Większość moich spotkań zespołowych odbywa się online.</div>
+    </div>
+
+    <div class="cat-heading">
+      <span>🔵</span>
+      <span class="cat-label">Team, Colleagues, and People</span>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>my team members</strong> / <strong>the members of my team</strong></div>
+      <div class="entry-pl">członkowie mojego zespołu</div>
+      <div class="entry-example">I always listen to <strong>my team members</strong> before I speak.</div>
+      <div class="entry-example-pl">Zawsze słucham członków mojego zespołu, zanim się wypowiem.</div>
+      <div class="entry-example"><strong>The members of my team</strong> often share useful ideas.</div>
+      <div class="entry-example-pl">Członkowie mojego zespołu często dzielą się przydatnymi pomysłami.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>colleagues from abroad</strong> / <strong>colleagues from other countries</strong></div>
+      <div class="entry-pl">współpracownicy z zagranicy / z innych krajów</div>
+      <div class="entry-example">I often speak with <strong>colleagues from abroad</strong>.</div>
+      <div class="entry-example-pl">Często rozmawiam ze współpracownikami z zagranicy.</div>
+      <div class="entry-example">We work with <strong>colleagues from other countries</strong> every week.</div>
+      <div class="entry-example-pl">Co tydzień pracujemy ze współpracownikami z innych krajów.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>English is not their first language</strong></div>
+      <div class="entry-pl">angielski nie jest ich pierwszym językiem</div>
+      <div class="entry-example"><strong>English is not their first language</strong>, but they communicate very well.</div>
+      <div class="entry-example-pl">Angielski nie jest ich pierwszym językiem, ale bardzo dobrze się komunikują.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>People are being made redundant</strong></div>
+      <div class="entry-pl">ludzie są zwalniani z pracy</div>
+      <div class="entry-example"><strong>People are scared because many people are being made redundant.</strong></div>
+      <div class="entry-example-pl">Ludzie się boją, ponieważ wiele osób jest zwalnianych z pracy.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>People are losing their jobs</strong></div>
+      <div class="entry-pl">ludzie tracą pracę</div>
+      <div class="entry-example"><strong>People are losing their jobs</strong> because the company is reducing costs.</div>
+      <div class="entry-example-pl">Ludzie tracą pracę, ponieważ firma ogranicza koszty.</div>
+    </div>
+
+    <div class="cat-heading">
+      <span>🟢</span>
+      <span class="cat-label">Meetings and Communication</span>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>prepare for a meeting</strong></div>
+      <div class="entry-pl">przygotować się do spotkania</div>
+      <div class="entry-example">I need time to <strong>prepare for a meeting</strong> with senior managers.</div>
+      <div class="entry-example-pl">Potrzebuję czasu, żeby przygotować się do spotkania z menedżerami wyższego szczebla.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>the management board</strong></div>
+      <div class="entry-pl">zarząd</div>
+      <div class="entry-example"><strong>The management board</strong> wants to see the latest figures.</div>
+      <div class="entry-example-pl">Zarząd chce zobaczyć najnowsze dane.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>speak up</strong></div>
+      <div class="entry-pl">zabrać głos; odezwać się</div>
+      <div class="entry-example">Some people find it difficult to <strong>speak up</strong> in meetings.</div>
+      <div class="entry-example-pl">Niektórym osobom trudno jest zabrać głos na spotkaniach.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>speak my mind</strong></div>
+      <div class="entry-pl">powiedzieć, co się naprawdę myśli</div>
+      <div class="entry-example">I do not always <strong>speak my mind</strong> before I hear other opinions.</div>
+      <div class="entry-example-pl">Nie zawsze mówię, co naprawdę myślę, zanim usłyszę inne opinie.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>stay silent</strong> &ndash; <strong>silence</strong> &ndash; to do sth <strong>on purpose</strong></div>
+      <div class="entry-pl">milczeć &ndash; cisza; milczenie &ndash; robić coś celowo</div>
+      <div class="entry-example">I sometimes <strong>stay silent</strong> because I want my team to speak first.</div>
+      <div class="entry-example-pl">Czasami milczę, ponieważ chcę, żeby mój zespół wypowiedział się pierwszy.</div>
+      <div class="entry-example"><strong>Silence</strong> in a meeting can sometimes be useful.</div>
+      <div class="entry-example-pl">Cisza na spotkaniu może czasami być przydatna.</div>
+      <div class="entry-example">Staying silent is something I do <strong>on purpose</strong>.</div>
+      <div class="entry-example-pl">Milczenie jest czymś, co robię celowo.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>at the end of the day,&hellip;</strong></div>
+      <div class="entry-pl">ostatecznie; koniec końców</div>
+      <div class="entry-example"><strong>At the end of the day</strong>, the manager must make a decision.</div>
+      <div class="entry-example-pl">Ostatecznie to menedżer musi podjąć decyzję.</div>
+    </div>
+
+    <div class="cat-heading">
+      <span>🟤</span>
+      <span class="cat-label">Business, Clients, and Payments</span>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>clients</strong></div>
+      <div class="entry-pl">klienci</div>
+      <div class="entry-example">Our <strong>clients</strong> often contact us by email.</div>
+      <div class="entry-example-pl">Nasi klienci często kontaktują się z nami mailowo.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>overdue payments</strong> / <strong>outstanding payments</strong></div>
+      <div class="entry-pl">zaległe płatności / nieuregulowane płatności</div>
+      <div class="entry-example">We need to <strong>collect overdue payments</strong> from several clients.</div>
+      <div class="entry-example-pl">Musimy odzyskać zaległe płatności od kilku klientów.</div>
+      <div class="entry-example">We need to contact clients about <strong>outstanding payments</strong>.</div>
+      <div class="entry-example-pl">Musimy skontaktować się z klientami w sprawie nieuregulowanych płatności.</div>
+    </div>
+
+    <div class="cat-heading">
+      <span>🔴</span>
+      <span class="cat-label">Difficulties and Obstacles</span>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>apart from</strong></div>
+      <div class="entry-pl">oprócz; poza</div>
+      <div class="entry-example"><strong>Apart from</strong> meetings, I also write many emails.</div>
+      <div class="entry-example-pl">Oprócz spotkań piszę też wiele maili.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>get stuck</strong></div>
+      <div class="entry-pl">utknąć; zaciąć się; zablokować się</div>
+      <div class="entry-example">Sometimes I <strong>get stuck</strong> when I try to explain complex ideas in English.</div>
+      <div class="entry-example-pl">Czasami zacinam się, kiedy próbuję wyjaśnić złożone pomysły po angielsku.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>The main challenge is&hellip;</strong></div>
+      <div class="entry-pl">głównym wyzwaniem jest&hellip;</div>
+      <div class="entry-example"><strong>The main challenge is</strong> to collect overdue payments.</div>
+      <div class="entry-example-pl">Głównym wyzwaniem jest odzyskiwanie zaległych płatności.</div>
+      <div class="entry-example"><strong>The main challenge is</strong> to receive payments on time.</div>
+      <div class="entry-example-pl">Głównym wyzwaniem jest otrzymywanie płatności na czas.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>What makes it difficult is&hellip;</strong></div>
+      <div class="entry-pl">To, co sprawia trudność, to&hellip;</div>
+      <div class="entry-example"><strong>What makes it difficult is</strong> the number of urgent tasks.</div>
+      <div class="entry-example-pl">To, co sprawia trudność, to liczba pilnych zadań.</div>
+    </div>
+
+    <div class="cat-heading">
+      <span>🟡</span>
+      <span class="cat-label">Personal Qualities and Management Style</span>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>busy taking care of my team</strong></div>
+      <div class="entry-pl">zajęta/zajęty dbaniem o mój zespół</div>
+      <div class="entry-example">I am <strong>busy taking care of my team</strong> during this difficult period.</div>
+      <div class="entry-example-pl">Jestem zajęta dbaniem o mój zespół w tym trudnym okresie.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en">to <strong>show empathy</strong></div>
+      <div class="entry-pl">okazywać empatię</div>
+      <div class="entry-example">Managers need to <strong>show empathy</strong> when people are stressed.</div>
+      <div class="entry-example-pl">Menedżerowie muszą okazywać empatię, kiedy ludzie są zestresowani.</div>
+    </div>
+
+    <div class="cat-heading">
+      <span>⚫</span>
+      <span class="cat-label">Useful Professional Sentence Starters</span>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>I&rsquo;m responsible for&hellip;</strong></div>
+      <div class="entry-pl">Jestem odpowiedzialna/odpowiedzialny za&hellip;</div>
+      <div class="entry-example"><strong>I&rsquo;m responsible for</strong> managing a team of 28 people.</div>
+      <div class="entry-example-pl">Jestem odpowiedzialna za zarządzanie zespołem 28 osób.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>We&rsquo;re dealing with around&hellip;</strong></div>
+      <div class="entry-pl">Mamy do czynienia z około&hellip;; obsługujemy około&hellip;</div>
+      <div class="entry-example"><strong>We&rsquo;re dealing with around</strong> fifty cases a week.</div>
+      <div class="entry-example-pl">Mamy do czynienia z około pięćdziesięcioma sprawami tygodniowo.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>The main challenge is&hellip;</strong></div>
+      <div class="entry-pl">Głównym wyzwaniem jest&hellip;</div>
+      <div class="entry-example"><strong>The main challenge is</strong> communication under pressure.</div>
+      <div class="entry-example-pl">Głównym wyzwaniem jest komunikacja pod presją.</div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-en"><strong>What makes it difficult is&hellip;</strong></div>
+      <div class="entry-pl">To, co sprawia trudność, to&hellip;</div>
+      <div class="entry-example"><strong>What makes it difficult is</strong> the need to react quickly.</div>
+      <div class="entry-example-pl">To, co sprawia trudność, to potrzeba szybkiego reagowania.</div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <p>Business English in the Polish Context &nbsp;&middot;&nbsp; Prepared for Gosia &nbsp;&middot;&nbsp; May 2026</p>
+</footer>
+
+</body>
+</html>
