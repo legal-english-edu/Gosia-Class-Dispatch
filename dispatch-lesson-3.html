@@ -944,6 +944,7 @@ function checkChoice(id, btn) {
 // ── EX4B/C: SORTING ──
 let selectedChip = null;
 function selectChip(el) {
+  if (event) event.stopPropagation();
   if (el.classList.contains('correct')) return;
   document.querySelectorAll('.sort-chip.selected').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
@@ -955,7 +956,7 @@ function dropChip(targetCol) {
   if (chip.dataset.col === targetCol) {
     chip.classList.remove('selected');
     chip.classList.add('correct');
-    chip.onclick = null;
+    chip.setAttribute('onclick', 'return false;');
     document.getElementById('col-' + targetCol).appendChild(chip);
     selectedChip = null;
   } else {
