@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After-Class Dispatch &ndash; Lesson 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f7f4ef;
+    --rust: #b5421a;
+    --gold: #D9AF62;
+    --cream: #ede9e0;
+    --dark: #1E2650;
+    --mid: #2a3060;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; font-size: 17px; line-height: 1.7; }
+  /* ── MASTHEAD ── */
+  .masthead { background-color: var(--dark); padding: 48px 40px 36px; max-width: 100%; position: relative; overflow: hidden; }
+  .masthead::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
+  .masthead-inner { max-width: 680px; margin: 0 auto; }
+  .masthead-logo { display: block; width: 148px; margin-bottom: 28px; }
+  .masthead-logo svg { width: 100%; height: auto; display: block; }
+  .masthead-label { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .masthead-course { font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; margin-bottom: 20px; text-transform: uppercase; }
+  .masthead-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 46px); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 24px; letter-spacing: -0.01em; }
+  .masthead-title em { font-style: italic; color: var(--gold); }
+  .definition-block { max-width: 480px; border-left: 2px solid var(--rust); padding-left: 20px; margin-top: 24px; }
+  .definition-word { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: #ffffff; letter-spacing: 0.03em; }
+  .definition-pron { font-family: 'Lato', sans-serif; font-size: 15px; color: #9a9080; margin-left: 6px; }
+  .definition-pos { font-family: 'Lato', sans-serif; font-size: 14px; font-style: italic; color: var(--gold); margin-bottom: 6px; margin-top: 2px; }
+  .definition-text { font-family: 'Lato', sans-serif; font-size: 17px; color: #b0a898; line-height: 1.6; }
+  .definition-text + .definition-text { margin-top: 4px; }
+  /* ── META BAR ── */
+  .meta-bar { background-color: var(--rust); padding: 10px 40px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .meta-item { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+  .meta-item span { color: rgba(255,255,255,0.5); margin-right: 6px; }
+  /* ── BACK NAV ── */
+  .back-nav { background: var(--gold); padding: 14px 40px; }
+  .back-nav a { font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark); text-decoration: none; }
+  .back-nav a:hover { color: var(--ink); }
+  /* ── BODY ── */
+  .body-wrap { max-width: 680px; margin: 0 auto; padding: 56px 40px 80px; }
+  /* ── QUIZLET ── */
+  .quizlet-card { background: var(--mid); border-radius: 3px; padding: 32px 36px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 16px; }
+  .quizlet-card .section-label { color: var(--gold); margin-bottom: 4px; }
+  .quizlet-card p { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .quizlet-btn { display: inline-block; background: var(--gold); color: var(--dark); font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border-radius: 2px; text-decoration: none; align-self: flex-start; transition: background 0.15s; }
+  .quizlet-btn:hover { background: #c49a4e; }
+  /* ── VOCAB SECTION (dark) ── */
+  .vocab-section { background: var(--dark); border-radius: 3px; padding: 32px 36px; margin-bottom: 48px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .vocab-section h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .vocab-entry { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .vocab-entry:last-child { border-bottom: none; }
+  .vocab-phrase { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+  .vocab-pos { font-size: 17px; font-style: italic; color: rgba(255,255,255,0.45); margin-bottom: 4px; font-family: 'Lato', sans-serif; }
+  .vocab-pl { font-size: 17px; color: var(--gold); font-style: italic; margin-bottom: 6px; opacity: 0.75; }
+  .vocab-def { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 6px; }
+  .vocab-def strong { color: var(--gold); font-weight: 700; }
+  .vocab-example { font-size: 17px; color: rgba(255,255,255,0.5); font-style: italic; line-height: 1.5; }
+  .vocab-subhead { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin: 30px 0 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); }
+  .vocab-subhead:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
+  .correct-line { color: #8fcf9f; }
+  .incorrect-line { color: #e08a6a; }
+  /* ── AUDIO CARD ── */
+  .audio-card { background: var(--dark); border: 1px solid rgba(200,150,62,0.25); border-radius: 3px; padding: 24px 28px; margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
+  .audio-card-header { display: flex; align-items: flex-start; gap: 16px; }
+  .audio-play-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--rust); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+  .audio-play-btn:hover { background: #c94d20; }
+  .audio-play-btn svg { width: 16px; height: 16px; fill: #ffffff; margin-left: 2px; }
+  .audio-play-btn.playing svg.icon-play { display: none; }
+  .audio-play-btn.playing svg.icon-pause { display: block !important; }
+  .audio-play-btn svg.icon-pause { display: none; }
+  .audio-meta { flex: 1; }
+  .audio-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: #ffffff; line-height: 1.3; margin-bottom: 4px; }
+  .audio-subtitle { font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+  .audio-duration { font-family: 'Lato', sans-serif; font-size: 12px; color: #6a6058; margin-top: 6px; }
+  .audio-progress-wrap { display: flex; align-items: center; gap: 12px; }
+  .audio-time { font-family: 'Lato', sans-serif; font-size: 13px; color: #6a6058; width: 36px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .audio-time.total { text-align: right; }
+  .audio-progress { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer; }
+  .audio-progress-fill { height: 100%; background: var(--rust); border-radius: 2px; width: 0%; transition: width 0.1s linear; pointer-events: none; }
+  /* ── READING ── */
+  .reading-intro { margin-bottom: 32px; }
+  .reading-intro .section-label { color: var(--rust); margin-bottom: 8px; }
+  .reading-intro p { font-size: 17px; color: #666; line-height: 1.6; }
+  .article-title { font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 32px); font-weight: 700; color: var(--dark); line-height: 1.2; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 2px solid var(--gold); }
+  .article-body p { font-size: 17px; line-height: 1.75; color: var(--ink); margin-bottom: 20px; }
+  .article-body h3 { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--dark); margin: 32px 0 14px; }
+  .article-body u { text-decoration: none; border-bottom: 2px solid var(--rust); color: var(--rust); font-weight: 700; }
+  .story-divider { height: 1px; background: var(--cream); margin: 56px 0; }
+  /* ── EXERCISE SECTIONS (cream) ── */
+  .exercise-section { background: var(--cream); border-radius: 3px; padding: 32px 36px; margin-top: 24px; }
+  .exercise-section .section-label { color: var(--rust); margin-bottom: 6px; }
+  .exercise-section h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .exercise-intro { font-size: 17px; color: #555; margin-bottom: 24px; line-height: 1.6; }
+  .exercise-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 6px; }
+  .exercise-def { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 8px; }
+  .exercise-def strong { color: var(--rust); font-weight: 700; }
+  /* ── EXERCISE 1: GAP REVEAL ── */
+  .gapfill-item { padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .gapfill-item:last-child { border-bottom: none; }
+  .gap-input { background: #fff; border: 1px solid #ccc; border-radius: 2px; color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 4px 10px; width: 180px; outline: none; transition: border-color 0.15s; }
+  .gap-input:focus { border-color: var(--dark); }
+  .gap-input.correct-input { border-color: #5a9e6f; background: #d4edda; color: #2d6a4f; }
+  .gap-input.incorrect-input { border-color: var(--rust); background: #fde8e3; }
+  .check-btn { background: var(--rust); border: none; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: 700; padding: 6px 14px; border-radius: 2px; cursor: pointer; margin-left: 8px; transition: background 0.15s; }
+  .check-btn:hover { background: #8f3214; }
+  .gap-feedback { font-size: 14px; font-weight: 700; margin-left: 8px; }
+  .gap-feedback.correct-fb { color: #2d6a4f; }
+  .gap-feedback.incorrect-fb { color: var(--rust); }
+  /* ── EXERCISE 2: MATCHING ── */
+  .matching-wrap { margin-bottom: 16px; }
+  .matching-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .match-item { padding: 16px 14px; border-radius: 3px; cursor: pointer; font-size: 17px; line-height: 1.5; transition: background 0.15s, border-color 0.15s; border: 2px solid transparent; display: flex; align-items: center; min-height: 72px; }
+  .match-item.phrase { background: var(--dark); color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; }
+  .match-item.def { background: #fff; color: var(--ink); border: 2px solid var(--cream); }
+  .match-item.selected { border-color: var(--rust) !important; }
+  .match-item.correct { background: #d4edda; border-color: #5a9e6f !important; color: #2d6a4f; pointer-events: none; }
+  .match-item.incorrect { border-color: var(--rust) !important; background: #fde8e3; }
+  .reset-btn { background: transparent; border: 1px solid var(--dark); color: var(--dark); padding: 6px 16px; font-size: 13px; font-family: 'Lato', sans-serif; border-radius: 2px; cursor: pointer; margin-top: 8px; transition: background 0.15s, color 0.15s; }
+  .reset-btn:hover { background: var(--dark); color: #fff; }
+  /* ── EXERCISE 3: PHRASE BOX GAP FILL ── */
+  .phrase-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; padding: 14px; background: var(--dark); border-radius: 3px; }
+  .phrase-box span { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 2px; }
+  /* EX4A: FORCED CHOICE */
+  .choice-item { padding: 16px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .choice-item:last-child { border-bottom: none; }
+  .choice-stem { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 12px; }
+  .choice-stem .blank { border-bottom: 2px solid var(--rust); padding: 0 28px; }
+  .choice-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .choice-btn { background: #fff; border: 2px solid var(--cream); color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 8px 18px; border-radius: 3px; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+  .choice-btn:hover { border-color: var(--dark); }
+  .choice-btn.correct { background: #d4edda; border-color: #5a9e6f; color: #2d6a4f; pointer-events: none; }
+  .choice-btn.incorrect { border-color: var(--rust); background: #fde8e3; }
+  /* EX4B: SORTING */
+  .sort-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 14px; background: var(--dark); border-radius: 3px; min-height: 56px; }
+  .sort-chip { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 2px; cursor: pointer; transition: background 0.15s; border: 2px solid transparent; }
+  .sort-chip:hover { background: rgba(255,255,255,0.16); }
+  .sort-chip.selected { border-color: var(--gold); }
+  .sort-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sort-col { background: #fff; border: 2px solid var(--cream); border-radius: 3px; padding: 14px; min-height: 110px; }
+  .sort-col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 10px; }
+  .sort-col-desc { font-size: 14px; color: #777; margin-bottom: 12px; line-height: 1.4; }
+  .sort-col .sort-chip { display: inline-block; margin: 0 6px 6px 0; }
+  .sort-col .sort-chip.correct { background: #d4edda; color: #2d6a4f; }
+  .sort-col .sort-chip.incorrect { background: #fde8e3; color: var(--rust); }
+  /* ── FOOTER ── */
+  .dispatch-footer { background: var(--dark); padding: 32px 40px; text-align: center; border-top: 3px solid var(--gold); }
+  .dispatch-footer p { font-family: 'Lato', sans-serif; font-size: 15px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
+  .dispatch-footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 187.17 64.8">
+        <path d="M75.73.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M91.17.35h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21V.35Z" fill="#fff"/>
+        <path d="M107.17,9.15v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M133.04.23h4.68l7.45,17.63h-5.2l-1.25-3.15h-6.78l-1.25,3.15h-5.08L133.04.23ZM137.29,10.93l-1.95-4.95-1.98,4.95h3.93Z" fill="#fff"/>
+        <path d="M146.87.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M75.73,23.84h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,23.84h4.53l7.2,9.25v-9.25h4.8v17.51h-4.23l-7.5-9.6v9.6h-4.8v-17.51Z" fill="#fff"/>
+        <path d="M111.5,32.64v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M131.31,23.84h4.85v13.25h8.48v4.25h-13.33v-17.51Z" fill="#fff"/>
+        <path d="M146.87,23.84h4.85v17.51h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M153.6,38.74l2.7-3.23c1.75,1.38,3.65,2.1,5.68,2.1,1.33,0,2.03-.45,2.03-1.2v-.05c0-.75-.58-1.12-2.98-1.7-3.73-.85-6.6-1.9-6.6-5.48v-.05c0-3.25,2.58-5.6,6.78-5.6,2.98,0,5.3.8,7.2,2.33l-2.43,3.43c-1.6-1.15-3.35-1.73-4.9-1.73-1.18,0-1.75.48-1.75,1.13v.05c0,.8.6,1.15,3.05,1.7,4,.88,6.5,2.18,6.5,5.45v.05c0,3.58-2.83,5.7-7.08,5.7-3.1,0-6.03-.98-8.2-2.9Z" fill="#fff"/>
+        <path d="M171.24,23.84h4.85v6.55h6.23v-6.55h4.85v17.51h-4.85v-6.65h-6.23v6.65h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M75.73,46.97h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,46.97h6.78c6.23,0,9.85,3.6,9.85,8.65v.05c0,5.05-3.68,8.8-9.95,8.8h-6.68v-17.51ZM97.29,51.25v8.93h1.98c2.93,0,4.85-1.6,4.85-4.43v-.05c0-2.8-1.93-4.45-4.85-4.45h-1.98Z" fill="#fff"/>
+        <path d="M111.4,56.8v-9.83h4.9v9.73c0,2.53,1.28,3.73,3.23,3.73s3.25-1.15,3.25-3.6v-9.85h4.9v9.7c0,5.63-3.23,8.13-8.2,8.13s-8.08-2.53-8.08-8Z" fill="#fff"/>
+        <path d="M47.97,14.89c1.86,0,2.98-.12,4.72-.25-7.71,11.93-9.32,13.55-19.14,15.66,2.73,0,5.72-.62,8.2-.87-4.35,4.47-7.21,9.2-10.56,12.8-1.12,1.24-2.98,2.86-5.34,3.23-2.61.5-4.6.62-7.58,1.12,2.98.37,5.84.37,8.7.37-.37.36-.73.7-1.08,1.01-5.36,4.79-9.99,5.45-17.68,5.45-3.11,3.23-4.1,6.21-5.97,11.06h49.09c7.46,0,12.8-4.85,12.8-12.8V.35c-8.7,10.07-5.47,11.56-16.16,14.54Z" fill="#fff"/>
+        <path d="M64.13.35c-9.82,2.98-22.37,3.85-28.96,10.44-1.74,1.74-3.23,5.84-3.48,9.07-.37-2.11-.62-4.23-.12-6.96-6.71,3.85-13.42,8.33-18.14,13.79-2.49,2.86-2.36,7.08-2.49,10.69-.87-2.73-.99-4.6-.87-7.21-2.98,3.36-6.34,6.21-6.71,10.69-.37,3.48.62,6.59,1.12,10.44-1.12,2.49-3.36,5.84-4.47,9.32v3.85c2.86-9.57,8.95-19.14,18.52-29.08C29.21,24.34,43,12.53,64.13.35Z" fill="#D9AF62"/>
+      </svg>
+    </div>
+    <div class="masthead-label">After-Class Dispatch &ndash; Lesson 4</div>
+    <div class="masthead-course">Business English in the Polish Context</div>
+    <div class="masthead-title">Working and Training Together:<br><em>Vocabulary from Lesson 4</em></div>
+    <div class="definition-block">
+      <div><span class="definition-word">dispatch</span><span class="definition-pron">/d&#618;&#712;sp&aelig;t&#643;/</span></div>
+      <div class="definition-pos">noun</div>
+      <div class="definition-text">1. A message or report sent quickly to its destination &ndash; especially one sent by a journalist from abroad, or between military officers.</div>
+      <div class="definition-text">2. Your after-class dispatch: everything from today's lesson, gathered in one place.</div>
+    </div>
+  </div>
+</header>
+<div class="meta-bar">
+  <div class="meta-item"><span>Lesson</span>4</div>
+  <div class="meta-item"><span>Date</span>1 July 2026</div>
+  <div class="meta-item"><span>Topic</span>International Teamwork, Travel and Everyday Corrections</div>
+</div>
+<div class="back-nav">
+  <a href="index.html">&larr; Home</a>
+</div>
+<main class="body-wrap">
+
+  <!-- QUIZLET -->
+  <div class="quizlet-card">
+    <div class="section-label">Your Quizlet Class</div>
+    <p>Your vocabulary is growing. After every lesson, new words and phrases are added to your Quizlet class. Go back, test yourself, and make them stick.</p>
+    <a class="quizlet-btn" href="https://quizlet.com/join/72BDBFDfB?i=4ie97k&x=1bqt" target="_blank">Open your Quizlet class &rarr;</a>
+  </div>
+
+  <!-- VOCABULARY -->
+  <div class="vocab-section">
+    <div class="section-label">Class Notes</div>
+    <h2>Lesson 4 &ndash; Vocabulary</h2>
+
+    <div class="vocab-subhead">🟠 Orders and Tasks</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to process an order</div>
+      <div class="vocab-pl">realizować / obsługiwać zamówienie</div>
+      <div class="vocab-example">Our sales team usually processes online orders within two working days.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to carry out a task</div>
+      <div class="vocab-pl">realizować / wykonywać zadanie</div>
+      <div class="vocab-example">The finance team is carrying out several important checks this week.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to implement a plan</div>
+      <div class="vocab-pl">realizować / wdrażać plan</div>
+      <div class="vocab-example">We are now implementing the changes agreed during the last meeting.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to complete a project</div>
+      <div class="vocab-pl">zrealizować / ukończyć projekt</div>
+      <div class="vocab-example">We expect to complete the project by the end of September.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to achieve a goal</div>
+      <div class="vocab-pl">zrealizować / osiągnąć cel</div>
+      <div class="vocab-example">The department achieved all its annual objectives.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to fulfil an obligation</div>
+      <div class="vocab-pl">zrealizować / wypełnić zobowiązanie</div>
+      <div class="vocab-example">Both parties must fulfil their contractual obligations.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def">Polish <strong>realizować</strong> does not have one universal English equivalent. The correct verb depends on the context.</div>
+    </div>
+
+    <div class="vocab-subhead">🟡 International Teamwork</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to get to know each other better</div>
+      <div class="vocab-pl">lepiej się poznać</div>
+      <div class="vocab-example">The informal dinner gave us an opportunity to get to know each other better.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">a team-building event</div>
+      <div class="vocab-pl">wydarzenie integracyjne; ogólne określenie, nie precyzuje miejsca ani czasu trwania</div>
+      <div class="vocab-example">The company is organising a team-building event for employees from both offices.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">a team-building day</div>
+      <div class="vocab-pl">jednodniowe wydarzenie integracyjne</div>
+      <div class="vocab-example">We are planning a team-building day before the new team starts working together.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">a team-building retreat</div>
+      <div class="vocab-pl">wyjazd integracyjny; zwykle poza miejscem pracy, często z noclegiem</div>
+      <div class="vocab-example">The Polish and Indian teams are going on a team-building retreat together.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">an offsite</div>
+      <div class="vocab-pl">wydarzenie służbowe poza zwykłym miejscem pracy, może łączyć spotkania, szkolenia i integrację</div>
+      <div class="vocab-example">They are organising an offsite that combines training sessions with social activities.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def">The noun <strong>offsite</strong> is common in everyday corporate English. In more formal writing, prefer <strong>an off-site meeting</strong>, <strong>an off-site event</strong>, or <strong>an event held away from the office</strong>.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def">A <strong>team-building event</strong> is a general term and does not specify the location or duration. A <strong>team-building day</strong> is a one-day event. A <strong>team-building retreat</strong> usually involves travelling away from the workplace and often staying overnight. An <strong>offsite</strong> is an organised work event held away from the usual workplace and may combine meetings, training and social activities.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">differences between A and B</div>
+      <div class="vocab-pl">różnice między A a B</div>
+      <div class="vocab-example">There are a lot of differences between our working styles.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">even if someone does not understand a thing</div>
+      <div class="vocab-pl">nawet jeśli ktoś nic nie rozumie</div>
+      <div class="vocab-example">People sometimes remain silent even if they do not understand a thing.</div>
+    </div>
+
+    <div class="vocab-subhead">🟢 Training and Future Plans</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to go back to a country</div>
+      <div class="vocab-pl">wrócić do kraju</div>
+      <div class="vocab-example">At the end of July, they are going back to India.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to train other people</div>
+      <div class="vocab-pl">szkolić inne osoby</div>
+      <div class="vocab-example">After returning home, they will train other employees.</div>
+    </div>
+
+    <div class="vocab-subhead">🟣 Making Notes</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to put something down</div>
+      <div class="vocab-pl">zapisać coś</div>
+      <div class="vocab-example">Let me put your contact details down before I forget them.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def">In this context, <strong>put something down</strong> means <strong>write something down</strong>. However, <strong>write something down</strong> is usually clearer, because <strong>put down</strong> has several other meanings.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to note something down</div>
+      <div class="vocab-pl">zanotować coś</div>
+      <div class="vocab-example">I noted down the main decisions made during the meeting.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to jot something down</div>
+      <div class="vocab-pl">szybko coś zanotować</div>
+      <div class="vocab-example">I need a moment to jot down this telephone number.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def"><strong>To jot something down</strong> is slightly more informal and suggests writing something quickly.</div>
+    </div>
+
+    <div class="vocab-subhead">🔵 Skills and Achievements</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to be good at something</div>
+      <div class="vocab-pl">być dobrym w czymś</div>
+      <div class="vocab-example">One of our colleagues from India is very good at cricket.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to win an award</div>
+      <div class="vocab-pl">zdobyć nagrodę</div>
+      <div class="vocab-example">He has won several awards during his sporting career.</div>
+    </div>
+
+    <div class="vocab-subhead">🟠 Time and Dates</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">until the end of this week</div>
+      <div class="vocab-pl">do końca tego tygodnia</div>
+      <div class="vocab-example">The visitors will work in our office until the end of this week.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">the week after</div>
+      <div class="vocab-pl">tydzień później; w kolejnym tygodniu</div>
+      <div class="vocab-example">I am busy next week, but I am available the week after.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def"><strong>The week after</strong> refers to the week following another week already mentioned.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">for a month</div>
+      <div class="vocab-pl">przez miesiąc</div>
+      <div class="vocab-example">They are staying in Poland for a month.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">on 15 July / on the 15th of July</div>
+      <div class="vocab-pl">15 lipca</div>
+      <div class="vocab-example">The next meeting will take place on 15 July.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def">In speech, say <strong>on July fifteenth</strong> or <strong>on July the fifteenth</strong>.</div>
+    </div>
+
+    <div class="vocab-subhead">🟡 Recovery</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to recover</div>
+      <div class="vocab-pl">dojść do siebie; wyzdrowieć; odzyskać siły</div>
+      <div class="vocab-example">She needs a few more days to recover after the operation.</div>
+    </div>
+
+    <div class="vocab-subhead">🟢 Studies Abroad</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to study in the Netherlands</div>
+      <div class="vocab-pl">studiować w Holandii</div>
+      <div class="vocab-example">My daughter is studying in the Netherlands.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to study for a bachelor's degree</div>
+      <div class="vocab-pl">studiować na studiach licencjackich</div>
+      <div class="vocab-example">She is studying for a bachelor's degree in international business.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def"><span class="correct-line">✅ She is studying for a bachelor's degree.</span><br><span class="incorrect-line">🚫 She is studying for bachelor's degree.</span></div>
+      <div class="vocab-def">Use an apostrophe in <strong>bachelor's</strong>, and use the article <strong>a</strong>: a bachelor's degree. When you name the subject, use <strong>a degree in</strong> + subject: a degree in international business.</div>
+    </div>
+
+    <div class="vocab-subhead">🟣 Countries and Organisations</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">the United States / the US</div>
+      <div class="vocab-pl">Stany Zjednoczone</div>
+      <div class="vocab-example">Our company has several clients in the United States.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">the United Kingdom / the UK</div>
+      <div class="vocab-pl">Zjednoczone Królestwo</div>
+      <div class="vocab-example">The head office is in the UK.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">the European Union / the EU</div>
+      <div class="vocab-pl">Unia Europejska</div>
+      <div class="vocab-example">The new regulations apply throughout the EU.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">The Hague</div>
+      <div class="vocab-pl">Haga</div>
+      <div class="vocab-example">Several international courts are based in The Hague.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def">Remember that the full name is <strong>The Hague</strong>.</div>
+    </div>
+
+    <div class="vocab-subhead">🔵 Nationalities</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">the Dutch</div>
+      <div class="vocab-pl">Holendrzy jako grupa narodowa</div>
+      <div class="vocab-example">The survey compared attitudes among the Dutch, the Germans and the Belgians.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-phrase">Dutch people</div>
+      <div class="vocab-pl">Holendrzy; osoby z Holandii</div>
+      <div class="vocab-example">She works with several Dutch people in the finance department.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def"><strong>The Dutch</strong> is a collective expression for Dutch people as a national group. <strong>Dutch people</strong> is more natural when referring to particular individuals or an unspecified number of people.</div>
+    </div>
+
+    <div class="vocab-subhead">🟠 Family</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to miss your family</div>
+      <div class="vocab-pl">tęsknić za rodziną</div>
+      <div class="vocab-example">She misses her family a lot while she is studying abroad.</div>
+    </div>
+    <div class="vocab-entry">
+      <div class="vocab-def"><span class="correct-line">✅ She misses her family a lot.</span><br><span class="incorrect-line">🚫 She misses the family a lot.</span></div>
+      <div class="vocab-def">Use <strong>my / your / her / his family</strong> when referring to someone's own family.</div>
+    </div>
+
+    <div class="vocab-subhead">🟡 Useful Correction</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-def"><span class="correct-line">✅ Half of my activities involve working with international teams.</span><br><span class="incorrect-line">🚫 A half of my activities involve working with international teams.</span></div>
+      <div class="vocab-def"><strong>Half of</strong> is usually the most natural form. <strong>A half of</strong> is possible when the half is treated as one distinct portion: <em>One half of the room was used for training, and the other half for informal meetings.</em> In this sentence, <strong>half of my activities</strong> is the natural form.</div>
+    </div>
+
+    <div class="vocab-subhead">🟢 Lesson Arrangements</div>
+
+    <div class="vocab-entry">
+      <div class="vocab-phrase">to make a payment</div>
+      <div class="vocab-pl">dokonać płatności</div>
+      <div class="vocab-example">I will make the payment for the next four lessons this week.</div>
+    </div>
+
+  </div>
+
+  <!-- READING -->
+  <div class="reading-intro">
+    <div class="section-label">Reading &amp; Listening</div>
+    <p>Listen to each recording and read the story. The target vocabulary from this lesson appears in the text. It is highlighted. Notice how each phrase is used in context.</p>
+  </div>
+
+  <div class="article-title">Working and Training Together</div>
+  <div class="audio-card">
+    <audio id="audio-1" preload="metadata"><source src="lesson-4-story-1.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-1" onclick="togglePlay(1)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">Working and Training Together</div>
+        <div class="audio-subtitle">Story 1 &middot; Lesson 4</div>
+        <div class="audio-duration" id="dur-1">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-1">0:00</span>
+      <div class="audio-progress" id="bar-1" onclick="seekAudio(event, 1)"><div class="audio-progress-fill" id="fill-1"></div></div>
+      <span class="audio-time total" id="tot-1">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Before the retreat could begin, there was still work to <u>carry out</u>. Anna's team needed to <u>process</u> a backlog of orders left over from the previous month, <u>implement</u> a new approval step agreed at the last review, and <u>complete</u> the project before the visit. Both sides had also promised the board that they would <u>fulfil</u> their reporting obligations on time, and the next report was due <u>on 15 July</u>, only a few days after the retreat ended. By June, Anna's team had <u>achieved</u> every goal set for the first half of the year, and the board wanted the two offices to <u>get to know each other better</u> before the busiest quarter began. Rather than organising another single <u>team-building day</u> in the Warsaw office, management decided on <u>a team-building retreat</u>: both the Polish and the Indian accounts receivable teams would leave their usual offices and spend several days together at a conference centre outside the city. The programme was structured as <u>an offsite</u>, combining training sessions each morning with informal activities in the afternoons, and the Indian visitors were <u>staying in Poland for a month</u> in total, since the retreat was only the first part of a longer visit.</p>
+    <p>During the sessions, Anna noticed <u>differences between</u> the two teams' working styles, particularly in their approach to documentation, though everyone had agreed beforehand that it was fine to ask again <u>even if someone did not understand a thing</u> the first time it was explained. One of the visiting colleagues turned out to be very <u>good at cricket</u> and had already <u>won several awards</u> during his sporting career. By the second evening, the others were joking that no one should agree to play against him. Before <u>going back to India</u> at the end of the visit, the group agreed that the Indian team would <u>train other employees</u> once they returned home. Anna spent the last afternoon making sure everything important was written down: she <u>put down</u> the contact details of each visiting colleague, <u>noted down</u> the follow-up actions from the training sessions, and asked a junior colleague to <u>jot down</u> the names of two systems that still needed to be aligned. In her closing email to both teams, she wrote plainly: "The alignment work will not begin <u>until the end of this week</u> at the earliest and may have to wait until <u>the week after</u>."</p>
+  </div>
+
+  <div class="story-divider"></div>
+
+  <div class="article-title">Half of Her Week</div>
+  <div class="audio-card">
+    <audio id="audio-2" preload="metadata"><source src="lesson-4-story-2.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-2" onclick="togglePlay(2)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">Half of Her Week</div>
+        <div class="audio-subtitle">Story 2 &middot; Lesson 4</div>
+        <div class="audio-duration" id="dur-2">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-2">0:00</span>
+      <div class="audio-progress" id="bar-2" onclick="seekAudio(event, 2)"><div class="audio-progress-fill" id="fill-2"></div></div>
+      <span class="audio-time total" id="tot-2">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Not every part of Anna's week involved the visiting team. One of her colleagues, Marta, was on a work placement in Rotterdam. She had been living in the Netherlands for almost a year and was <u>studying for a bachelor's degree</u> in international business alongside the placement. During a catch-up call, Marta admitted that she still <u>missed her family</u> whenever her flat felt too quiet in the evenings, though she had settled in well and worked closely with <u>Dutch people</u> in the office every day. She found their communication style direct, but once she became familiar with it, she found them easy to work with. Anna sometimes joked that <u>half of</u> her own working week now involved international contacts of one kind or another, whether in <u>the United States</u>, <u>the United Kingdom</u>, or closer to home.</p>
+    <p>One of Anna's regular contacts worked for a client based near <u>The Hague</u>, coordinating a shared project that also touched several partners across <u>the European Union</u>. In an email that week, the client mentioned needing a few extra days to <u>recover</u> after a minor operation, which delayed one report slightly, but nothing serious was affected. Looking back over her week, Anna realised that <u>half of</u> her activities now involved some form of international coordination.</p>
+  </div>
+
+  <!-- EXERCISE 1 -->
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 1 &ndash; Complete the Phrase</h2>
+    <p class="exercise-intro">Each definition below has one key word or expression missing from the phrase. Type the missing part in the box and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="gapfill-item" id="ex1-1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">A general term for a social or professional bonding activity, with no fixed location or duration: <em>a team-building <input class="gap-input" data-answer="event" placeholder="______"></em></div>
+      <button class="check-btn" onclick="checkGap('ex1-1')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-1"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">To put a plan into action: <em>to <input class="gap-input" data-answer="implement" placeholder="______"> a plan</em></div>
+      <button class="check-btn" onclick="checkGap('ex1-2')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-2"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">To finish a piece of work from start to end: <em>to <input class="gap-input" data-answer="complete" placeholder="______"> a project</em></div>
+      <button class="check-btn" onclick="checkGap('ex1-3')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-3"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">To write something quickly, usually as a short note: <em>to <input class="gap-input" data-answer="jot" placeholder="______"> something down</em></div>
+      <button class="check-btn" onclick="checkGap('ex1-4')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-4"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">To be skilled or talented at doing something: <em>to be <input class="gap-input" data-answer="good" placeholder="______"> at something</em></div>
+      <button class="check-btn" onclick="checkGap('ex1-5')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-5"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-6">
+      <div class="exercise-number">6</div>
+      <div class="exercise-def">A collective term for Dutch people as a national group: <em>the <input class="gap-input" data-answer="dutch" placeholder="______"></em></div>
+      <button class="check-btn" onclick="checkGap('ex1-6')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-6"></span>
+    </div>
+  </div>
+
+  <!-- EXERCISE 2: MATCHING -->
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 2 &ndash; Matching</h2>
+    <p class="exercise-intro">Match each verb phrase on the left with its definition on the right. Click a phrase to select it (it will highlight in red), then click the correct definition. Green means correct. Red flash means try again.</p>
+    <div class="matching-wrap" id="matching">
+      <div class="matching-col">
+        <div class="match-item phrase" data-id="1" data-group="ex2" onclick="selectMatch(this)">to process an order</div>
+        <div class="match-item def" data-id="4" data-group="ex2" onclick="selectMatch(this)">To succeed in reaching an objective.</div>
+        <div class="match-item phrase" data-id="2" data-group="ex2" onclick="selectMatch(this)">to carry out a task</div>
+        <div class="match-item def" data-id="6" data-group="ex2" onclick="selectMatch(this)">To finish a piece of work from start to end.</div>
+        <div class="match-item phrase" data-id="3" data-group="ex2" onclick="selectMatch(this)">to implement a plan</div>
+        <div class="match-item def" data-id="1" data-group="ex2" onclick="selectMatch(this)">To handle and complete a customer order.</div>
+        <div class="match-item phrase" data-id="4" data-group="ex2" onclick="selectMatch(this)">to achieve a goal</div>
+        <div class="match-item def" data-id="2" data-group="ex2" onclick="selectMatch(this)">To do or perform a piece of work.</div>
+        <div class="match-item phrase" data-id="5" data-group="ex2" onclick="selectMatch(this)">to fulfil an obligation</div>
+        <div class="match-item def" data-id="3" data-group="ex2" onclick="selectMatch(this)">To put a plan into action.</div>
+        <div class="match-item phrase" data-id="6" data-group="ex2" onclick="selectMatch(this)">to complete a project</div>
+        <div class="match-item def" data-id="5" data-group="ex2" onclick="selectMatch(this)">To do what a contract, law or promise requires.</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetMatching('ex2')">Reset</button>
+  </div>
+
+  <!-- EXERCISE 3: GAP FILL -->
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 3 &ndash; Gap Fill</h2>
+    <p class="exercise-intro">Complete each sentence using one of the phrases from the box below. Type your answer in the gap and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="phrase-box">
+      <span>Dutch people</span>
+      <span>the week after</span>
+      <span>half of my activities</span>
+      <span>a team-building retreat</span>
+      <span>an offsite</span>
+      <span>until the end of this week</span>
+    </div>
+    <div class="gapfill-item" id="gf1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">The two teams went on <input class="gap-input" data-answer="a team-building retreat" placeholder="____________"> together, staying at a conference centre outside the city.</div>
+      <button class="check-btn" onclick="checkGap('gf1')">Check</button>
+      <span class="gap-feedback" id="fb-gf1"></span>
+    </div>
+    <div class="gapfill-item" id="gf2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">The programme was structured as <input class="gap-input" data-answer="an offsite" placeholder="____________">, combining training with social activities.</div>
+      <button class="check-btn" onclick="checkGap('gf2')">Check</button>
+      <span class="gap-feedback" id="fb-gf2"></span>
+    </div>
+    <div class="gapfill-item" id="gf3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">I am busy next week, but I am available <input class="gap-input" data-answer="the week after" placeholder="____________">.</div>
+      <button class="check-btn" onclick="checkGap('gf3')">Check</button>
+      <span class="gap-feedback" id="fb-gf3"></span>
+    </div>
+    <div class="gapfill-item" id="gf4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">The visitors will work in our office <input class="gap-input" data-answer="until the end of this week" placeholder="____________">.</div>
+      <button class="check-btn" onclick="checkGap('gf4')">Check</button>
+      <span class="gap-feedback" id="fb-gf4"></span>
+    </div>
+    <div class="gapfill-item" id="gf5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def"><input class="gap-input" data-answer="half of my activities" placeholder="____________"> involve working with international teams.</div>
+      <button class="check-btn" onclick="checkGap('gf5')">Check</button>
+      <span class="gap-feedback" id="fb-gf5"></span>
+    </div>
+    <div class="gapfill-item" id="gf6">
+      <div class="exercise-number">6</div>
+      <div class="exercise-def">She works with several <input class="gap-input" data-answer="dutch people" placeholder="____________"> in the finance department.</div>
+      <button class="check-btn" onclick="checkGap('gf6')">Check</button>
+      <span class="gap-feedback" id="fb-gf6"></span>
+    </div>
+  </div>
+
+  <!-- EXERCISE 4: CONTRASTS -->
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 4 &ndash; Choosing Between Confusable Forms</h2>
+    <p class="exercise-intro">This lesson contained several pairs that are easy to confuse. Part A tests choices that depend on context. Part B tests the main difference between four related terms.</p>
+
+    <h3 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dark);margin:8px 0 16px;">Part A &ndash; Choose the correct form</h3>
+
+    <div class="choice-item" id="ch1">
+      <div class="choice-stem">I am busy next week, but I am free <span class="blank"></span>.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch1', this)">the week after</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch1', this)">next week</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch2">
+      <div class="choice-stem">We are finishing the current project this Friday. We will begin the new one <span class="blank"></span>.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch2', this)">next week</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch2', this)">the week after</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch3">
+      <div class="choice-stem"><span class="blank"></span> my activities involve working with international teams.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch3', this)">Half of</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch3', this)">A half of</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch4">
+      <div class="choice-stem">She <span class="blank"></span> a lot while she is studying abroad.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch4', this)">misses her family</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch4', this)">misses the family</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch5">
+      <div class="choice-stem">The survey compared attitudes among <span class="blank"></span>, the Germans and the Belgians.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch5', this)">the Dutch</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch5', this)">Dutch people</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch6">
+      <div class="choice-stem">She works closely with several <span class="blank"></span> in the finance department.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch6', this)">Dutch people</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch6', this)">the Dutch</button>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dark);margin:32px 0 8px;">Part B &ndash; Match the term to its defining feature</h3>
+    <p class="exercise-intro" style="margin-bottom:16px;">These four terms overlap in meaning but are not identical. Click a term to select it, then click the definition that fits it best. Green means correct.</p>
+    <div class="matching-wrap" id="matching-ex4b">
+      <div class="matching-col">
+        <div class="match-item phrase" data-id="1" data-group="ex4b" onclick="selectMatch(this)">a team-building event</div>
+        <div class="match-item def" data-id="3" data-group="ex4b" onclick="selectMatch(this)">Involves travelling away from the workplace, often with an overnight stay.</div>
+        <div class="match-item phrase" data-id="2" data-group="ex4b" onclick="selectMatch(this)">a team-building day</div>
+        <div class="match-item def" data-id="1" data-group="ex4b" onclick="selectMatch(this)">General term; does not specify location or duration.</div>
+        <div class="match-item phrase" data-id="3" data-group="ex4b" onclick="selectMatch(this)">a team-building retreat</div>
+        <div class="match-item def" data-id="4" data-group="ex4b" onclick="selectMatch(this)">A work event held away from the usual workplace; may combine meetings, training and social activities.</div>
+        <div class="match-item phrase" data-id="4" data-group="ex4b" onclick="selectMatch(this)">an offsite</div>
+        <div class="match-item def" data-id="2" data-group="ex4b" onclick="selectMatch(this)">A one-day event.</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetMatching('ex4b')">Reset</button>
+
+  </div>
+
+</main>
+<footer class="dispatch-footer">
+  <p>Business English in the Polish Context &nbsp;&middot;&nbsp; Prepared for Gosia &nbsp;&middot;&nbsp; July 2026</p>
+</footer>
+<script>
+// ── AUDIO (two players) ──
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+[1, 2].forEach(function(n) {
+  const audio = document.getElementById('audio-' + n);
+  if (!audio) return;
+  audio.addEventListener('loadedmetadata', function() {
+    document.getElementById('dur-' + n).textContent = formatTime(audio.duration);
+    document.getElementById('tot-' + n).textContent = formatTime(audio.duration);
+  });
+  audio.addEventListener('timeupdate', function() {
+    document.getElementById('cur-' + n).textContent = formatTime(audio.currentTime);
+    const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    document.getElementById('fill-' + n).style.width = pct + '%';
+  });
+  audio.addEventListener('ended', function() {
+    document.getElementById('play-' + n).classList.remove('playing');
+    document.getElementById('fill-' + n).style.width = '0%';
+    document.getElementById('cur-' + n).textContent = '0:00';
+  });
+});
+function togglePlay(n) {
+  const audio = document.getElementById('audio-' + n);
+  const btn = document.getElementById('play-' + n);
+  const other = n === 1 ? 2 : 1;
+  const otherAudio = document.getElementById('audio-' + other);
+  const otherBtn = document.getElementById('play-' + other);
+  if (otherAudio && !otherAudio.paused) {
+    otherAudio.pause();
+    otherBtn.classList.remove('playing');
+  }
+  if (audio.paused) { audio.play(); btn.classList.add('playing'); }
+  else { audio.pause(); btn.classList.remove('playing'); }
+}
+function seekAudio(e, n) {
+  const audio = document.getElementById('audio-' + n);
+  const bar = document.getElementById('bar-' + n);
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+}
+// ── MATCHING (scoped per data-group so multiple matching exercises can coexist) ──
+let selectedPhrase = {};
+let selectedDef = {};
+function selectMatch(el) {
+  if (el.classList.contains('correct')) return;
+  const group = el.dataset.group || 'default';
+  const isPhrase = el.classList.contains('phrase');
+  const isDef = el.classList.contains('def');
+  if (isPhrase) {
+    document.querySelectorAll('.match-item.phrase.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPhrase[group] = el;
+  } else if (isDef) {
+    document.querySelectorAll('.match-item.def.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedDef[group] = el;
+  }
+  if (selectedPhrase[group] && selectedDef[group]) {
+    if (selectedPhrase[group].dataset.id === selectedDef[group].dataset.id) {
+      selectedPhrase[group].classList.remove('selected');
+      selectedDef[group].classList.remove('selected');
+      selectedPhrase[group].classList.add('correct');
+      selectedDef[group].classList.add('correct');
+    } else {
+      const p = selectedPhrase[group], d = selectedDef[group];
+      p.classList.remove('selected');
+      d.classList.remove('selected');
+      p.classList.add('incorrect');
+      d.classList.add('incorrect');
+      setTimeout(() => {
+        p.classList.remove('incorrect');
+        d.classList.remove('incorrect');
+      }, 800);
+    }
+    selectedPhrase[group] = null;
+    selectedDef[group] = null;
+  }
+}
+function resetMatching(group) {
+  const g = group || 'default';
+  document.querySelectorAll('.match-item[data-group="' + g + '"]').forEach(el => {
+    el.classList.remove('selected', 'correct', 'incorrect');
+  });
+  selectedPhrase[g] = null;
+  selectedDef[g] = null;
+}
+// ── GAP FILL ──
+function checkGap(id) {
+  const item = document.getElementById(id);
+  const input = item.querySelector('.gap-input');
+  const fb = document.getElementById('fb-' + id);
+  const correct = input.dataset.answer.toLowerCase().trim();
+  const given = input.value.toLowerCase().trim();
+  if (given === correct) {
+    fb.textContent = '✓ Correct';
+    fb.className = 'gap-feedback correct-fb';
+    input.classList.add('correct-input');
+    input.classList.remove('incorrect-input');
+  } else {
+    fb.textContent = '✗ Try again';
+    fb.className = 'gap-feedback incorrect-fb';
+    input.classList.add('incorrect-input');
+    input.classList.remove('correct-input');
+  }
+}
+// ── EX4A: FORCED CHOICE ──
+function checkChoice(id, btn) {
+  const correct = btn.dataset.correct === '1';
+  if (correct) {
+    const wrap = document.getElementById(id);
+    wrap.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('incorrect'));
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('incorrect');
+    setTimeout(() => btn.classList.remove('incorrect'), 800);
+  }
+}
+// ── EX4B: SORTING ──
+let selectedChip = null;
+function selectChip(el) {
+  if (event) event.stopPropagation();
+  if (el.classList.contains('correct')) return;
+  document.querySelectorAll('.sort-chip.selected').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedChip = el;
+}
+function dropChip(targetCol) {
+  if (!selectedChip) return;
+  const chip = selectedChip;
+  if (chip.dataset.col === targetCol) {
+    chip.classList.remove('selected');
+    chip.classList.add('correct');
+    chip.setAttribute('onclick', 'return false;');
+    document.getElementById('col-' + targetCol).appendChild(chip);
+    selectedChip = null;
+  } else {
+    chip.classList.add('incorrect');
+    const c = chip;
+    setTimeout(() => { c.classList.remove('incorrect'); }, 800);
+    chip.classList.remove('selected');
+    selectedChip = null;
+  }
+}
+</script>
+</body>
+</html>
