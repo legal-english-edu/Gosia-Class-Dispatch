@@ -534,7 +534,7 @@
     </div>
     <div class="gapfill-item" id="ex1-2">
       <div class="exercise-number">2</div>
-      <div class="exercise-def">To put a plan into action: <em>to <input class="gap-input" data-answer="implement" placeholder="______"> a plan</em></div>
+      <div class="exercise-def">To put a plan into action: <em>to <input class="gap-input" data-answer="implement|execute" placeholder="______"> a plan</em></div>
       <button class="check-btn" onclick="checkGap('ex1-2')">Check</button>
       <span class="gap-feedback" id="fb-ex1-2"></span>
     </div>
@@ -552,13 +552,13 @@
     </div>
     <div class="gapfill-item" id="ex1-5">
       <div class="exercise-number">5</div>
-      <div class="exercise-def">To be skilled or talented at doing something: <em>to be <input class="gap-input" data-answer="good" placeholder="______"> at something</em></div>
+      <div class="exercise-def">To pay money that you owe, for example for lessons or services: <em>to <input class="gap-input" data-answer="make" placeholder="______"> a payment</em></div>
       <button class="check-btn" onclick="checkGap('ex1-5')">Check</button>
       <span class="gap-feedback" id="fb-ex1-5"></span>
     </div>
     <div class="gapfill-item" id="ex1-6">
       <div class="exercise-number">6</div>
-      <div class="exercise-def">A collective term for Dutch people as a national group: <em>the <input class="gap-input" data-answer="dutch" placeholder="______"></em></div>
+      <div class="exercise-def">To return to your home country after time working or studying abroad: <em>to go <input class="gap-input" data-answer="back" placeholder="______"> to your country</em></div>
       <button class="check-btn" onclick="checkGap('ex1-6')">Check</button>
       <span class="gap-feedback" id="fb-ex1-6"></span>
     </div>
@@ -669,10 +669,10 @@
       </div>
     </div>
     <div class="choice-item" id="ch4">
-      <div class="choice-stem">She <span class="blank"></span> a lot while she is studying abroad.</div>
+      <div class="choice-stem">She is <span class="blank"></span> in international business.</div>
       <div class="choice-options">
-        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch4', this)">misses her family</button>
-        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch4', this)">misses the family</button>
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch4', this)">studying for a bachelor's degree</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch4', this)">studying for bachelor's degree</button>
       </div>
     </div>
     <div class="choice-item" id="ch5">
@@ -680,13 +680,6 @@
       <div class="choice-options">
         <button class="choice-btn" data-correct="1" onclick="checkChoice('ch5', this)">the Dutch</button>
         <button class="choice-btn" data-correct="0" onclick="checkChoice('ch5', this)">Dutch people</button>
-      </div>
-    </div>
-    <div class="choice-item" id="ch6">
-      <div class="choice-stem">She works closely with several <span class="blank"></span> in the finance department.</div>
-      <div class="choice-options">
-        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch6', this)">Dutch people</button>
-        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch6', this)">the Dutch</button>
       </div>
     </div>
 
@@ -809,9 +802,9 @@ function checkGap(id) {
   const item = document.getElementById(id);
   const input = item.querySelector('.gap-input');
   const fb = document.getElementById('fb-' + id);
-  const correct = input.dataset.answer.toLowerCase().trim();
+  const acceptable = input.dataset.answer.toLowerCase().split('|').map(s => s.trim());
   const given = input.value.toLowerCase().trim();
-  if (given === correct) {
+  if (acceptable.includes(given)) {
     fb.textContent = '✓ Correct';
     fb.className = 'gap-feedback correct-fb';
     input.classList.add('correct-input');
