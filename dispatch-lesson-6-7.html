@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After-Class Dispatch &ndash; Lessons 6 &amp; 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f7f4ef;
+    --rust: #b5421a;
+    --gold: #D9AF62;
+    --cream: #ede9e0;
+    --dark: #1E2650;
+    --mid: #2a3060;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; font-size: 17px; line-height: 1.7; }
+  .masthead { background-color: var(--dark); padding: 48px 40px 36px; max-width: 100%; position: relative; overflow: hidden; }
+  .masthead::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
+  .masthead-inner { max-width: 680px; margin: 0 auto; }
+  .masthead-logo { display: block; width: 148px; margin-bottom: 28px; }
+  .masthead-logo svg { width: 100%; height: auto; display: block; }
+  .masthead-label { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .masthead-course { font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; margin-bottom: 20px; text-transform: uppercase; }
+  .masthead-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 46px); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 24px; letter-spacing: -0.01em; }
+  .masthead-title em { font-style: italic; color: var(--gold); }
+  .definition-block { max-width: 480px; border-left: 2px solid var(--rust); padding-left: 20px; margin-top: 24px; }
+  .definition-word { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: #ffffff; letter-spacing: 0.03em; }
+  .definition-pron { font-family: 'Lato', sans-serif; font-size: 15px; color: #9a9080; margin-left: 6px; }
+  .definition-pos { font-family: 'Lato', sans-serif; font-size: 14px; font-style: italic; color: var(--gold); margin-bottom: 6px; margin-top: 2px; }
+  .definition-text { font-family: 'Lato', sans-serif; font-size: 17px; color: #b0a898; line-height: 1.6; }
+  .definition-text + .definition-text { margin-top: 4px; }
+  .meta-bar { background-color: var(--rust); padding: 10px 40px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .meta-item { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+  .meta-item span { color: rgba(255,255,255,0.5); margin-right: 6px; }
+  .back-nav { background: var(--gold); padding: 14px 40px; }
+  .back-nav a { font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark); text-decoration: none; }
+  .back-nav a:hover { color: var(--ink); }
+  .body-wrap { max-width: 680px; margin: 0 auto; padding: 56px 40px 80px; }
+  .quizlet-card { background: var(--mid); border-radius: 3px; padding: 32px 36px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 16px; }
+  .quizlet-card .section-label { color: var(--gold); margin-bottom: 4px; }
+  .quizlet-card p { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .quizlet-btn { display: inline-block; background: var(--gold); color: var(--dark); font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border-radius: 2px; text-decoration: none; align-self: flex-start; transition: background 0.15s; }
+  .quizlet-btn:hover { background: #c49a4e; }
+  .vocab-section { background: var(--dark); border-radius: 3px; padding: 32px 36px; margin-bottom: 48px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .vocab-section h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .vocab-entry { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .vocab-entry:last-child { border-bottom: none; }
+  .vocab-phrase { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+  .vocab-pos { font-size: 17px; font-style: italic; color: rgba(255,255,255,0.45); margin-bottom: 4px; font-family: 'Lato', sans-serif; }
+  .vocab-pl { font-size: 17px; color: var(--gold); font-style: italic; margin-bottom: 6px; opacity: 0.75; }
+  .vocab-def { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 6px; }
+  .vocab-def strong { color: var(--gold); font-weight: 700; }
+  .vocab-example { font-size: 17px; color: rgba(255,255,255,0.5); font-style: italic; line-height: 1.5; }
+  .vocab-subhead { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin: 30px 0 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); }
+  .vocab-subhead:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
+  .correct-line { color: #8fcf9f; }
+  .incorrect-line { color: #e08a6a; }
+  /* ── VOCAB DASHBOARD ── */
+  :root {
+    --vc-location: #E0954A;
+    --vc-time: #E0C24A;
+    --vc-workload: #7DBB8C;
+    --vc-skills: #7FB2E0;
+    --vc-ai: #BC9DE0;
+    --vc-tasks: #C79A6A;
+    --vc-people: #E08066;
+    --vc-projects: #4AA8E0;
+    --vc-meetings: #E04A8C;
+    --vc-relationships: #4AE0A8;
+    --vc-documents: #8C4AE0;
+    --vc-restructuring: #E0D14A;
+    --vc-reporting: #4AE0D1;
+    --vc-dates: #D97BA0;
+    --vc-pronunciation: #9AA0C7;
+  }
+  .vocab-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .vocab-stat { background: rgba(255,255,255,0.05); border-radius: 3px; padding: 14px 16px; border-top: 2px solid var(--gold); }
+  .vocab-stat-num { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; color: #fff; line-height: 1; }
+  .vocab-stat-label { font-family: 'Lato', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 6px; }
+  .vocab-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+  .vocab-search { flex: 1 1 200px; position: relative; }
+  .vocab-search input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 999px; padding: 10px 18px 10px 38px; font-family: 'Lato', sans-serif; font-size: 16px; color: #fff; outline: none; transition: border-color 0.15s; }
+  .vocab-search input::placeholder { color: rgba(255,255,255,0.4); }
+  .vocab-search input:focus { border-color: var(--gold); }
+  .vocab-search::before { content: ''; position: absolute; left: 14px; top: 50%; width: 13px; height: 13px; transform: translateY(-50%); border: 1.5px solid rgba(255,255,255,0.45); border-radius: 50%; background: linear-gradient(45deg, transparent 46%, rgba(255,255,255,0.45) 47%, rgba(255,255,255,0.45) 53%, transparent 54%) no-repeat; }
+  .vocab-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vocab-chip { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 13.5px; letter-spacing: 0.03em; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; white-space: nowrap; }
+  .vocab-chip .vdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .vocab-chip:hover { border-color: var(--gold); }
+  .vocab-chip.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  .vocab-hint { font-size: 14px; color: rgba(255,255,255,0.35); font-style: italic; margin-bottom: 22px; }
+  .vocab-cat-block { margin-bottom: 34px; }
+  .vocab-cat-block.vhidden { display: none; }
+  .vocab-cat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .vocab-cat-head .vbar { width: 4px; height: 18px; border-radius: 2px; }
+  .vocab-cat-head span.vname { font-size: 12.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+  .vocab-cat-head span.vcount { font-size: 12.5px; color: rgba(255,255,255,0.35); }
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .vflip-card { perspective: 1200px; height: 190px; cursor: pointer; }
+  .vflip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(.4,.2,.2,1); transform-style: preserve-3d; }
+  .vflip-card.vflipped .vflip-inner { transform: rotateY(180deg); }
+  .vflip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 4px; padding: 18px 18px 16px; display: flex; flex-direction: column; justify-content: space-between; }
+  .vflip-front { background: rgba(255,255,255,0.05); border-top: 3px solid var(--vcat-color, var(--gold)); }
+  .vflip-back { background: rgba(255,255,255,0.1); border-top: 3px solid var(--vcat-color, var(--gold)); transform: rotateY(180deg); }
+  .vterm { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 20px; color: var(--gold); line-height: 1.25; }
+  .vexample { font-size: 16px; color: rgba(255,255,255,0.6); font-style: italic; line-height: 1.45; }
+  .vgloss { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 19px; color: #fff; line-height: 1.3; }
+  .vgloss-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); font-weight: 700; margin-bottom: 4px; }
+  .vflip-flag { align-self: flex-start; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vflip-tap { align-self: flex-end; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vnote-card, .vwarning-card { grid-column: 1 / -1; background: rgba(255,255,255,0.04); border: 1px dashed rgba(217,175,98,0.4); border-radius: 4px; padding: 16px 18px; font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .vnote-card strong { color: var(--gold); font-weight: 700; }
+  .vwarning-card { border-color: rgba(224,128,102,0.5); }
+  .vwarning-card .vw-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #e08a6a; margin-bottom: 4px; }
+  .vwarning-card .vw-line { color: #e08a6a; font-family: 'Lato', sans-serif; font-size: 17px; }
+  .vwarning-card .vw-fix { color: rgba(255,255,255,0.75); font-family: 'Lato', sans-serif; font-size: 17px; margin-top: 6px; }
+  .vempty-state { text-align: center; padding: 30px; color: rgba(255,255,255,0.35); font-style: italic; font-size: 15px; display: none; }
+  .vempty-state.vvisible { display: block; }
+  @media (max-width: 640px) { .vocab-stats { grid-template-columns: 1fr 1fr; } }
+  .audio-card { background: var(--dark); border: 1px solid rgba(200,150,62,0.25); border-radius: 3px; padding: 24px 28px; margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
+  .audio-card-header { display: flex; align-items: flex-start; gap: 16px; }
+  .audio-play-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--rust); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+  .audio-play-btn:hover { background: #c94d20; }
+  .audio-play-btn svg { width: 16px; height: 16px; fill: #ffffff; margin-left: 2px; }
+  .audio-play-btn.playing svg.icon-play { display: none; }
+  .audio-play-btn.playing svg.icon-pause { display: block !important; }
+  .audio-play-btn svg.icon-pause { display: none; }
+  .audio-meta { flex: 1; }
+  .audio-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: #ffffff; line-height: 1.3; margin-bottom: 4px; }
+  .audio-subtitle { font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+  .audio-duration { font-family: 'Lato', sans-serif; font-size: 12px; color: #6a6058; margin-top: 6px; }
+  .audio-progress-wrap { display: flex; align-items: center; gap: 12px; }
+  .audio-time { font-family: 'Lato', sans-serif; font-size: 13px; color: #6a6058; width: 36px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .audio-time.total { text-align: right; }
+  .audio-progress { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer; }
+  .audio-progress-fill { height: 100%; background: var(--rust); border-radius: 2px; width: 0%; transition: width 0.1s linear; pointer-events: none; }
+  .reading-intro { margin-bottom: 32px; }
+  .reading-intro .section-label { color: var(--rust); margin-bottom: 8px; }
+  .reading-intro p { font-size: 17px; color: #666; line-height: 1.6; }
+  .article-title { font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 32px); font-weight: 700; color: var(--dark); line-height: 1.2; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 2px solid var(--gold); }
+  .article-body p { font-size: 17px; line-height: 1.75; color: var(--ink); margin-bottom: 20px; }
+  .article-body h3 { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--dark); margin: 32px 0 14px; }
+  .article-body u { text-decoration: none; border-bottom: 2px solid var(--rust); color: var(--rust); font-weight: 700; }
+  .story-divider { height: 1px; background: var(--cream); margin: 56px 0; }
+  .exercise-section { background: var(--cream); border-radius: 3px; padding: 32px 36px; margin-top: 24px; }
+  .exercise-section .section-label { color: var(--rust); margin-bottom: 6px; }
+  .exercise-section h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .exercise-intro { font-size: 17px; color: #555; margin-bottom: 24px; line-height: 1.6; }
+  .exercise-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 6px; }
+  .exercise-def { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 8px; }
+  .exercise-def strong { color: var(--rust); font-weight: 700; }
+  .gapfill-item { padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .gapfill-item:last-child { border-bottom: none; }
+  .gap-input { background: #fff; border: 1px solid #ccc; border-radius: 2px; color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 4px 10px; width: 180px; outline: none; transition: border-color 0.15s; }
+  .gap-input:focus { border-color: var(--dark); }
+  .gap-input.correct-input { border-color: #5a9e6f; background: #d4edda; color: #2d6a4f; }
+  .gap-input.incorrect-input { border-color: var(--rust); background: #fde8e3; }
+  .check-btn { background: var(--rust); border: none; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: 700; padding: 6px 14px; border-radius: 2px; cursor: pointer; margin-left: 8px; transition: background 0.15s; }
+  .check-btn:hover { background: #8f3214; }
+  .gap-feedback { font-size: 14px; font-weight: 700; margin-left: 8px; }
+  .gap-feedback.correct-fb { color: #2d6a4f; }
+  .gap-feedback.incorrect-fb { color: var(--rust); }
+  .matching-wrap { margin-bottom: 16px; }
+  .matching-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .match-item { padding: 16px 14px; border-radius: 3px; cursor: pointer; font-size: 17px; line-height: 1.5; transition: background 0.15s, border-color 0.15s; border: 2px solid transparent; display: flex; align-items: center; min-height: 72px; }
+  .match-item.phrase { background: var(--dark); color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; }
+  .match-item.def { background: #fff; color: var(--ink); border: 2px solid var(--cream); }
+  .match-item.selected { border-color: var(--rust) !important; }
+  .match-item.correct { background: #d4edda; border-color: #5a9e6f !important; color: #2d6a4f; pointer-events: none; }
+  .match-item.incorrect { border-color: var(--rust) !important; background: #fde8e3; }
+  .reset-btn { background: transparent; border: 1px solid var(--dark); color: var(--dark); padding: 6px 16px; font-size: 13px; font-family: 'Lato', sans-serif; border-radius: 2px; cursor: pointer; margin-top: 8px; transition: background 0.15s, color 0.15s; }
+  .reset-btn:hover { background: var(--dark); color: #fff; }
+  .phrase-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; padding: 14px; background: var(--dark); border-radius: 3px; }
+  .phrase-box span { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 2px; }
+  .choice-item { padding: 16px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .choice-item:last-child { border-bottom: none; }
+  .choice-stem { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 12px; }
+  .choice-stem .blank { border-bottom: 2px solid var(--rust); padding: 0 28px; }
+  .choice-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .choice-btn { background: #fff; border: 2px solid var(--cream); color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 8px 18px; border-radius: 3px; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+  .choice-btn:hover { border-color: var(--dark); }
+  .choice-btn.correct { background: #d4edda; border-color: #5a9e6f; color: #2d6a4f; pointer-events: none; }
+  .choice-btn.incorrect { border-color: var(--rust); background: #fde8e3; }
+  .sort-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 14px; background: var(--dark); border-radius: 3px; min-height: 56px; }
+  .sort-chip { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 2px; cursor: pointer; transition: background 0.15s; border: 2px solid transparent; }
+  .sort-chip:hover { background: rgba(255,255,255,0.16); }
+  .sort-chip.selected { border-color: var(--gold); }
+  .sort-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sort-col { background: #fff; border: 2px solid var(--cream); border-radius: 3px; padding: 14px; min-height: 110px; }
+  .sort-col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 10px; }
+  .sort-col-desc { font-size: 14px; color: #777; margin-bottom: 12px; line-height: 1.4; }
+  .sort-col .sort-chip { display: inline-block; margin: 0 6px 6px 0; }
+  .sort-col .sort-chip.correct { background: #d4edda; color: #2d6a4f; }
+  .sort-col .sort-chip.incorrect { background: #fde8e3; color: var(--rust); }
+  .dispatch-footer { background: var(--dark); padding: 32px 40px; text-align: center; border-top: 3px solid var(--gold); }
+  .dispatch-footer p { font-family: 'Lato', sans-serif; font-size: 15px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
+  .dispatch-footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 187.17 64.8">
+        <path d="M75.73.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M91.17.35h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21V.35Z" fill="#fff"/>
+        <path d="M107.17,9.15v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M133.04.23h4.68l7.45,17.63h-5.2l-1.25-3.15h-6.78l-1.25,3.15h-5.08L133.04.23ZM137.29,10.93l-1.95-4.95-1.98,4.95h3.93Z" fill="#fff"/>
+        <path d="M146.87.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M75.73,23.84h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,23.84h4.53l7.2,9.25v-9.25h4.8v17.51h-4.23l-7.5-9.6v9.6h-4.8v-17.51Z" fill="#fff"/>
+        <path d="M111.5,32.64v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M131.31,23.84h4.85v13.25h8.48v4.25h-13.33v-17.51Z" fill="#fff"/>
+        <path d="M146.87,23.84h4.85v17.51h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M153.6,38.74l2.7-3.23c1.75,1.38,3.65,2.1,5.68,2.1,1.33,0,2.03-.45,2.03-1.2v-.05c0-.75-.58-1.12-2.98-1.7-3.73-.85-6.6-1.9-6.6-5.48v-.05c0-3.25,2.58-5.6,6.78-5.6,2.98,0,5.3.8,7.2,2.33l-2.43,3.43c-1.6-1.15-3.35-1.73-4.9-1.73-1.18,0-1.75.48-1.75,1.13v.05c0,.8.6,1.15,3.05,1.7,4,.88,6.5,2.18,6.5,5.45v.05c0,3.58-2.83,5.7-7.08,5.7-3.1,0-6.03-.98-8.2-2.9Z" fill="#fff"/>
+        <path d="M171.24,23.84h4.85v6.55h6.23v-6.55h4.85v17.51h-4.85v-6.65h-6.23v6.65h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M75.73,46.97h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,46.97h6.78c6.23,0,9.85,3.6,9.85,8.65v.05c0,5.05-3.68,8.8-9.95,8.8h-6.68v-17.51ZM97.29,51.25v8.93h1.98c2.93,0,4.85-1.6,4.85-4.43v-.05c0-2.8-1.93-4.45-4.85-4.45h-1.98Z" fill="#fff"/>
+        <path d="M111.4,56.8v-9.83h4.9v9.73c0,2.53,1.28,3.73,3.23,3.73s3.25-1.15,3.25-3.6v-9.85h4.9v9.7c0,5.63-3.23,8.13-8.2,8.13s-8.08-2.53-8.08-8Z" fill="#fff"/>
+        <path d="M47.97,14.89c1.86,0,2.98-.12,4.72-.25-7.71,11.93-9.32,13.55-19.14,15.66,2.73,0,5.72-.62,8.2-.87-4.35,4.47-7.21,9.2-10.56,12.8-1.12,1.24-2.98,2.86-5.34,3.23-2.61.5-4.6.62-7.58,1.12,2.98.37,5.84.37,8.7.37-.37.36-.73.7-1.08,1.01-5.36,4.79-9.99,5.45-17.68,5.45-3.11,3.23-4.1,6.21-5.97,11.06h49.09c7.46,0,12.8-4.85,12.8-12.8V.35c-8.7,10.07-5.47,11.56-16.16,14.54Z" fill="#fff"/>
+        <path d="M64.13.35c-9.82,2.98-22.37,3.85-28.96,10.44-1.74,1.74-3.23,5.84-3.48,9.07-.37-2.11-.62-4.23-.12-6.96-6.71,3.85-13.42,8.33-18.14,13.79-2.49,2.86-2.36,7.08-2.49,10.69-.87-2.73-.99-4.6-.87-7.21-2.98,3.36-6.34,6.21-6.71,10.69-.37,3.48.62,6.59,1.12,10.44-1.12,2.49-3.36,5.84-4.47,9.32v3.85c2.86-9.57,8.95-19.14,18.52-29.08C29.21,24.34,43,12.53,64.13.35Z" fill="#D9AF62"/>
+      </svg>
+    </div>
+    <div class="masthead-label">After-Class Dispatch &ndash; Lessons 6 &amp; 7</div>
+    <div class="masthead-course">Business English in the Polish Context</div>
+    <div class="masthead-title">Headquarters to Handover:<br><em>Vocabulary from Lessons 6 &amp; 7</em></div>
+    <div class="definition-block">
+      <div><span class="definition-word">dispatch</span><span class="definition-pron">/d&#618;&#712;sp&aelig;t&#643;/</span></div>
+      <div class="definition-pos">noun</div>
+      <div class="definition-text">1. A message or report sent quickly to its destination &ndash; especially one sent by a journalist from abroad, or between military officers.</div>
+      <div class="definition-text">2. Your after-class dispatch: everything from today's lesson, gathered in one place.</div>
+    </div>
+  </div>
+</header>
+<div class="meta-bar">
+  <div class="meta-item"><span>Lessons</span>6 &amp; 7</div>
+  <div class="meta-item"><span>Dates</span>24 &amp; 31 July 2026</div>
+  <div class="meta-item"><span>Topic</span>Location, Time, AI, Projects, Meetings, Restructuring and Transition</div>
+</div>
+<div class="back-nav">
+  <a href="index.html">&larr; Home</a>
+</div>
+<main class="body-wrap">
+  <div class="quizlet-card">
+    <div class="section-label">Your Quizlet Class</div>
+    <p>Your vocabulary is growing. After every lesson, new words and phrases are added to your Quizlet class. Go back, test yourself, and make them stick.</p>
+    <a class="quizlet-btn" href="https://quizlet.com/join/72BDBFDfB?i=4ie97k&x=1bqt" target="_blank">Open your Quizlet class &rarr;</a>
+  </div>
+  <div class="vocab-section">
+    <div class="section-label">Class Notes</div>
+    <h2>Lessons 6 &amp; 7 &ndash; Vocabulary</h2>
+    <div class="vocab-stats" id="vocabStats"></div>
+    <div class="vocab-controls">
+      <div class="vocab-search"><input type="text" id="vocabSearch" placeholder="Search a term..." autocomplete="off"></div>
+      <div class="vocab-filters" id="vocabFilters"></div>
+    </div>
+    <div class="vocab-hint">Click any card to flip it and check the Polish gloss.</div>
+    <div id="vocabDashboard"></div>
+    <div class="vempty-state" id="vocabEmpty">No terms match your search.</div>
+  </div>
+  <div class="reading-intro">
+    <div class="section-label">Reading &amp; Listening</div>
+    <p>Listen to each recording and read the story. The target vocabulary from each lesson appears in the text. It is highlighted. Notice how each phrase is used in context.</p>
+  </div>
+<div class="section-label" style="color:var(--rust); margin-bottom:12px;">Lesson 6 &middot; 24 July 2026</div>
+  <div class="article-title">A New Stage</div>
+  <div class="audio-card">
+    <audio id="audio-1" preload="metadata"><source src="lesson-6-7-story-1.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-1" onclick="togglePlay(1)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">A New Stage</div>
+        <div class="audio-subtitle">Story 1 (Lesson 6)</div>
+        <div class="audio-duration" id="dur-1">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-1">0:00</span>
+      <div class="audio-progress" id="bar-1" onclick="seekAudio(event, 1)"><div class="audio-progress-fill" id="fill-1"></div></div>
+      <span class="audio-time total" id="tot-1">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>The transition project had now reached <u>a new stage</u>. <u>In today's meeting</u>, the finance director confirmed that the team could <u>move on to the next stage</u> once the final figures were confirmed. <u>The process had been going on since</u> the last week of June, and by now it <u>had been going on for</u> one month.</p>
+    <p>&ldquo;<u>What is important is that</u> both teams understand the new procedure,&rdquo; the director said, &ldquo;and both teams will be able <u>to refer to this document</u> in the future.&rdquo; <u>It turned out that</u> the transition was more complicated than expected, but <u>the most important thing is that</u> the knowledge transfer has been completed successfully.</p>
+  </div>
+  <div class="story-divider"></div>
+  <div class="article-title">Ending One Chapter, Starting Another</div>
+  <div class="audio-card">
+    <audio id="audio-2" preload="metadata"><source src="lesson-6-7-story-2.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-2" onclick="togglePlay(2)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">Ending One Chapter, Starting Another</div>
+        <div class="audio-subtitle">Story 2 (Lesson 6)</div>
+        <div class="audio-duration" id="dur-2">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-2">0:00</span>
+      <div class="audio-progress" id="bar-2" onclick="seekAudio(event, 2)"><div class="audio-progress-fill" id="fill-2"></div></div>
+      <span class="audio-time total" id="tot-2">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Over the past few months, Anna's team had <u>built a strong relationship</u> with the partners in India, who were now <u>involved in the transition</u>. Anna had successfully <u>transferred her knowledge to</u> the new team, and their <u>solid preparation</u> meant the handover went smoothly.</p>
+    <p>Not every part of the department was so lucky. The restructuring meant the company had <u>to make</u> several employees <u>redundant</u>, and it looked likely <u>to make part of</u> the finance team <u>redundant</u> as well. Some colleagues would <u>finish working for the company</u> in October, and the company was trying <u>to find jobs for</u> some of the affected employees elsewhere in the business.</p>
+    <p>Anna hadn't spent much time on her own study <u>this week</u>, but she planned <u>to make up for it</u> at the weekend.</p>
+  </div>
+  <div class="story-divider"></div>
+  <div class="section-label" style="color:var(--rust); margin-bottom:12px;">Lesson 7 &middot; 31 July 2026</div>
+  <div class="article-title">A Journey to Headquarters</div>
+  <div class="audio-card">
+    <audio id="audio-3" preload="metadata"><source src="lesson-6-7-story-3.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-3" onclick="togglePlay(3)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">A Journey to Headquarters</div>
+        <div class="audio-subtitle">Story 3 (Lesson 7)</div>
+        <div class="audio-duration" id="dur-3">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-3">0:00</span>
+      <div class="audio-progress" id="bar-3" onclick="seekAudio(event, 3)"><div class="audio-progress-fill" id="fill-3"></div></div>
+      <span class="audio-time total" id="tot-3">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Anna <u>arrived in</u> Warsaw on Monday morning and went straight to <u>headquarters</u> for a meeting with the finance team, running <u>from Monday to Thursday</u>. Nobody at reception knew the finance director's <u>whereabouts</u>, and the meeting had to start without him. He had been staying at <u>a country house</u> <u>halfway between</u> Warsaw and Bia&#322;ystok over the weekend and was expected to join later that morning.</p>
+    <p>When the director finally arrived on Tuesday, Anna told him she <u>had already been working</u> on the transition report <u>since Monday</u>. He was pleased to hear the department had already held several important meetings <u>this week</u>, and the two of them agreed to review the figures together before Thursday.</p>
+  </div>
+  <div class="story-divider"></div>
+  <div class="article-title">New Tools, New Approaches</div>
+  <div class="audio-card">
+    <audio id="audio-4" preload="metadata"><source src="lesson-6-7-story-4.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-4" onclick="togglePlay(4)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">New Tools, New Approaches</div>
+        <div class="audio-subtitle">Story 4 (Lesson 7)</div>
+        <div class="audio-duration" id="dur-4">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-4">0:00</span>
+      <div class="audio-progress" id="bar-4" onclick="seekAudio(event, 4)"><div class="audio-progress-fill" id="fill-4"></div></div>
+      <span class="audio-time total" id="tot-4">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Anna <u>had a lot on her plate</u> before the end of the month, with the transition report due and the usual month-end tasks still ahead. Even so, she tried <u>to look on the bright side</u>: data entry was <u>a repetitive activity</u> that a new tool might finally speed up. Her manager, who took a <u>hands-on</u> approach to the rollout, asked the team to test an AI system for drafting standard client letters.</p>
+    <p>The tool required a clear <u>prompt</u> before it could produce a usable draft, and Anna <u>was excited about</u> the possibilities it offered. Several colleagues were also <u>interested in</u> trying it for their own repetitive activities. The idea of relying on AI for client correspondence felt <u>intimidating</u> at first, especially for colleagues who had never used anything similar. After a few weeks of practice, Anna was <u>better at</u> writing prompts than she had been at the start, and the team agreed they needed a more <u>sustainable</u> way of managing the month-end workload rather than relying on overtime. A new team member was due <u>to join</u> Anna the following month, and she offered to show her how the system worked.</p>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 1 &ndash; Complete the Phrase</h2>
+    <p class="exercise-intro">Each definition below has one key word missing from the phrase. Type the missing part in the box and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="gapfill-item" id="ex1-1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">The main office or centre of operations of a company or organisation: <input class="gap-input" data-answer="headquarters" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex1-1')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-1"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">A house located outside the city, often used for weekends or holidays: a <input class="gap-input" data-answer="country" placeholder="______"> house</div>
+      <button class="check-btn" onclick="checkGap('ex1-2')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-2"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">The place where someone currently is, especially when others are trying to locate them: their <input class="gap-input" data-answer="whereabouts" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex1-3')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-3"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">Actively and directly involved in the practical side of work, rather than just supervising: a <input class="gap-input" data-answer="hands-on|hands on" placeholder="______"> manager</div>
+      <button class="check-btn" onclick="checkGap('ex1-4')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-4"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">A piece of text given to an AI tool in order to generate a response: a <input class="gap-input" data-answer="prompt" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex1-5')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-5"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-6">
+      <div class="exercise-number">6</div>
+      <div class="exercise-def">An activity that is done in the same way, again and again: a <input class="gap-input" data-answer="repetitive" placeholder="______"> activity</div>
+      <button class="check-btn" onclick="checkGap('ex1-6')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-6"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 2 &ndash; Matching</h2>
+    <p class="exercise-intro">Match each phrase on the left with its definition on the right. Click a phrase to select it, then click the correct definition. Green means correct.</p>
+    <div class="matching-wrap" id="matching">
+      <div class="matching-col">
+        <div class="match-item phrase" data-id="1" data-group="ex2" onclick="selectMatch(this)">to have a lot on your plate</div>
+        <div class="match-item def" data-id="3" data-group="ex2" onclick="selectMatch(this)">To feel a strong, positive anticipation about something.</div>
+        <div class="match-item phrase" data-id="2" data-group="ex2" onclick="selectMatch(this)">to look on the bright side</div>
+        <div class="match-item def" data-id="5" data-group="ex2" onclick="selectMatch(this)">Causing feelings of nervousness or a lack of confidence.</div>
+        <div class="match-item phrase" data-id="3" data-group="ex2" onclick="selectMatch(this)">to be excited about something</div>
+        <div class="match-item def" data-id="1" data-group="ex2" onclick="selectMatch(this)">To be very busy, with many responsibilities.</div>
+        <div class="match-item phrase" data-id="4" data-group="ex2" onclick="selectMatch(this)">to be interested in something</div>
+        <div class="match-item def" data-id="2" data-group="ex2" onclick="selectMatch(this)">To focus on the positive aspects of a difficult situation.</div>
+        <div class="match-item phrase" data-id="5" data-group="ex2" onclick="selectMatch(this)">intimidating</div>
+        <div class="match-item def" data-id="4" data-group="ex2" onclick="selectMatch(this)">To want to learn more about, or be involved with, something.</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetMatching('ex2')">Reset</button>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 3 &ndash; Gap Fill</h2>
+    <p class="exercise-intro">Complete each sentence using one of the phrases from the box below. Type your answer in the gap and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="phrase-box">
+      <span>since Monday</span>
+      <span>to join</span>
+      <span>halfway between</span>
+      <span>arrived in</span>
+      <span>from Monday to Thursday</span>
+      <span>sustainable</span>
+    </div>
+    <div class="gapfill-item" id="gf1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">Anna <input class="gap-input" data-answer="arrived in" placeholder="____________"> Warsaw early on Monday morning, straight from the airport.</div>
+      <button class="check-btn" onclick="checkGap('gf1')">Check</button>
+      <span class="gap-feedback" id="fb-gf1"></span>
+    </div>
+    <div class="gapfill-item" id="gf2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">The new distribution centre is <input class="gap-input" data-answer="halfway between" placeholder="____________"> Warsaw and &#321;&oacute;d&#378;, which makes deliveries easier for both regions.</div>
+      <button class="check-btn" onclick="checkGap('gf2')">Check</button>
+      <span class="gap-feedback" id="fb-gf2"></span>
+    </div>
+    <div class="gapfill-item" id="gf3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">The training programme ran <input class="gap-input" data-answer="from Monday to Thursday" placeholder="____________">, with a short break on Wednesday afternoon.</div>
+      <button class="check-btn" onclick="checkGap('gf3')">Check</button>
+      <span class="gap-feedback" id="fb-gf3"></span>
+    </div>
+    <div class="gapfill-item" id="gf4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">Anna told the director she had already been working on the report <input class="gap-input" data-answer="since Monday" placeholder="____________">.</div>
+      <button class="check-btn" onclick="checkGap('gf4')">Check</button>
+      <span class="gap-feedback" id="fb-gf4"></span>
+    </div>
+    <div class="gapfill-item" id="gf5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">The team agreed they needed a more <input class="gap-input" data-answer="sustainable" placeholder="____________"> way of managing the month-end workload.</div>
+      <button class="check-btn" onclick="checkGap('gf5')">Check</button>
+      <span class="gap-feedback" id="fb-gf5"></span>
+    </div>
+    <div class="gapfill-item" id="gf6">
+      <div class="exercise-number">6</div>
+      <div class="exercise-def">A new colleague was due <input class="gap-input" data-answer="to join" placeholder="____________"> Anna the following month.</div>
+      <button class="check-btn" onclick="checkGap('gf6')">Check</button>
+      <span class="gap-feedback" id="fb-gf6"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 4 &ndash; Choosing Between Confusable Forms</h2>
+    <p class="exercise-intro">This lesson contained several forms that are easy to get wrong. Choose the correct option in each sentence.</p>
+    <div class="choice-item" id="ch1">
+      <div class="choice-stem">We have had several important meetings <span class="blank"></span>.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch1', this)">this week</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch1', this)">in this week</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch2">
+      <div class="choice-stem">Anna is <span class="blank"></span> speaking English than she used to be.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch2', this)">better at</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch2', this)">more good at</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch3">
+      <div class="choice-stem">By the time the meeting started, the team <span class="blank"></span> preparations for a week.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch3', this)">had already been making</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch3', this)">was already making</button>
+      </div>
+    </div>
+  </div>
+<div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 5 &ndash; Complete the Phrase</h2>
+    <p class="exercise-intro">Each definition below has part of the phrase missing. Type the missing part in the box and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="gapfill-item" id="ex5-1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">A period of work or development within a larger project: a new <input class="gap-input" data-answer="stage" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex5-1')">Check</button>
+      <span class="gap-feedback" id="fb-ex5-1"></span>
+    </div>
+    <div class="gapfill-item" id="ex5-2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">To move forward to the next part of a process: to <input class="gap-input" data-answer="move on to" placeholder="______"> the next stage</div>
+      <button class="check-btn" onclick="checkGap('ex5-2')">Check</button>
+      <span class="gap-feedback" id="fb-ex5-2"></span>
+    </div>
+    <div class="gapfill-item" id="ex5-3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">A document that people can look at again for information: both teams will be able to <input class="gap-input" data-answer="refer to" placeholder="______"> this document</div>
+      <button class="check-btn" onclick="checkGap('ex5-3')">Check</button>
+      <span class="gap-feedback" id="fb-ex5-3"></span>
+    </div>
+    <div class="gapfill-item" id="ex5-4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">To end someone's employment because their job no longer exists, often during company changes: to make somebody <input class="gap-input" data-answer="redundant" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex5-4')">Check</button>
+      <span class="gap-feedback" id="fb-ex5-4"></span>
+    </div>
+    <div class="gapfill-item" id="ex5-5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">In British English, a common way of saying the number zero (an alternative spelling, more usual in American English, also exists): <input class="gap-input" data-answer="nought|naught" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex5-5')">Check</button>
+      <span class="gap-feedback" id="fb-ex5-5"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 6 &ndash; Matching</h2>
+    <p class="exercise-intro">Match each phrase on the left with its definition on the right. Click a phrase to select it, then click the correct definition. Green means correct.</p>
+    <div class="matching-wrap" id="matching-ex6">
+      <div class="matching-col">
+        <div class="match-item phrase" data-id="1" data-group="ex6" onclick="selectMatch(this)">to build a strong relationship</div>
+        <div class="match-item def" data-id="3" data-group="ex6" onclick="selectMatch(this)">Thorough and reliable preparation.</div>
+        <div class="match-item phrase" data-id="2" data-group="ex6" onclick="selectMatch(this)">to transfer knowledge to somebody</div>
+        <div class="match-item def" data-id="5" data-group="ex6" onclick="selectMatch(this)">To end your employment with a company.</div>
+        <div class="match-item phrase" data-id="3" data-group="ex6" onclick="selectMatch(this)">solid preparation</div>
+        <div class="match-item def" data-id="1" data-group="ex6" onclick="selectMatch(this)">To develop a close, positive connection with someone over time.</div>
+        <div class="match-item phrase" data-id="4" data-group="ex6" onclick="selectMatch(this)">to be involved in the transition</div>
+        <div class="match-item def" data-id="2" data-group="ex6" onclick="selectMatch(this)">To share your knowledge or skills so another person can use them.</div>
+        <div class="match-item phrase" data-id="5" data-group="ex6" onclick="selectMatch(this)">to finish working for a company</div>
+        <div class="match-item def" data-id="4" data-group="ex6" onclick="selectMatch(this)">To take part in a process of change.</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetMatching('ex6')">Reset</button>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 7 &ndash; Gap Fill</h2>
+    <p class="exercise-intro">Complete each sentence using one of the phrases from the box below. Type your answer in the gap and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="phrase-box">
+      <span>make up for it</span>
+      <span>it turned out that</span>
+      <span>find jobs for</span>
+      <span>in today's meeting</span>
+      <span>make part of the team redundant</span>
+      <span>what is important is that</span>
+    </div>
+    <div class="gapfill-item" id="gf7">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">Anna raised the issue <input class="gap-input" data-answer="in today's meeting" placeholder="____________">, and the whole department discussed it together.</div>
+      <button class="check-btn" onclick="checkGap('gf7')">Check</button>
+      <span class="gap-feedback" id="fb-gf7"></span>
+    </div>
+    <div class="gapfill-item" id="gf8">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def"><input class="gap-input" data-answer="what is important is that" placeholder="____________"> both teams understand the new procedure before the handover date.</div>
+      <button class="check-btn" onclick="checkGap('gf8')">Check</button>
+      <span class="gap-feedback" id="fb-gf8"></span>
+    </div>
+    <div class="gapfill-item" id="gf9">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def"><input class="gap-input" data-answer="it turned out that" placeholder="____________"> the transition was more complicated than the team had expected.</div>
+      <button class="check-btn" onclick="checkGap('gf9')">Check</button>
+      <span class="gap-feedback" id="fb-gf9"></span>
+    </div>
+    <div class="gapfill-item" id="gf10">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">The restructuring plan may <input class="gap-input" data-answer="make part of the team redundant" placeholder="____________"> once the new system is fully in place.</div>
+      <button class="check-btn" onclick="checkGap('gf10')">Check</button>
+      <span class="gap-feedback" id="fb-gf10"></span>
+    </div>
+    <div class="gapfill-item" id="gf11">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">HR is trying to <input class="gap-input" data-answer="find jobs for" placeholder="____________"> some of the employees affected by the changes.</div>
+      <button class="check-btn" onclick="checkGap('gf11')">Check</button>
+      <span class="gap-feedback" id="fb-gf11"></span>
+    </div>
+    <div class="gapfill-item" id="gf12">
+      <div class="exercise-number">6</div>
+      <div class="exercise-def">Anna hadn't studied much this week, but she planned to <input class="gap-input" data-answer="make up for it" placeholder="____________"> at the weekend.</div>
+      <button class="check-btn" onclick="checkGap('gf12')">Check</button>
+      <span class="gap-feedback" id="fb-gf12"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 8 &ndash; Choosing Between Confusable Forms</h2>
+    <p class="exercise-intro">This lesson contained several forms that are easy to get wrong, including a genuine British/American difference. Choose the correct option in each sentence.</p>
+    <div class="choice-item" id="ch5">
+      <div class="choice-stem">I haven't spent much time studying the dispatch <span class="blank"></span>.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch5', this)">this week</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch5', this)">in this week</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch6">
+      <div class="choice-stem">The training will be held <span class="blank"></span> July 24 to July 26.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch6', this)">from</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch6', this)">since</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch7">
+      <div class="choice-stem">American English: The company <span class="blank"></span> trying to find jobs for some people.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch7', this)">is</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch7', this)">are</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch8">
+      <div class="choice-stem">British English, focusing on the people in the company: The company <span class="blank"></span> trying to find jobs for some people.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch8', this)">are</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch8', this)">is</button>
+      </div>
+    </div>
+  </div>
+</main>
+<footer class="dispatch-footer">
+  <p>Business English in the Polish Context &nbsp;&middot;&nbsp; Prepared for Gosia &nbsp;&middot;&nbsp; July 2026</p>
+</footer>
+<script>
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+[1, 2, 3, 4].forEach(function(n) {
+  const audio = document.getElementById('audio-' + n);
+  if (!audio) return;
+  audio.addEventListener('loadedmetadata', function() {
+    document.getElementById('dur-' + n).textContent = formatTime(audio.duration);
+    document.getElementById('tot-' + n).textContent = formatTime(audio.duration);
+  });
+  audio.addEventListener('timeupdate', function() {
+    document.getElementById('cur-' + n).textContent = formatTime(audio.currentTime);
+    const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    document.getElementById('fill-' + n).style.width = pct + '%';
+  });
+  audio.addEventListener('ended', function() {
+    document.getElementById('play-' + n).classList.remove('playing');
+    document.getElementById('fill-' + n).style.width = '0%';
+    document.getElementById('cur-' + n).textContent = '0:00';
+  });
+});
+function togglePlay(n) {
+  const audio = document.getElementById('audio-' + n);
+  const btn = document.getElementById('play-' + n);
+  [1, 2, 3, 4].forEach(function(other) {
+    if (other === n) return;
+    const otherAudio = document.getElementById('audio-' + other);
+    const otherBtn = document.getElementById('play-' + other);
+    if (otherAudio && !otherAudio.paused) {
+      otherAudio.pause();
+      otherBtn.classList.remove('playing');
+    }
+  });
+  if (audio.paused) { audio.play(); btn.classList.add('playing'); }
+  else { audio.pause(); btn.classList.remove('playing'); }
+}
+function seekAudio(e, n) {
+  const audio = document.getElementById('audio-' + n);
+  const bar = document.getElementById('bar-' + n);
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+}
+let selectedPhrase = {};
+let selectedDef = {};
+function selectMatch(el) {
+  if (el.classList.contains('correct')) return;
+  const group = el.dataset.group || 'default';
+  const isPhrase = el.classList.contains('phrase');
+  const isDef = el.classList.contains('def');
+  if (isPhrase) {
+    document.querySelectorAll('.match-item.phrase.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPhrase[group] = el;
+  } else if (isDef) {
+    document.querySelectorAll('.match-item.def.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedDef[group] = el;
+  }
+  if (selectedPhrase[group] && selectedDef[group]) {
+    if (selectedPhrase[group].dataset.id === selectedDef[group].dataset.id) {
+      selectedPhrase[group].classList.remove('selected');
+      selectedDef[group].classList.remove('selected');
+      selectedPhrase[group].classList.add('correct');
+      selectedDef[group].classList.add('correct');
+    } else {
+      const p = selectedPhrase[group], d = selectedDef[group];
+      p.classList.remove('selected');
+      d.classList.remove('selected');
+      p.classList.add('incorrect');
+      d.classList.add('incorrect');
+      setTimeout(() => {
+        p.classList.remove('incorrect');
+        d.classList.remove('incorrect');
+      }, 800);
+    }
+    selectedPhrase[group] = null;
+    selectedDef[group] = null;
+  }
+}
+function resetMatching(group) {
+  const g = group || 'default';
+  document.querySelectorAll('.match-item[data-group="' + g + '"]').forEach(el => {
+    el.classList.remove('selected', 'correct', 'incorrect');
+  });
+  selectedPhrase[g] = null;
+  selectedDef[g] = null;
+}
+function checkGap(id) {
+  const item = document.getElementById(id);
+  const input = item.querySelector('.gap-input');
+  const fb = document.getElementById('fb-' + id);
+  const acceptable = input.dataset.answer.toLowerCase().split('|').map(s => s.trim());
+  const given = input.value.toLowerCase().trim();
+  if (acceptable.includes(given)) {
+    fb.textContent = '✓ Correct';
+    fb.className = 'gap-feedback correct-fb';
+    input.classList.add('correct-input');
+    input.classList.remove('incorrect-input');
+  } else {
+    fb.textContent = '✗ Try again';
+    fb.className = 'gap-feedback incorrect-fb';
+    input.classList.add('incorrect-input');
+    input.classList.remove('correct-input');
+  }
+}
+function checkChoice(id, btn) {
+  const correct = btn.dataset.correct === '1';
+  if (correct) {
+    const wrap = document.getElementById(id);
+    wrap.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('incorrect'));
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('incorrect');
+    setTimeout(() => btn.classList.remove('incorrect'), 800);
+  }
+}
+let selectedChip = null;
+function selectChip(el) {
+  if (event) event.stopPropagation();
+  if (el.classList.contains('correct')) return;
+  document.querySelectorAll('.sort-chip.selected').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedChip = el;
+}
+function dropChip(targetCol) {
+  if (!selectedChip) return;
+  const chip = selectedChip;
+  if (chip.dataset.col === targetCol) {
+    chip.classList.remove('selected');
+    chip.classList.add('correct');
+    chip.setAttribute('onclick', 'return false;');
+    document.getElementById('col-' + targetCol).appendChild(chip);
+    selectedChip = null;
+  } else {
+    chip.classList.add('incorrect');
+    const c = chip;
+    setTimeout(() => { c.classList.remove('incorrect'); }, 800);
+    chip.classList.remove('selected');
+    selectedChip = null;
+  }
+}
+</script>
+<script>
+// ── VOCAB DASHBOARD (Lessons 6 & 7) ──
+const VOCAB_CATS = [
+  { key: "location", label: "Location &amp; Travel", emoji: "🟠", color: "var(--vc-location)" },
+  { key: "time", label: "Time Expressions", emoji: "🟡", color: "var(--vc-time)" },
+  { key: "workload", label: "Workload &amp; Attitude", emoji: "🟢", color: "var(--vc-workload)" },
+  { key: "skills", label: "Skills &amp; Working Style", emoji: "🔵", color: "var(--vc-skills)" },
+  { key: "ai", label: "AI &amp; Technology", emoji: "🟣", color: "var(--vc-ai)" },
+  { key: "tasks", label: "Tasks &amp; Impressions", emoji: "🟤", color: "var(--vc-tasks)" },
+  { key: "people", label: "People &amp; Cooperation", emoji: "🔴", color: "var(--vc-people)" },
+  { key: "projects", label: "Projects &amp; Processes", emoji: "🟧", color: "var(--vc-projects)" },
+  { key: "meetings", label: "Meetings &amp; Key Points", emoji: "🟨", color: "var(--vc-meetings)" },
+  { key: "relationships", label: "Relationships &amp; Cooperation", emoji: "🟩", color: "var(--vc-relationships)" },
+  { key: "documents", label: "Documents &amp; Reference", emoji: "🟦", color: "var(--vc-documents)" },
+  { key: "restructuring", label: "Restructuring &amp; Transition", emoji: "🟪", color: "var(--vc-restructuring)" },
+  { key: "reporting", label: "Reporting Results", emoji: "🟫", color: "var(--vc-reporting)" },
+  { key: "dates", label: "Dates &amp; Events", emoji: "⚪", color: "var(--vc-dates)" },
+  { key: "pronunciation", label: "Pronunciation &amp; Spelling", emoji: "⚫", color: "var(--vc-pronunciation)" }
+];
+
+const VOCAB_DATA = [
+  { cat: "location", term: "to arrive in + city / country", gloss: "przyjecha&#263; do / dotrze&#263; do miasta lub kraju", ex: "Yesterday I arrived in Warsaw and went straight to my apartment." },
+  { cat: "location", term: "headquarters", gloss: "siedziba g&#322;&oacute;wna / centrala", ex: "I'm working from our Warsaw headquarters today." },
+  { cat: "location", term: "a country house", gloss: "dom na wsi / dom poza miastem", ex: "I usually spend part of the week at my country house." },
+  { cat: "location", term: "halfway between A and B", gloss: "w po&#322;owie drogi mi&#281;dzy A a B", ex: "My country house is halfway between Warsaw and Bia&#322;ystok." },
+  { cat: "location", term: "whereabouts", gloss: "miejsce pobytu / okolica, w kt&oacute;rej kto&#347; lub co&#347; si&#281; znajduje", ex: "Do you know his whereabouts at the moment?" },
+
+  { cat: "time", term: "from Monday to Thursday", gloss: "od poniedzia&#322;ku do czwartku", ex: "I stayed there from Monday to Thursday." },
+  { cat: "time", term: "since + point in time", gloss: "od + konkretnego momentu", ex: "When we spoke on Friday, I had already been working on the issue since Monday." },
+  { cat: "time", term: "had already been doing something", gloss: "ju&#380; od jakiego&#347; czasu co&#347; robi&#263; przed innym momentem w przesz&#322;o&#347;ci", ex: "When we met last Friday, I had already been working on the report for several days." },
+  { cat: "time", term: "this week / this month / this summer", gloss: "w tym tygodniu / w tym miesi&#261;cu / tego lata", ex: "We have had several important meetings this week." },
+  { cat: "time", term: "to make up for something", gloss: "nadrobi&#263; co&#347; / zrekompensowa&#263; co&#347;", ex: "I didn't study much this week, but I'll make up for it at the weekend." },
+
+  { cat: "workload", term: "to have a lot on your plate", gloss: "mie&#263; du&#380;o na g&#322;owie", ex: "I've got a lot on my plate before the end of the month." },
+  { cat: "workload", term: "to look on the bright side / focus on the bright side", gloss: "patrze&#263; na pozytywn&#261; stron&#281; / skupia&#263; si&#281; na pozytywach", ex: "Even when a project becomes difficult, I try to look on the bright side." },
+
+  { cat: "skills", term: "hands-on", gloss: "praktyczny / aktywnie zaanga&#380;owany", ex: "She takes a very hands-on approach to managing the team." },
+  { cat: "skills", term: "to be better at doing something", gloss: "by&#263; lepszym w robieniu czego&#347;", ex: "I'm better at understanding English than I used to be." },
+
+  { cat: "ai", term: "a prompt", gloss: "prompt / polecenie dla narz&#281;dzia AI", ex: "A clear prompt usually produces a more useful answer." },
+  { cat: "ai", term: "to be excited about something", gloss: "by&#263; czym&#347; podekscytowanym / entuzjastycznie do czego&#347; podchodzi&#263;", ex: "She's excited about the possibilities offered by AI." },
+  { cat: "ai", term: "to be interested in something", gloss: "interesowa&#263; si&#281; czym&#347;", ex: "Many companies are interested in using AI to automate routine work." },
+
+  { cat: "tasks", term: "a repetitive activity", gloss: "powtarzalna czynno&#347;&#263;", ex: "Data entry can be a very repetitive activity." },
+  { cat: "tasks", term: "intimidating", gloss: "onie&#347;mielaj&#261;cy / budz&#261;cy obawy", ex: "Speaking during a large international meeting can feel intimidating at first." },
+  { cat: "tasks", term: "sustainable", gloss: "zr&oacute;wnowa&#380;ony / mo&#380;liwy do utrzymania w d&#322;u&#380;szej perspektywie", ex: "We need a more sustainable way of managing the workload." },
+
+  { cat: "people", term: "to join somebody", gloss: "do&#322;&#261;czy&#263; do kogo&#347;", ex: "She wants to join me for the next meeting." },
+
+  { cat: "projects", term: "a new stage", gloss: "nowy etap", ex: "We are now moving on to a new stage of the project." },
+  { cat: "projects", term: "to move on to the next stage", gloss: "przej&#347;&#263; do kolejnego etapu", ex: "Once the transfer is complete, we can move on to the next stage." },
+  { cat: "projects", term: "a process has been going on since...", gloss: "proces trwa od...", ex: "The process has been going on since the last week of June." },
+  { cat: "projects", term: "for + period of time", gloss: "przez / od okre&#347;lonego czasu", ex: "The process has been going on for one month." },
+  { cat: "projects", term: "since + point in time", gloss: "od konkretnego momentu", ex: "The process has been going on since the last week of June." },
+
+  { cat: "meetings", term: "in today's meeting", gloss: "na dzisiejszym spotkaniu", ex: "We discussed the transition in today's meeting." },
+  { cat: "meetings", term: "what is important is that...", gloss: "wa&#380;ne jest to, &#380;e...", ex: "What is important is that both teams understand the new procedure." },
+  { cat: "meetings", term: "the most important thing is that...", gloss: "najwa&#380;niejsze jest to, &#380;e...", ex: "The most important thing is that the knowledge transfer has been completed successfully." },
+
+  { cat: "relationships", term: "to build a strong / close relationship", gloss: "zbudowa&#263; siln&#261; / blisk&#261; relacj&#281;", ex: "Over the past few months, we have built a strong relationship with our partners in India." },
+  { cat: "relationships", term: "to transfer knowledge to somebody", gloss: "przekaza&#263; komu&#347; wiedz&#281;", ex: "We have successfully transferred our knowledge to the new team." },
+  { cat: "relationships", term: "solid preparation", gloss: "solidne przygotowanie", ex: "Our partners appreciated the team's solid preparation." },
+
+  { cat: "documents", term: "to refer to a document", gloss: "odwo&#322;a&#263; si&#281; do dokumentu / powo&#322;a&#263; si&#281; na dokument", ex: "Both teams will be able to refer to this document in the future." },
+
+  { cat: "restructuring", term: "to make somebody redundant", gloss: "zwolni&#263; kogo&#347; z powodu likwidacji stanowiska / redukcji etat&oacute;w", ex: "The company had to make several employees redundant during the restructuring." },
+  { cat: "restructuring", term: "to make part of a team redundant", gloss: "zredukowa&#263; cz&#281;&#347;&#263; zespo&#322;u", ex: "The restructuring may make part of the team redundant." },
+  { cat: "restructuring", term: "to be involved in the transition", gloss: "uczestniczy&#263; w procesie przej&#347;ciowym / by&#263; zaanga&#380;owanym w zmian&#281;", ex: "Several departments are involved in the transition." },
+  { cat: "restructuring", term: "to finish working for a company", gloss: "zako&#324;czy&#263; prac&#281; w firmie", ex: "Some employees will finish working for the company in October." },
+  { cat: "restructuring", term: "to find jobs for somebody", gloss: "znale&#378;&#263; komu&#347; prac&#281;", ex: "The company is trying to find jobs for some of the affected employees." },
+
+  { cat: "reporting", term: "it turned out that...", gloss: "okaza&#322;o si&#281;, &#380;e...", ex: "It turned out that the transition was more complicated than expected." },
+
+  { cat: "dates", term: "to be held from ... to ...", gloss: "odbywa&#263; si&#281; od... do...", ex: "The training will be held from July 24 to July 26." },
+
+  { cat: "pronunciation", term: "nought", gloss: "zero", ex: "In British English, nought is a common word for the number zero." },
+  { cat: "pronunciation", term: "naught", gloss: "zero / nic", ex: "Naught is an alternative spelling, especially in American English. It can also mean \"nothing\", particularly in older or literary English." }
+];
+
+const VOCAB_NOTES = [
+  { cat: "skills", html: "<strong>Correct:</strong> a hands-on manager / to be hands-on." },
+  { cat: "restructuring", html: "<strong>American English:</strong> The company is trying to find jobs for some people. <strong>British English:</strong> The company are trying to find jobs for some people &ndash; company can be treated as plural when the focus is on the people who make up the company." },
+  { cat: "dates", html: "Also possible: <strong>The training will be held July 24&ndash;26.</strong>" }
+];
+
+const VOCAB_WARNINGS = [
+  { cat: "time", label: "Do not say", line: "in this week / in this month / in this summer", fix: "Say: this week / this month / this summer &ndash; no preposition." }
+];
+
+let vocabActiveCat = "all";
+
+function vocabBuildStats() {
+  const el = document.getElementById('vocabStats');
+  el.innerHTML = `
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_DATA.length}</div><div class="vocab-stat-label">Vocabulary Items</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_CATS.length}</div><div class="vocab-stat-label">Topic Areas</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_NOTES.length + VOCAB_WARNINGS.length}</div><div class="vocab-stat-label">Usage Notes</div></div>`;
+}
+
+function vocabBuildFilters() {
+  const el = document.getElementById('vocabFilters');
+  let html = `<button class="vocab-chip active" data-cat="all" onclick="vocabSetFilter('all')"><span class="vdot" style="background:var(--gold)"></span>All</button>`;
+  VOCAB_CATS.forEach(c => {
+    html += `<button class="vocab-chip" data-cat="${c.key}" onclick="vocabSetFilter('${c.key}')"><span class="vdot" style="background:${c.color}"></span>${c.emoji} ${c.label}</button>`;
+  });
+  el.innerHTML = html;
+}
+
+function vocabSetFilter(key) {
+  vocabActiveCat = key;
+  document.querySelectorAll('.vocab-chip').forEach(c => c.classList.toggle('active', c.dataset.cat === key));
+  vocabApplyFilters();
+}
+
+function vocabBuildDashboard() {
+  const container = document.getElementById('vocabDashboard');
+  let html = '';
+  VOCAB_CATS.forEach(cat => {
+    const items = VOCAB_DATA.filter(d => d.cat === cat.key);
+    const notes = VOCAB_NOTES.filter(n => n.cat === cat.key);
+    const warnings = VOCAB_WARNINGS.filter(w => w.cat === cat.key);
+    if (!items.length) return;
+
+    html += `<div class="vocab-cat-block" data-cat="${cat.key}">
+      <div class="vocab-cat-head"><span class="vbar" style="background:${cat.color}"></span><span class="vname">${cat.emoji} ${cat.label}</span><span class="vcount">${items.length} item${items.length > 1 ? 's' : ''}</span></div>
+      <div class="vocab-grid">`;
+
+    items.forEach((item, i) => {
+      const id = cat.key + '-' + i;
+      html += `<div class="vflip-card" data-term="${item.term.toLowerCase()}" onclick="this.classList.toggle('vflipped')">
+        <div class="vflip-inner">
+          <div class="vflip-face vflip-front" style="--vcat-color:${cat.color}">
+            <div class="vterm">${item.term}</div>
+            <div class="vexample">${item.ex}</div>
+            <div class="vflip-flag">Tap to see gloss</div>
+          </div>
+          <div class="vflip-face vflip-back" style="--vcat-color:${cat.color}">
+            <div><div class="vgloss-label">Polish</div><div class="vgloss">${item.gloss}</div></div>
+            <div class="vflip-tap">Tap to flip back</div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    warnings.forEach(w => {
+      html += `<div class="vwarning-card"><div class="vw-label">${w.label}</div><div class="vw-line">🚫 ${w.line}</div><div class="vw-fix">${w.fix}</div></div>`;
+    });
+    notes.forEach(n => {
+      html += `<div class="vnote-card">${n.html}</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function vocabApplyFilters() {
+  const q = document.getElementById('vocabSearch').value.trim().toLowerCase();
+  let anyVisible = false;
+  document.querySelectorAll('.vocab-cat-block').forEach(block => {
+    const cat = block.dataset.cat;
+    const catMatch = (vocabActiveCat === 'all' || vocabActiveCat === cat);
+    let hasVisible = false;
+    block.querySelectorAll('.vflip-card').forEach(card => {
+      const show = catMatch && (!q || card.dataset.term.includes(q));
+      card.style.display = show ? '' : 'none';
+      if (show) hasVisible = true;
+    });
+    block.querySelectorAll('.vnote-card, .vwarning-card').forEach(extra => {
+      extra.style.display = (catMatch && !q) ? '' : 'none';
+    });
+    block.classList.toggle('vhidden', !hasVisible);
+    if (hasVisible) anyVisible = true;
+  });
+  document.getElementById('vocabEmpty').classList.toggle('vvisible', !anyVisible);
+}
+
+vocabBuildStats();
+vocabBuildFilters();
+vocabBuildDashboard();
+document.getElementById('vocabSearch').addEventListener('input', vocabApplyFilters);
+</script>
+</body>
+</html>
