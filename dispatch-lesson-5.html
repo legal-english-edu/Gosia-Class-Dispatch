@@ -17,7 +17,6 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { background-color: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; font-size: 17px; line-height: 1.7; }
-  /* ── MASTHEAD ── */
   .masthead { background-color: var(--dark); padding: 48px 40px 36px; max-width: 100%; position: relative; overflow: hidden; }
   .masthead::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
   .masthead-inner { max-width: 680px; margin: 0 auto; }
@@ -33,23 +32,18 @@
   .definition-pos { font-family: 'Lato', sans-serif; font-size: 14px; font-style: italic; color: var(--gold); margin-bottom: 6px; margin-top: 2px; }
   .definition-text { font-family: 'Lato', sans-serif; font-size: 17px; color: #b0a898; line-height: 1.6; }
   .definition-text + .definition-text { margin-top: 4px; }
-  /* ── META BAR ── */
   .meta-bar { background-color: var(--rust); padding: 10px 40px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
   .meta-item { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
   .meta-item span { color: rgba(255,255,255,0.5); margin-right: 6px; }
-  /* ── BACK NAV ── */
   .back-nav { background: var(--gold); padding: 14px 40px; }
   .back-nav a { font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark); text-decoration: none; }
   .back-nav a:hover { color: var(--ink); }
-  /* ── BODY ── */
   .body-wrap { max-width: 680px; margin: 0 auto; padding: 56px 40px 80px; }
-  /* ── QUIZLET ── */
   .quizlet-card { background: var(--mid); border-radius: 3px; padding: 32px 36px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 16px; }
   .quizlet-card .section-label { color: var(--gold); margin-bottom: 4px; }
   .quizlet-card p { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
   .quizlet-btn { display: inline-block; background: var(--gold); color: var(--dark); font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border-radius: 2px; text-decoration: none; align-self: flex-start; transition: background 0.15s; }
   .quizlet-btn:hover { background: #c49a4e; }
-  /* ── VOCAB SECTION (dark) ── */
   .vocab-section { background: var(--dark); border-radius: 3px; padding: 32px 36px; margin-bottom: 48px; }
   .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
   .vocab-section h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
@@ -65,7 +59,60 @@
   .vocab-subhead:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
   .correct-line { color: #8fcf9f; }
   .incorrect-line { color: #e08a6a; }
-  /* ── AUDIO CARD ── */
+  /* ── VOCAB DASHBOARD ── */
+  :root {
+    --vc-hotel: #E0954A;
+    --vc-meals: #7DBB8C;
+    --vc-trade: #7FB2E0;
+    --vc-work: #BC9DE0;
+    --vc-money: #E0C24A;
+    --vc-struct: #C79A6A;
+    --vc-dates: #E08066;
+  }
+  .vocab-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .vocab-stat { background: rgba(255,255,255,0.05); border-radius: 3px; padding: 14px 16px; border-top: 2px solid var(--gold); }
+  .vocab-stat-num { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; color: #fff; line-height: 1; }
+  .vocab-stat-label { font-family: 'Lato', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 6px; }
+  .vocab-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+  .vocab-search { flex: 1 1 200px; position: relative; }
+  .vocab-search input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 999px; padding: 10px 18px 10px 38px; font-family: 'Lato', sans-serif; font-size: 16px; color: #fff; outline: none; transition: border-color 0.15s; }
+  .vocab-search input::placeholder { color: rgba(255,255,255,0.4); }
+  .vocab-search input:focus { border-color: var(--gold); }
+  .vocab-search::before { content: ''; position: absolute; left: 14px; top: 50%; width: 13px; height: 13px; transform: translateY(-50%); border: 1.5px solid rgba(255,255,255,0.45); border-radius: 50%; background: linear-gradient(45deg, transparent 46%, rgba(255,255,255,0.45) 47%, rgba(255,255,255,0.45) 53%, transparent 54%) no-repeat; }
+  .vocab-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vocab-chip { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 13.5px; letter-spacing: 0.03em; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; white-space: nowrap; }
+  .vocab-chip .vdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .vocab-chip:hover { border-color: var(--gold); }
+  .vocab-chip.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  .vocab-hint { font-size: 14px; color: rgba(255,255,255,0.35); font-style: italic; margin-bottom: 22px; }
+  .vocab-cat-block { margin-bottom: 34px; }
+  .vocab-cat-block.vhidden { display: none; }
+  .vocab-cat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .vocab-cat-head .vbar { width: 4px; height: 18px; border-radius: 2px; }
+  .vocab-cat-head span.vname { font-size: 12.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+  .vocab-cat-head span.vcount { font-size: 12.5px; color: rgba(255,255,255,0.35); }
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .vflip-card { perspective: 1200px; height: 190px; cursor: pointer; }
+  .vflip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(.4,.2,.2,1); transform-style: preserve-3d; }
+  .vflip-card.vflipped .vflip-inner { transform: rotateY(180deg); }
+  .vflip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 4px; padding: 18px 18px 16px; display: flex; flex-direction: column; justify-content: space-between; }
+  .vflip-front { background: rgba(255,255,255,0.05); border-top: 3px solid var(--vcat-color, var(--gold)); }
+  .vflip-back { background: rgba(255,255,255,0.1); border-top: 3px solid var(--vcat-color, var(--gold)); transform: rotateY(180deg); }
+  .vterm { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 20px; color: var(--gold); line-height: 1.25; }
+  .vexample { font-size: 16px; color: rgba(255,255,255,0.6); font-style: italic; line-height: 1.45; }
+  .vgloss { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 19px; color: #fff; line-height: 1.3; }
+  .vgloss-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); font-weight: 700; margin-bottom: 4px; }
+  .vflip-flag { align-self: flex-start; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vflip-tap { align-self: flex-end; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vnote-card, .vwarning-card { grid-column: 1 / -1; background: rgba(255,255,255,0.04); border: 1px dashed rgba(217,175,98,0.4); border-radius: 4px; padding: 16px 18px; font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .vnote-card strong { color: var(--gold); font-weight: 700; }
+  .vwarning-card { border-color: rgba(224,128,102,0.5); }
+  .vwarning-card .vw-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #e08a6a; margin-bottom: 4px; }
+  .vwarning-card .vw-line { color: #e08a6a; font-family: 'Lato', sans-serif; font-size: 17px; }
+  .vwarning-card .vw-fix { color: rgba(255,255,255,0.75); font-family: 'Lato', sans-serif; font-size: 17px; margin-top: 6px; }
+  .vempty-state { text-align: center; padding: 30px; color: rgba(255,255,255,0.35); font-style: italic; font-size: 15px; display: none; }
+  .vempty-state.vvisible { display: block; }
+  @media (max-width: 640px) { .vocab-stats { grid-template-columns: 1fr 1fr; } }
   .audio-card { background: var(--dark); border: 1px solid rgba(200,150,62,0.25); border-radius: 3px; padding: 24px 28px; margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
   .audio-card-header { display: flex; align-items: flex-start; gap: 16px; }
   .audio-play-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--rust); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
@@ -83,7 +130,6 @@
   .audio-time.total { text-align: right; }
   .audio-progress { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer; }
   .audio-progress-fill { height: 100%; background: var(--rust); border-radius: 2px; width: 0%; transition: width 0.1s linear; pointer-events: none; }
-  /* ── READING ── */
   .reading-intro { margin-bottom: 32px; }
   .reading-intro .section-label { color: var(--rust); margin-bottom: 8px; }
   .reading-intro p { font-size: 17px; color: #666; line-height: 1.6; }
@@ -92,7 +138,6 @@
   .article-body h3 { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--dark); margin: 32px 0 14px; }
   .article-body u { text-decoration: none; border-bottom: 2px solid var(--rust); color: var(--rust); font-weight: 700; }
   .story-divider { height: 1px; background: var(--cream); margin: 56px 0; }
-  /* ── EXERCISE SECTIONS (cream) ── */
   .exercise-section { background: var(--cream); border-radius: 3px; padding: 32px 36px; margin-top: 24px; }
   .exercise-section .section-label { color: var(--rust); margin-bottom: 6px; }
   .exercise-section h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
@@ -100,7 +145,6 @@
   .exercise-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 6px; }
   .exercise-def { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 8px; }
   .exercise-def strong { color: var(--rust); font-weight: 700; }
-  /* ── EXERCISE 1: GAP REVEAL ── */
   .gapfill-item { padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
   .gapfill-item:last-child { border-bottom: none; }
   .gap-input { background: #fff; border: 1px solid #ccc; border-radius: 2px; color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 4px 10px; width: 180px; outline: none; transition: border-color 0.15s; }
@@ -112,7 +156,6 @@
   .gap-feedback { font-size: 14px; font-weight: 700; margin-left: 8px; }
   .gap-feedback.correct-fb { color: #2d6a4f; }
   .gap-feedback.incorrect-fb { color: var(--rust); }
-  /* ── EXERCISE 2: MATCHING ── */
   .matching-wrap { margin-bottom: 16px; }
   .matching-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .match-item { padding: 16px 14px; border-radius: 3px; cursor: pointer; font-size: 17px; line-height: 1.5; transition: background 0.15s, border-color 0.15s; border: 2px solid transparent; display: flex; align-items: center; min-height: 72px; }
@@ -123,10 +166,8 @@
   .match-item.incorrect { border-color: var(--rust) !important; background: #fde8e3; }
   .reset-btn { background: transparent; border: 1px solid var(--dark); color: var(--dark); padding: 6px 16px; font-size: 13px; font-family: 'Lato', sans-serif; border-radius: 2px; cursor: pointer; margin-top: 8px; transition: background 0.15s, color 0.15s; }
   .reset-btn:hover { background: var(--dark); color: #fff; }
-  /* ── EXERCISE 3: PHRASE BOX GAP FILL ── */
   .phrase-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; padding: 14px; background: var(--dark); border-radius: 3px; }
   .phrase-box span { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 2px; }
-  /* EX4A: FORCED CHOICE */
   .choice-item { padding: 16px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
   .choice-item:last-child { border-bottom: none; }
   .choice-stem { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 12px; }
@@ -136,7 +177,6 @@
   .choice-btn:hover { border-color: var(--dark); }
   .choice-btn.correct { background: #d4edda; border-color: #5a9e6f; color: #2d6a4f; pointer-events: none; }
   .choice-btn.incorrect { border-color: var(--rust); background: #fde8e3; }
-  /* EX4B: SORTING */
   .sort-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 14px; background: var(--dark); border-radius: 3px; min-height: 56px; }
   .sort-chip { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 2px; cursor: pointer; transition: background 0.15s; border: 2px solid transparent; }
   .sort-chip:hover { background: rgba(255,255,255,0.16); }
@@ -148,7 +188,6 @@
   .sort-col .sort-chip { display: inline-block; margin: 0 6px 6px 0; }
   .sort-col .sort-chip.correct { background: #d4edda; color: #2d6a4f; }
   .sort-col .sort-chip.incorrect { background: #fde8e3; color: var(--rust); }
-  /* ── FOOTER ── */
   .dispatch-footer { background: var(--dark); padding: 32px 40px; text-align: center; border-top: 3px solid var(--gold); }
   .dispatch-footer p { font-family: 'Lato', sans-serif; font-size: 15px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
   .dispatch-footer a { color: var(--gold); text-decoration: none; }
@@ -198,292 +237,27 @@
   <a href="index.html">&larr; Home</a>
 </div>
 <main class="body-wrap">
-
-  <!-- QUIZLET -->
   <div class="quizlet-card">
     <div class="section-label">Your Quizlet Class</div>
     <p>Your vocabulary is growing. After every lesson, new words and phrases are added to your Quizlet class. Go back, test yourself, and make them stick.</p>
     <a class="quizlet-btn" href="https://quizlet.com/join/72BDBFDfB?i=4ie97k&x=1bqt" target="_blank">Open your Quizlet class &rarr;</a>
   </div>
-
-  <!-- VOCABULARY -->
   <div class="vocab-section">
     <div class="section-label">Class Notes</div>
     <h2>Lesson 5 &ndash; Vocabulary</h2>
-
-    <div class="vocab-subhead">🟠 Hotel and Facilities</div>
-
-    <div class="vocab-entry">
-      <div class="vocab-phrase">air conditioning</div>
-      <div class="vocab-pl">klimatyzacja</div>
-      <div class="vocab-example">There was no air conditioning in the first hotel.</div>
+    <div class="vocab-stats" id="vocabStats"></div>
+    <div class="vocab-controls">
+      <div class="vocab-search"><input type="text" id="vocabSearch" placeholder="Search a term..." autocomplete="off"></div>
+      <div class="vocab-filters" id="vocabFilters"></div>
     </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to choose a more luxurious hotel</div>
-      <div class="vocab-pl">wybrać bardziej luksusowy hotel</div>
-      <div class="vocab-example">We had to choose a more luxurious hotel because the first one did not meet our needs.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to change hotels</div>
-      <div class="vocab-pl">zmienić hotel</div>
-      <div class="vocab-example">We decided to change hotels because the first one was not comfortable.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to move to another hotel</div>
-      <div class="vocab-pl">przenieść się do innego hotelu</div>
-      <div class="vocab-example">After the first night, we moved to another hotel in Spała.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a facility</div>
-      <div class="vocab-pl">obiekt / placówka / infrastruktura</div>
-      <div class="vocab-example">The training centre has excellent facilities for business groups.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">an office facility</div>
-      <div class="vocab-pl">obiekt biurowy</div>
-      <div class="vocab-example">The company is planning to open a new office facility next year.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a sports facility</div>
-      <div class="vocab-pl">obiekt sportowy</div>
-      <div class="vocab-example">The town has invested in several modern sports facilities.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a shopping facility</div>
-      <div class="vocab-pl">obiekt handlowy</div>
-      <div class="vocab-example">The new shopping facility will include several restaurants and service points.</div>
-    </div>
-
-    <div class="vocab-subhead">🟢 Meals and Rest</div>
-
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to have breakfast</div>
-      <div class="vocab-pl">jeść śniadanie</div>
-      <div class="vocab-example">We usually have breakfast at 8 a.m. during business trips.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to have dinner</div>
-      <div class="vocab-pl">jeść obiad / kolację</div>
-      <div class="vocab-example">We had dinner with our business partners after the meeting.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to have a rest / to take a rest</div>
-      <div class="vocab-pl">odpocząć</div>
-      <div class="vocab-example">After the journey, we had a rest before the evening meeting. After the long meeting, we decided to take a rest.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def">Use <strong>have</strong> with meals: <strong>have breakfast</strong>, <strong>have dinner</strong>. Use <strong>have a rest</strong> or <strong>take a rest</strong> when you mean <em>odpocząć</em>.</div>
-    </div>
-
-    <div class="vocab-subhead">🔵 Trade and Business</div>
-
-    <div class="vocab-entry">
-      <div class="vocab-phrase">retail</div>
-      <div class="vocab-pl">handel detaliczny</div>
-      <div class="vocab-example">Our company does not work directly in retail.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a retailer</div>
-      <div class="vocab-pl">sprzedawca detaliczny / detalista</div>
-      <div class="vocab-example">A retailer sells products directly to customers.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">wholesale</div>
-      <div class="vocab-pl">handel hurtowy</div>
-      <div class="vocab-example">The company sells its products mainly through wholesale channels.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">commerce</div>
-      <div class="vocab-pl">handel / działalność handlowa</div>
-      <div class="vocab-example">Online commerce has grown very quickly in recent years.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">trade</div>
-      <div class="vocab-pl">handel; także fach / zawód</div>
-      <div class="vocab-example">The company is active in international trade. Accounting is a skilled trade that demands precision and attention to detail.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">domestic trade</div>
-      <div class="vocab-pl">handel krajowy</div>
-      <div class="vocab-example">The new rules may affect domestic trade.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">international trade</div>
-      <div class="vocab-pl">handel międzynarodowy</div>
-      <div class="vocab-example">English is very important in international trade.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">foreign trade</div>
-      <div class="vocab-pl">handel zagraniczny</div>
-      <div class="vocab-example">The report presents recent figures on foreign trade.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def">Do not confuse: <strong>retail</strong> = selling directly to the final customer. <strong>wholesale</strong> = selling in large quantities to shops or other businesses. <strong>commerce</strong> = commercial activity, especially buying and selling, often online. <strong>trade</strong> = buying and selling as a whole, especially between countries; also a profession or craft.</div>
-    </div>
-
-    <div class="vocab-subhead">🟣 Work, Departments and Responsibilities</div>
-
-    <div class="vocab-entry">
-      <div class="vocab-phrase">my company told me that...</div>
-      <div class="vocab-pl">firma powiedziała mi, że... / poinformowała mnie, że...</div>
-      <div class="vocab-example">My company told me that we needed to change hotels.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">my company said that...</div>
-      <div class="vocab-pl">firma powiedziała, że... / poinformowała, że...</div>
-      <div class="vocab-example">My company said that the first hotel was not suitable.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def"><span class="incorrect-line">🚫 My company said me that...</span></div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to be good at figures</div>
-      <div class="vocab-pl">dobrze radzić sobie z liczbami / danymi liczbowymi</div>
-      <div class="vocab-example">People in finance usually need to be good at figures.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">figures</div>
-      <div class="vocab-pl">liczby / dane liczbowe / wielkości</div>
-      <div class="vocab-example">We need to review the overdue payment figures before the meeting.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">I work as an accountant</div>
-      <div class="vocab-pl">pracuję jako księgowa / księgowy</div>
-      <div class="vocab-example">I work as an accountant in the Accounts department.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def">Useful, but less natural: My position is called <strong>accountant</strong>.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">Accounts</div>
-      <div class="vocab-pl">dział księgowości</div>
-      <div class="vocab-example">She works in Accounts.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a claims-handling department</div>
-      <div class="vocab-pl">dział obsługi roszczeń / reklamacji</div>
-      <div class="vocab-example">The claims-handling department deals with customer complaints.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to handle claims</div>
-      <div class="vocab-pl">obsługiwać roszczenia / reklamacje</div>
-      <div class="vocab-example">Our team handles claims from business clients.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">business partners</div>
-      <div class="vocab-pl">partnerzy biznesowi</div>
-      <div class="vocab-example">We discussed the new contract with our business partners.</div>
-    </div>
-
-    <div class="vocab-subhead">🟡 Money and Debt</div>
-
-    <div class="vocab-entry">
-      <div class="vocab-phrase">debt</div>
-      <div class="vocab-pl">dług</div>
-      <div class="vocab-example">The company is trying to reduce its debt this year.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a debtor</div>
-      <div class="vocab-pl">dłużnik</div>
-      <div class="vocab-example">A debtor is a person or company that owes money.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a creditor</div>
-      <div class="vocab-pl">wierzyciel</div>
-      <div class="vocab-example">A creditor can demand payment from the debtor.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to owe somebody money</div>
-      <div class="vocab-pl">być komuś winnym pieniądze</div>
-      <div class="vocab-example">She owes me a large amount of money.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def">Say <strong>a large amount of money</strong>. Less natural here: <strong>a big amount of money</strong>.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">to own something</div>
-      <div class="vocab-pl">posiadać coś</div>
-      <div class="vocab-example">The company owns several office buildings.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def">Do not confuse: <strong>owe</strong> = być komuś coś winnym. <strong>own</strong> = posiadać coś.</div>
-    </div>
-
-    <div class="vocab-subhead">🟤 Useful Structures</div>
-
-    <div class="vocab-entry">
-      <div class="vocab-phrase">on the one hand..., on the other hand...</div>
-      <div class="vocab-pl">z jednej strony..., z drugiej strony...</div>
-      <div class="vocab-example">On the one hand, the hotel was expensive; on the other hand, the location was excellent.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">a column</div>
-      <div class="vocab-pl">kolumna</div>
-      <div class="vocab-example">Put the customer names in the first column and the payment dates in the second.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">all the exercises</div>
-      <div class="vocab-pl">wszystkie ćwiczenia</div>
-      <div class="vocab-example">Please finish all the exercises before the next lesson.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">every exercise</div>
-      <div class="vocab-pl">każde ćwiczenie</div>
-      <div class="vocab-example">Check every exercise carefully before you send it.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def"><strong>all the exercises</strong> = the complete set. <strong>every exercise</strong> = each individual exercise.</div>
-    </div>
-
-    <div class="vocab-subhead">🔴 Dates and Email References</div>
-
-    <div class="vocab-entry">
-      <div class="vocab-phrase">today is 8 July</div>
-      <div class="vocab-pl">dziś jest 8 lipca</div>
-      <div class="vocab-example">Today is 8 July, so the deadline is next week.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">today is the eighth of July</div>
-      <div class="vocab-pl">dziś jest ósmy lipca</div>
-      <div class="vocab-example">Today is the eighth of July, and the meeting is on the fifteenth.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">today is July 8</div>
-      <div class="vocab-pl">dziś jest 8 lipca &ndash; zapis amerykański</div>
-      <div class="vocab-example">Today is July 8, so we still have one week.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">today is July eighth</div>
-      <div class="vocab-pl">dziś jest ósmy lipca &ndash; wymowa amerykańska</div>
-      <div class="vocab-example">Today is July eighth, and the report is due soon.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">on 15 July</div>
-      <div class="vocab-pl">15 lipca / w dniu 15 lipca</div>
-      <div class="vocab-example">The meeting will take place on 15 July.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">your email received 12 February</div>
-      <div class="vocab-pl">Pani/Pana e-mail otrzymany 12 lutego</div>
-      <div class="vocab-example">Thank you for your email received 12 February.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-phrase">your email of 12 February</div>
-      <div class="vocab-pl">Pani/Pana e-mail z 12 lutego</div>
-      <div class="vocab-example">Thank you for your email of 12 February.</div>
-    </div>
-    <div class="vocab-entry">
-      <div class="vocab-def">Possible date formats: <strong>8 July 2026</strong> (British / European style), <strong>July 8, 2026</strong> (American style), <strong>08/07/2026</strong> (British / European numeric format &ndash; 8 July 2026).</div>
-      <div class="vocab-def">Say: <strong>on 8 July</strong> = <strong>on the eighth of July</strong>. <strong>on July 8</strong> = <strong>on July eighth</strong>.</div>
-    </div>
-
+    <div class="vocab-hint">Click any card to flip it and check the Polish gloss.</div>
+    <div id="vocabDashboard"></div>
+    <div class="vempty-state" id="vocabEmpty">No terms match your search.</div>
   </div>
-  <!-- READING -->
   <div class="reading-intro">
     <div class="section-label">Reading &amp; Listening</div>
     <p>Listen to each recording and read the story. The target vocabulary from this lesson appears in the text. It is highlighted. Notice how each phrase is used in context.</p>
   </div>
-
   <div class="article-title">A Change of Hotel</div>
   <div class="audio-card">
     <audio id="audio-1" preload="metadata"><source src="lesson-5-story-1.m4a" type="audio/mp4"></audio>
@@ -505,12 +279,10 @@
     </div>
   </div>
   <div class="article-body">
-    <p>Anna travelled to Spała for a two-day training session with colleagues from the regional office and several <u>business partners</u>. The first hotel had no <u>air conditioning</u>, and with no other room available that night, the group decided they needed <u>to change hotels</u>. After checking two alternatives nearby, Anna and her colleague agreed <u>to choose a more luxurious hotel</u> closer to the training centre, and the group <u>moved to another hotel</u> just before evening. The new hotel had far better <u>facilities</u>: a small business centre where guests could print documents, a gym and pool, and several shops nearby.</p>
-    <p>On the first evening, Anna and her business partners <u>had dinner</u> together before the next day's sessions began. The schedule for the following two days was tight, so everyone agreed <u>to have breakfast</u> early. After the long journey, Anna decided <u>to have a rest</u> before dinner, and by the second evening the group had settled into a routine that left enough time <u>to take a rest</u> between sessions.</p>
+    <p>Anna travelled to Spała for a two-day training session with colleagues from the regional office and several <u>business partners</u>. The first hotel had no <u>air conditioning</u>, and with no other room available at the hotel, the group decided they needed <u>to change hotels</u>. After checking two alternatives nearby, Anna and her colleague agreed <u>to choose a more luxurious hotel</u> closer to the training centre, and the group <u>moved to another hotel</u> just before evening. The new hotel had far better <u>facilities</u>: a small business centre where guests could print documents, a gym and pool, and several shops nearby.</p>
+    <p>On the first evening, Anna and her business partners <u>had dinner</u> together. The schedule for the following two days was tight, so everyone agreed <u>to have breakfast</u> early. After the long journey, Anna decided <u>to have a rest</u> before dinner, and by the second evening the group had settled into a routine that left enough time <u>to take a rest</u> between sessions.</p>
   </div>
-
   <div class="story-divider"></div>
-
   <div class="article-title">Figures and Follow-Ups</div>
   <div class="audio-card">
     <audio id="audio-2" preload="metadata"><source src="lesson-5-story-2.m4a" type="audio/mp4"></audio>
@@ -532,11 +304,9 @@
     </div>
   </div>
   <div class="article-body">
-    <p>Anna <u>works as an accountant</u> in <u>Accounts</u>, where <u>being good at figures</u> matters every day. The company is active in <u>international trade</u>, selling through <u>wholesale</u> channels to <u>retailers</u> across the region, though a small part of the business still involves <u>domestic trade</u> closer to home. The report Anna was preparing that week focused mainly on <u>foreign trade</u>, and the company had also seen steady growth in online <u>commerce</u> over the past year. One afternoon, a colleague from the <u>claims-handling department</u> asked whether Anna's team could help <u>handle claims</u> from one of their long-standing business partners, since the case involved several overdue payments.</p>
-    <p>Anna opened the overdue payments file and reviewed the <u>figures</u>: the first <u>column</u> listed each <u>debtor's</u> name, the second the amount <u>owed</u>. One client <u>owed</u> the company <u>a large amount of money</u>, and Anna made a note to contact them again soon. Every <u>creditor</u> had the right to expect payment on time, and the company always contacted clients whose accounts were more than thirty days overdue. In her reply, Anna wrote: "Thank you for <u>your email of 12 February</u>." She also confirmed that the updated report would be ready <u>on 15 July</u>. The company <u>owned</u> several office buildings across the region, a reminder that owing money and owning property were two very different things in the department's daily work.</p>
+    <p>Anna <u>works as an accountant</u> in <u>Accounts</u>, where <u>being good at figures</u> matters every day. The company is active in <u>international trade</u>, selling through <u>wholesale</u> channels to <u>retailers</u> across the region, though a small part of the business still involves <u>domestic trade</u> closer to home. The report Anna was preparing that week focused mainly on <u>foreign trade</u>, and the company had also seen steady growth in online <u>commerce</u> over the past year. One afternoon, a colleague from the <u>claims-handling department</u> asked whether Anna's team could help with a case involving one of their long-standing business partners and several overdue payments.</p>
+    <p>Anna opened the overdue payments file and reviewed the <u>figures</u>: the first <u>column</u> listed each <u>debtor's</u> name, the second the amount <u>owed</u>. One client <u>owed</u> the company <u>a large amount of money</u>, and Anna made a note to contact them again soon. In these cases, the company was the <u>creditor</u> and the client was the <u>debtor</u>. The company always contacted clients whose accounts were more than thirty days overdue. In her reply, Anna wrote: "Thank you for <u>your email of 12 February</u>." She also confirmed that the updated report would be ready <u>on 15 July</u>. The company <u>owned</u> several office buildings across the region, a reminder that owing money and owning property were two very different things in the department's daily work.</p>
   </div>
-
-  <!-- EXERCISE 1: GAP REVEAL -->
   <div class="exercise-section">
     <div class="section-label">Practice</div>
     <h2>Exercise 1 &ndash; Complete the Phrase</h2>
@@ -561,7 +331,7 @@
     </div>
     <div class="gapfill-item" id="ex1-4">
       <div class="exercise-number">4</div>
-      <div class="exercise-def">Money that is owed and has not yet been paid: <input class="gap-input" data-answer="debt|debts" placeholder="______"></div>
+      <div class="exercise-def">Money that a person or company owes: <input class="gap-input" data-answer="debt|debts" placeholder="______"></div>
       <button class="check-btn" onclick="checkGap('ex1-4')">Check</button>
       <span class="gap-feedback" id="fb-ex1-4"></span>
     </div>
@@ -576,11 +346,9 @@
       <div class="exercise-def">Thank you for your email <input class="gap-input" data-answer="of|dated" placeholder="______"> 12 February.</div>
       <button class="check-btn" onclick="checkGap('ex1-6')">Check</button>
       <span class="gap-feedback" id="fb-ex1-6"></span>
-      <div class="vocab-def" style="color:#777; margin-top:6px; font-size:15px;">Also possible: "Thank you for your email received on 12 February."</div>
+      <div class="vocab-def" style="color:#777; margin-top:6px; font-size:15px;">Also possible: "Thank you for your email received 12 February."</div>
     </div>
   </div>
-
-  <!-- EXERCISE 2: MATCHING -->
   <div class="exercise-section">
     <div class="section-label">Practice</div>
     <h2>Exercise 2 &ndash; Matching</h2>
@@ -589,20 +357,18 @@
       <div class="matching-col">
         <div class="match-item phrase" data-id="1" data-group="ex2" onclick="selectMatch(this)">a sports facility</div>
         <div class="match-item def" data-id="3" data-group="ex2" onclick="selectMatch(this)">Used to present two contrasting sides of a situation.</div>
-        <div class="match-item phrase" data-id="2" data-group="ex2" onclick="selectMatch(this)">a shopping facility</div>
-        <div class="match-item def" data-id="5" data-group="ex2" onclick="selectMatch(this)">The department that deals with customer complaints.</div>
+        <div class="match-item phrase" data-id="2" data-group="ex2" onclick="selectMatch(this)">a retail facility</div>
+        <div class="match-item def" data-id="5" data-group="ex2" onclick="selectMatch(this)">The department responsible for processing customer claims.</div>
         <div class="match-item phrase" data-id="3" data-group="ex2" onclick="selectMatch(this)">on the one hand..., on the other hand...</div>
         <div class="match-item def" data-id="1" data-group="ex2" onclick="selectMatch(this)">A building or place equipped for physical activities such as a gym or pool.</div>
         <div class="match-item phrase" data-id="4" data-group="ex2" onclick="selectMatch(this)">a creditor</div>
-        <div class="match-item def" data-id="2" data-group="ex2" onclick="selectMatch(this)">A place or area where people can buy things, often with shops and other services.</div>
+        <div class="match-item def" data-id="2" data-group="ex2" onclick="selectMatch(this)">A building or place used for retail activities, such as shops and related services.</div>
         <div class="match-item phrase" data-id="5" data-group="ex2" onclick="selectMatch(this)">a claims-handling department</div>
         <div class="match-item def" data-id="4" data-group="ex2" onclick="selectMatch(this)">A person or company that can demand payment from someone who owes money.</div>
       </div>
     </div>
     <button class="reset-btn" onclick="resetMatching('ex2')">Reset</button>
   </div>
-
-  <!-- EXERCISE 3: PHRASE BOX GAP FILL -->
   <div class="exercise-section">
     <div class="section-label">Practice</div>
     <h2>Exercise 3 &ndash; Gap Fill</h2>
@@ -641,7 +407,7 @@
     </div>
     <div class="gapfill-item" id="gf5">
       <div class="exercise-number">5</div>
-      <div class="exercise-def">A colleague from another department asked whether Anna's team could help <input class="gap-input" data-answer="handle claims" placeholder="____________"> from a long-standing client.</div>
+      <div class="exercise-def">A colleague from another department asked whether Anna's team could help <input class="gap-input" data-answer="handle claims" placeholder="____________"> involving a long-standing client.</div>
       <button class="check-btn" onclick="checkGap('gf5')">Check</button>
       <span class="gap-feedback" id="fb-gf5"></span>
     </div>
@@ -652,15 +418,11 @@
       <span class="gap-feedback" id="fb-gf6"></span>
     </div>
   </div>
-
-  <!-- EXERCISE 4: CONTRASTS -->
   <div class="exercise-section">
     <div class="section-label">Practice</div>
     <h2>Exercise 4 &ndash; Choosing Between Confusable Forms</h2>
     <p class="exercise-intro">This lesson contained several pairs that are easy to confuse. Part A tests choices that depend on context. Part B tests the main difference between four related terms.</p>
-
     <h3 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dark);margin:8px 0 16px;">Part A &ndash; Choose the correct form</h3>
-
     <div class="choice-item" id="ch1">
       <div class="choice-stem">She <span class="blank"></span> me a large amount of money.</div>
       <div class="choice-options">
@@ -689,26 +451,22 @@
         <button class="choice-btn" data-correct="0" onclick="checkChoice('ch4', this)">wholesaler</button>
       </div>
     </div>
-
     <h3 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dark);margin:32px 0 8px;">Part B &ndash; Match the term to its defining feature</h3>
     <p class="exercise-intro" style="margin-bottom:16px;">These four terms overlap in meaning but are not identical. Click a term to select it, then click the definition that fits it best. Green means correct.</p>
     <div class="matching-wrap" id="matching-ex4b">
       <div class="matching-col">
         <div class="match-item phrase" data-id="1" data-group="ex4b" onclick="selectMatch(this)">retail</div>
-        <div class="match-item def" data-id="3" data-group="ex4b" onclick="selectMatch(this)">Commercial activity, especially buying and selling, often online.</div>
+        <div class="match-item def" data-id="3" data-group="ex4b" onclick="selectMatch(this)">The activity of buying and selling goods and services, especially as a business.</div>
         <div class="match-item phrase" data-id="2" data-group="ex4b" onclick="selectMatch(this)">wholesale</div>
-        <div class="match-item def" data-id="1" data-group="ex4b" onclick="selectMatch(this)">Selling directly to the final customer.</div>
+        <div class="match-item def" data-id="1" data-group="ex4b" onclick="selectMatch(this)">Selling goods directly to the final customer.</div>
         <div class="match-item phrase" data-id="3" data-group="ex4b" onclick="selectMatch(this)">commerce</div>
-        <div class="match-item def" data-id="4" data-group="ex4b" onclick="selectMatch(this)">Buying and selling as a whole, especially between countries; also a profession or craft.</div>
+        <div class="match-item def" data-id="4" data-group="ex4b" onclick="selectMatch(this)">The buying and selling of goods and services, especially between businesses, regions or countries; also a skilled occupation.</div>
         <div class="match-item phrase" data-id="4" data-group="ex4b" onclick="selectMatch(this)">trade</div>
-        <div class="match-item def" data-id="2" data-group="ex4b" onclick="selectMatch(this)">Selling in large quantities to shops or other businesses.</div>
+        <div class="match-item def" data-id="2" data-group="ex4b" onclick="selectMatch(this)">Selling goods in large quantities to retailers or other businesses.</div>
       </div>
     </div>
     <button class="reset-btn" onclick="resetMatching('ex4b')">Reset</button>
-
   </div>
-
-  <!-- EXERCISE 5: SORTING -->
   <div class="exercise-section">
     <div class="section-label">Practice</div>
     <h2>Exercise 5 &ndash; Sorting: Date Styles</h2>
@@ -723,22 +481,20 @@
     </div>
     <div class="sort-cols">
       <div class="sort-col" id="col-uk" onclick="dropChip('uk')">
-        <div class="sort-col-label">British-Style Date Format</div>
-        <div class="sort-col-desc">Written and spoken forms typical of British / European English.</div>
+        <div class="sort-col-label">British English</div>
+        <div class="sort-col-desc">Written and spoken date forms typical of British English.</div>
       </div>
       <div class="sort-col" id="col-us" onclick="dropChip('us')">
-        <div class="sort-col-label">American-Style Date Format</div>
-        <div class="sort-col-desc">Written and spoken forms typical of American English.</div>
+        <div class="sort-col-label">American English</div>
+        <div class="sort-col-desc">Written and spoken date forms typical of American English.</div>
       </div>
     </div>
   </div>
-
 </main>
 <footer class="dispatch-footer">
   <p>Business English in the Polish Context &nbsp;&middot;&nbsp; Prepared for Gosia &nbsp;&middot;&nbsp; July 2026</p>
 </footer>
 <script>
-// ── AUDIO (two players) ──
 function formatTime(s) {
   if (isNaN(s)) return '0:00';
   const m = Math.floor(s / 60);
@@ -783,7 +539,6 @@ function seekAudio(e, n) {
   const pct = (e.clientX - rect.left) / rect.width;
   audio.currentTime = pct * audio.duration;
 }
-// ── MATCHING (scoped per data-group so multiple matching exercises can coexist) ──
 let selectedPhrase = {};
 let selectedDef = {};
 function selectMatch(el) {
@@ -829,7 +584,6 @@ function resetMatching(group) {
   selectedPhrase[g] = null;
   selectedDef[g] = null;
 }
-// ── GAP FILL ──
 function checkGap(id) {
   const item = document.getElementById(id);
   const input = item.querySelector('.gap-input');
@@ -848,7 +602,6 @@ function checkGap(id) {
     input.classList.remove('correct-input');
   }
 }
-// ── EX4A: FORCED CHOICE ──
 function checkChoice(id, btn) {
   const correct = btn.dataset.correct === '1';
   if (correct) {
@@ -860,7 +613,6 @@ function checkChoice(id, btn) {
     setTimeout(() => btn.classList.remove('incorrect'), 800);
   }
 }
-// ── EX4B: SORTING ──
 let selectedChip = null;
 function selectChip(el) {
   if (event) event.stopPropagation();
@@ -886,6 +638,179 @@ function dropChip(targetCol) {
     selectedChip = null;
   }
 }
+</script>
+<script>
+// ── VOCAB DASHBOARD (Lesson 5) ──
+const VOCAB_CATS = [
+  { key: "hotel", label: "Hotel &amp; Facilities", emoji: "🟠", color: "var(--vc-hotel)" },
+  { key: "meals", label: "Meals &amp; Rest", emoji: "🟢", color: "var(--vc-meals)" },
+  { key: "trade", label: "Trade &amp; Business", emoji: "🔵", color: "var(--vc-trade)" },
+  { key: "work", label: "Work &amp; Departments", emoji: "🟣", color: "var(--vc-work)" },
+  { key: "money", label: "Money &amp; Debt", emoji: "🟡", color: "var(--vc-money)" },
+  { key: "struct", label: "Useful Structures", emoji: "🟤", color: "var(--vc-struct)" },
+  { key: "dates", label: "Dates &amp; Email References", emoji: "🔴", color: "var(--vc-dates)" }
+];
+
+const VOCAB_DATA = [
+  { cat: "hotel", term: "air conditioning", gloss: "klimatyzacja", ex: "There was no air conditioning in the first hotel." },
+  { cat: "hotel", term: "to choose a more luxurious hotel", gloss: "wybrać bardziej luksusowy hotel", ex: "We had to choose a more luxurious hotel because the first one did not meet our needs." },
+  { cat: "hotel", term: "to change hotels", gloss: "zmienić hotel", ex: "We decided to change hotels because the first one was not comfortable." },
+  { cat: "hotel", term: "to move to another hotel", gloss: "przenieść się do innego hotelu", ex: "After the first night, we moved to another hotel in Spała." },
+  { cat: "hotel", term: "a facility / facilities", gloss: "obiekt / placówka; infrastruktura / udogodnienia", ex: "The town has a modern sports facility. The training centre has excellent facilities for business groups." },
+  { cat: "hotel", term: "an office facility", gloss: "obiekt biurowy", ex: "The company is planning to open a new office facility next year." },
+  { cat: "hotel", term: "a sports facility", gloss: "obiekt sportowy", ex: "The town has invested in several modern sports facilities." },
+  { cat: "hotel", term: "a retail facility", gloss: "obiekt handlowy", ex: "The new retail facility will include several shops, restaurants and service points." },
+
+  { cat: "meals", term: "to have breakfast", gloss: "jeść śniadanie", ex: "We usually have breakfast at 8 a.m. during business trips." },
+  { cat: "meals", term: "to have dinner", gloss: "jeść obiad / kolację", ex: "We had dinner with our business partners after the meeting." },
+  { cat: "meals", term: "to have a rest / to take a rest", gloss: "odpocząć", ex: "After the journey, we had a rest before the evening meeting." },
+
+  { cat: "trade", term: "retail", gloss: "handel detaliczny", ex: "Our company does not operate directly in retail." },
+  { cat: "trade", term: "a retailer", gloss: "sprzedawca detaliczny / detalista", ex: "A retailer sells products directly to customers." },
+  { cat: "trade", term: "wholesale", gloss: "handel hurtowy", ex: "The company sells its products mainly through wholesale channels." },
+  { cat: "trade", term: "commerce", gloss: "handel / działalność handlowa", ex: "Online commerce has grown very quickly in recent years." },
+  { cat: "trade", term: "trade", gloss: "handel; także fach / zawód", ex: "The company is active in international trade." },
+  { cat: "trade", term: "domestic trade", gloss: "handel krajowy", ex: "The new rules may affect domestic trade." },
+  { cat: "trade", term: "international trade", gloss: "handel międzynarodowy", ex: "English is very important in international trade." },
+  { cat: "trade", term: "foreign trade", gloss: "handel zagraniczny", ex: "The report presents recent figures on foreign trade." },
+
+  { cat: "work", term: "my company told me that...", gloss: "firma powiedziała mi, że...", ex: "My company told me that we needed to change hotels." },
+  { cat: "work", term: "my company said that...", gloss: "firma powiedziała, że...", ex: "My company said that the first hotel was not suitable." },
+  { cat: "work", term: "to be good at figures", gloss: "dobrze radzić sobie z liczbami", ex: "People in finance usually need to be good at figures." },
+  { cat: "work", term: "figures", gloss: "liczby / dane liczbowe / wielkości", ex: "We need to review the overdue payment figures before the meeting." },
+  { cat: "work", term: "to work as an accountant", gloss: "pracować jako księgowa / księgowy", ex: "I work as an accountant in the Accounts department." },
+  { cat: "work", term: "Accounts", gloss: "dział księgowości", ex: "She works in Accounts." },
+  { cat: "work", term: "a claims-handling department", gloss: "dział obsługi roszczeń / reklamacji", ex: "The claims-handling department deals with customer claims." },
+  { cat: "work", term: "to handle claims", gloss: "obsługiwać roszczenia / reklamacje", ex: "Our team handles claims from business clients." },
+  { cat: "work", term: "business partners", gloss: "partnerzy biznesowi", ex: "We discussed the new contract with our business partners." },
+
+  { cat: "money", term: "debt", gloss: "dług", ex: "The company is trying to reduce its debt this year." },
+  { cat: "money", term: "a debtor", gloss: "dłużnik", ex: "A debtor is a person or company that owes money." },
+  { cat: "money", term: "a creditor", gloss: "wierzyciel", ex: "A creditor is a person or company to whom money is owed. A creditor can demand payment from the debtor." },
+  { cat: "money", term: "to owe somebody money", gloss: "być komuś winnym pieniądze", ex: "She owes me a large amount of money." },
+  { cat: "money", term: "to own something", gloss: "posiadać coś", ex: "The company owns several office buildings." },
+
+  { cat: "struct", term: "on the one hand..., on the other hand...", gloss: "z jednej strony..., z drugiej strony...", ex: "On the one hand, the hotel was expensive; on the other hand, the location was excellent." },
+  { cat: "struct", term: "a column", gloss: "kolumna", ex: "Put the customer names in the first column and the payment dates in the second." },
+  { cat: "struct", term: "all the exercises", gloss: "wszystkie ćwiczenia", ex: "Please finish all the exercises before the next lesson." },
+  { cat: "struct", term: "every exercise", gloss: "każde ćwiczenie", ex: "Check every exercise carefully before you send it." },
+
+  { cat: "dates", term: "today is 8 July", gloss: "dziś jest 8 lipca", ex: "Today is 8 July, so the deadline is next week." },
+  { cat: "dates", term: "today is the eighth of July", gloss: "dziś jest ósmy lipca", ex: "Today is the eighth of July, and the meeting is on the fifteenth." },
+  { cat: "dates", term: "today is July 8", gloss: "dziś jest 8 lipca &ndash; zapis amerykański", ex: "Today is July 8, so we still have one week." },
+  { cat: "dates", term: "today is July eighth", gloss: "dziś jest ósmy lipca &ndash; wymowa amerykańska", ex: "Today is July eighth, and the report is due soon." },
+  { cat: "dates", term: "on 15 July", gloss: "15 lipca / w dniu 15 lipca", ex: "The meeting will take place on 15 July." },
+  { cat: "dates", term: "your email received 12 February", gloss: "Pani/Pana e-mail otrzymany 12 lutego", ex: "Thank you for your email received 12 February." },
+  { cat: "dates", term: "your email of 12 February", gloss: "Pani/Pana e-mail z 12 lutego", ex: "Thank you for your email of 12 February." }
+];
+
+const VOCAB_NOTES = [
+  { cat: "meals", html: "Use <strong>have</strong> with meals: <strong>have breakfast</strong>, <strong>have dinner</strong>. Use <strong>have a rest</strong> or <strong>take a rest</strong> when you mean <em>odpocząć</em>." },
+  { cat: "hotel", html: "<strong>facility</strong> can mean a building or place provided for a particular purpose. In the plural, <strong>facilities</strong> often means the equipment, services or amenities available in a place." },
+  { cat: "trade", html: "Do not confuse: <strong>retail</strong> = selling goods directly to the final customer. <strong>wholesale</strong> = selling goods in large quantities to retailers or other businesses. <strong>commerce</strong> = the activity of buying and selling goods and services, especially as a business. <strong>trade</strong> = the buying and selling of goods and services, especially between businesses, regions or countries; also a skilled occupation." },
+  { cat: "work", html: "<strong>Natural:</strong> I work as an accountant. <strong>Possible when referring specifically to a job title:</strong> My job title is accountant." },
+  { cat: "money", html: "Do not confuse: <strong>owe</strong> = być komuś coś winnym. <strong>own</strong> = posiadać coś." },
+  { cat: "struct", html: "<strong>all the exercises</strong> = the complete set. <strong>every exercise</strong> = each individual exercise." },
+  { cat: "dates", html: "<strong>Use:</strong> 8 July 2026 (British style) or July 8, 2026 (American style). Avoid purely numeric dates such as <strong>08/07/2026</strong>, because they can be ambiguous internationally." },
+  { cat: "dates", html: "Say: <strong>on 8 July</strong> = <strong>on the eighth of July</strong>. <strong>on July 8</strong> = <strong>on July eighth</strong>." }
+];
+
+const VOCAB_WARNINGS = [
+  { cat: "work", label: "Do not say", line: "My company said me that...", fix: "Say: My company told me that... — or: My company said that..." }
+];
+
+let vocabActiveCat = "all";
+
+function vocabBuildStats() {
+  const el = document.getElementById('vocabStats');
+  el.innerHTML = `
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_DATA.length}</div><div class="vocab-stat-label">Vocabulary Items</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_CATS.length}</div><div class="vocab-stat-label">Topic Areas</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_NOTES.length}</div><div class="vocab-stat-label">Usage Notes</div></div>`;
+}
+
+function vocabBuildFilters() {
+  const el = document.getElementById('vocabFilters');
+  let html = `<button class="vocab-chip active" data-cat="all" onclick="vocabSetFilter('all')"><span class="vdot" style="background:var(--gold)"></span>All</button>`;
+  VOCAB_CATS.forEach(c => {
+    html += `<button class="vocab-chip" data-cat="${c.key}" onclick="vocabSetFilter('${c.key}')"><span class="vdot" style="background:${c.color}"></span>${c.emoji} ${c.label}</button>`;
+  });
+  el.innerHTML = html;
+}
+
+function vocabSetFilter(key) {
+  vocabActiveCat = key;
+  document.querySelectorAll('.vocab-chip').forEach(c => c.classList.toggle('active', c.dataset.cat === key));
+  vocabApplyFilters();
+}
+
+function vocabBuildDashboard() {
+  const container = document.getElementById('vocabDashboard');
+  let html = '';
+  VOCAB_CATS.forEach(cat => {
+    const items = VOCAB_DATA.filter(d => d.cat === cat.key);
+    const notes = VOCAB_NOTES.filter(n => n.cat === cat.key);
+    const warnings = VOCAB_WARNINGS.filter(w => w.cat === cat.key);
+    if (!items.length) return;
+
+    html += `<div class="vocab-cat-block" data-cat="${cat.key}">
+      <div class="vocab-cat-head"><span class="vbar" style="background:${cat.color}"></span><span class="vname">${cat.emoji} ${cat.label}</span><span class="vcount">${items.length} item${items.length > 1 ? 's' : ''}</span></div>
+      <div class="vocab-grid">`;
+
+    items.forEach((item, i) => {
+      const id = cat.key + '-' + i;
+      html += `<div class="vflip-card" data-term="${item.term.toLowerCase()}" onclick="this.classList.toggle('vflipped')">
+        <div class="vflip-inner">
+          <div class="vflip-face vflip-front" style="--vcat-color:${cat.color}">
+            <div class="vterm">${item.term}</div>
+            <div class="vexample">${item.ex}</div>
+            <div class="vflip-flag">Tap to see gloss</div>
+          </div>
+          <div class="vflip-face vflip-back" style="--vcat-color:${cat.color}">
+            <div><div class="vgloss-label">Polish</div><div class="vgloss">${item.gloss}</div></div>
+            <div class="vflip-tap">Tap to flip back</div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    warnings.forEach(w => {
+      html += `<div class="vwarning-card"><div class="vw-label">${w.label}</div><div class="vw-line">🚫 ${w.line}</div><div class="vw-fix">${w.fix}</div></div>`;
+    });
+    notes.forEach(n => {
+      html += `<div class="vnote-card">${n.html}</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function vocabApplyFilters() {
+  const q = document.getElementById('vocabSearch').value.trim().toLowerCase();
+  let anyVisible = false;
+  document.querySelectorAll('.vocab-cat-block').forEach(block => {
+    const cat = block.dataset.cat;
+    const catMatch = (vocabActiveCat === 'all' || vocabActiveCat === cat);
+    let hasVisible = false;
+    block.querySelectorAll('.vflip-card').forEach(card => {
+      const show = catMatch && (!q || card.dataset.term.includes(q));
+      card.style.display = show ? '' : 'none';
+      if (show) hasVisible = true;
+    });
+    block.querySelectorAll('.vnote-card, .vwarning-card').forEach(extra => {
+      extra.style.display = (catMatch && !q) ? '' : 'none';
+    });
+    block.classList.toggle('vhidden', !hasVisible);
+    if (hasVisible) anyVisible = true;
+  });
+  document.getElementById('vocabEmpty').classList.toggle('vvisible', !anyVisible);
+}
+
+vocabBuildStats();
+vocabBuildFilters();
+vocabBuildDashboard();
+document.getElementById('vocabSearch').addEventListener('input', vocabApplyFilters);
 </script>
 </body>
 </html>
