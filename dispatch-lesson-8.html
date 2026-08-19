@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After-Class Dispatch &ndash; Lesson 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f7f4ef;
+    --rust: #b5421a;
+    --gold: #D9AF62;
+    --cream: #ede9e0;
+    --dark: #1E2650;
+    --mid: #2a3060;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; font-size: 17px; line-height: 1.7; }
+  .masthead { background-color: var(--dark); padding: 48px 40px 36px; max-width: 100%; position: relative; overflow: hidden; }
+  .masthead::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
+  .masthead-inner { max-width: 680px; margin: 0 auto; }
+  .masthead-logo { display: block; width: 148px; margin-bottom: 28px; }
+  .masthead-logo svg { width: 100%; height: auto; display: block; }
+  .masthead-label { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .masthead-course { font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; margin-bottom: 20px; text-transform: uppercase; }
+  .masthead-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 46px); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 24px; letter-spacing: -0.01em; }
+  .masthead-title em { font-style: italic; color: var(--gold); }
+  .definition-block { max-width: 480px; border-left: 2px solid var(--rust); padding-left: 20px; margin-top: 24px; }
+  .definition-word { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: #ffffff; letter-spacing: 0.03em; }
+  .definition-pron { font-family: 'Lato', sans-serif; font-size: 15px; color: #9a9080; margin-left: 6px; }
+  .definition-pos { font-family: 'Lato', sans-serif; font-size: 14px; font-style: italic; color: var(--gold); margin-bottom: 6px; margin-top: 2px; }
+  .definition-text { font-family: 'Lato', sans-serif; font-size: 17px; color: #b0a898; line-height: 1.6; }
+  .definition-text + .definition-text { margin-top: 4px; }
+  .meta-bar { background-color: var(--rust); padding: 10px 40px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .meta-item { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+  .meta-item span { color: rgba(255,255,255,0.5); margin-right: 6px; }
+  .back-nav { background: var(--gold); padding: 14px 40px; }
+  .back-nav a { font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark); text-decoration: none; }
+  .back-nav a:hover { color: var(--ink); }
+  .body-wrap { max-width: 680px; margin: 0 auto; padding: 56px 40px 80px; }
+  .quizlet-card { background: var(--mid); border-radius: 3px; padding: 32px 36px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 16px; }
+  .quizlet-card .section-label { color: var(--gold); margin-bottom: 4px; }
+  .quizlet-card p { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .quizlet-btn { display: inline-block; background: var(--gold); color: var(--dark); font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border-radius: 2px; text-decoration: none; align-self: flex-start; transition: background 0.15s; }
+  .quizlet-btn:hover { background: #c49a4e; }
+  .vocab-section { background: var(--dark); border-radius: 3px; padding: 32px 36px; margin-bottom: 48px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .vocab-section h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .vocab-entry { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .vocab-entry:last-child { border-bottom: none; }
+  .vocab-phrase { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+  .vocab-pos { font-size: 17px; font-style: italic; color: rgba(255,255,255,0.45); margin-bottom: 4px; font-family: 'Lato', sans-serif; }
+  .vocab-pl { font-size: 17px; color: var(--gold); font-style: italic; margin-bottom: 6px; opacity: 0.75; }
+  .vocab-def { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 6px; }
+  .vocab-def strong { color: var(--gold); font-weight: 700; }
+  .vocab-example { font-size: 17px; color: rgba(255,255,255,0.5); font-style: italic; line-height: 1.5; }
+  .vocab-subhead { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin: 30px 0 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); }
+  .vocab-subhead:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
+  .correct-line { color: #8fcf9f; }
+  .incorrect-line { color: #e08a6a; }
+  /* ── VOCAB DASHBOARD ── */
+  :root {
+    --vc-location: #E0954A;
+    --vc-finance: #4AA8E0;
+    --vc-cause: #E04A8C;
+    --vc-numbers: #7DBB8C;
+    --vc-language: #BC9DE0;
+    --vc-worktime: #E0C24A;
+    --vc-allplural: #D97BA0;
+    --vc-us: #4AE0A8;
+    --vc-tasks: #C79A6A;
+    --vc-attitudes: #9AA0C7;
+  }
+  .vocab-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .vocab-stat { background: rgba(255,255,255,0.05); border-radius: 3px; padding: 14px 16px; border-top: 2px solid var(--gold); }
+  .vocab-stat-num { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; color: #fff; line-height: 1; }
+  .vocab-stat-label { font-family: 'Lato', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 6px; }
+  .vocab-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+  .vocab-search { flex: 1 1 200px; position: relative; }
+  .vocab-search input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 999px; padding: 10px 18px 10px 38px; font-family: 'Lato', sans-serif; font-size: 16px; color: #fff; outline: none; transition: border-color 0.15s; }
+  .vocab-search input::placeholder { color: rgba(255,255,255,0.4); }
+  .vocab-search input:focus { border-color: var(--gold); }
+  .vocab-search::before { content: ''; position: absolute; left: 14px; top: 50%; width: 13px; height: 13px; transform: translateY(-50%); border: 1.5px solid rgba(255,255,255,0.45); border-radius: 50%; background: linear-gradient(45deg, transparent 46%, rgba(255,255,255,0.45) 47%, rgba(255,255,255,0.45) 53%, transparent 54%) no-repeat; }
+  .vocab-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vocab-chip { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 13.5px; letter-spacing: 0.03em; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; white-space: nowrap; }
+  .vocab-chip .vdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .vocab-chip:hover { border-color: var(--gold); }
+  .vocab-chip.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  .vocab-hint { font-size: 14px; color: rgba(255,255,255,0.35); font-style: italic; margin-bottom: 22px; }
+  .vocab-cat-block { margin-bottom: 34px; }
+  .vocab-cat-block.vhidden { display: none; }
+  .vocab-cat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .vocab-cat-head .vbar { width: 4px; height: 18px; border-radius: 2px; }
+  .vocab-cat-head span.vname { font-size: 12.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+  .vocab-cat-head span.vcount { font-size: 12.5px; color: rgba(255,255,255,0.35); }
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .vflip-card { perspective: 1200px; height: 190px; cursor: pointer; }
+  .vflip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(.4,.2,.2,1); transform-style: preserve-3d; }
+  .vflip-card.vflipped .vflip-inner { transform: rotateY(180deg); }
+  .vflip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 4px; padding: 18px 18px 16px; display: flex; flex-direction: column; justify-content: space-between; }
+  .vflip-front { background: rgba(255,255,255,0.05); border-top: 3px solid var(--vcat-color, var(--gold)); }
+  .vflip-back { background: rgba(255,255,255,0.1); border-top: 3px solid var(--vcat-color, var(--gold)); transform: rotateY(180deg); }
+  .vterm { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 20px; color: var(--gold); line-height: 1.25; }
+  .vexample { font-size: 16px; color: rgba(255,255,255,0.6); font-style: italic; line-height: 1.45; }
+  .vgloss { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 19px; color: #fff; line-height: 1.3; }
+  .vgloss-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); font-weight: 700; margin-bottom: 4px; }
+  .vflip-flag { align-self: flex-start; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vflip-tap { align-self: flex-end; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vnote-card, .vwarning-card { grid-column: 1 / -1; background: rgba(255,255,255,0.04); border: 1px dashed rgba(217,175,98,0.4); border-radius: 4px; padding: 16px 18px; font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .vnote-card strong { color: var(--gold); font-weight: 700; }
+  .vwarning-card { border-color: rgba(224,128,102,0.5); }
+  .vwarning-card .vw-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #e08a6a; margin-bottom: 4px; }
+  .vwarning-card .vw-line { color: #e08a6a; font-family: 'Lato', sans-serif; font-size: 17px; }
+  .vwarning-card .vw-fix { color: rgba(255,255,255,0.75); font-family: 'Lato', sans-serif; font-size: 17px; margin-top: 6px; }
+  .vempty-state { text-align: center; padding: 30px; color: rgba(255,255,255,0.35); font-style: italic; font-size: 15px; display: none; }
+  .vempty-state.vvisible { display: block; }
+  @media (max-width: 640px) { .vocab-stats { grid-template-columns: 1fr 1fr; } }
+  .audio-card { background: var(--dark); border: 1px solid rgba(200,150,62,0.25); border-radius: 3px; padding: 24px 28px; margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
+  .audio-card-header { display: flex; align-items: flex-start; gap: 16px; }
+  .audio-play-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--rust); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+  .audio-play-btn:hover { background: #c94d20; }
+  .audio-play-btn svg { width: 16px; height: 16px; fill: #ffffff; margin-left: 2px; }
+  .audio-play-btn.playing svg.icon-play { display: none; }
+  .audio-play-btn.playing svg.icon-pause { display: block !important; }
+  .audio-play-btn svg.icon-pause { display: none; }
+  .audio-meta { flex: 1; }
+  .audio-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: #ffffff; line-height: 1.3; margin-bottom: 4px; }
+  .audio-subtitle { font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+  .audio-duration { font-family: 'Lato', sans-serif; font-size: 12px; color: #6a6058; margin-top: 6px; }
+  .audio-progress-wrap { display: flex; align-items: center; gap: 12px; }
+  .audio-time { font-family: 'Lato', sans-serif; font-size: 13px; color: #6a6058; width: 36px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .audio-time.total { text-align: right; }
+  .audio-progress { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer; }
+  .audio-progress-fill { height: 100%; background: var(--rust); border-radius: 2px; width: 0%; transition: width 0.1s linear; pointer-events: none; }
+  .reading-intro { margin-bottom: 32px; }
+  .reading-intro .section-label { color: var(--rust); margin-bottom: 8px; }
+  .reading-intro p { font-size: 17px; color: #666; line-height: 1.6; }
+  .article-title { font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 32px); font-weight: 700; color: var(--dark); line-height: 1.2; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 2px solid var(--gold); }
+  .article-body p { font-size: 17px; line-height: 1.75; color: var(--ink); margin-bottom: 20px; }
+  .article-body h3 { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--dark); margin: 32px 0 14px; }
+  .article-body u { text-decoration: none; border-bottom: 2px solid var(--rust); color: var(--rust); font-weight: 700; }
+  .story-divider { height: 1px; background: var(--cream); margin: 56px 0; }
+  .exercise-section { background: var(--cream); border-radius: 3px; padding: 32px 36px; margin-top: 24px; }
+  .exercise-section .section-label { color: var(--rust); margin-bottom: 6px; }
+  .exercise-section h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .exercise-intro { font-size: 17px; color: #555; margin-bottom: 24px; line-height: 1.6; }
+  .exercise-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 6px; }
+  .exercise-def { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 8px; }
+  .exercise-def strong { color: var(--rust); font-weight: 700; }
+  .gapfill-item { padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .gapfill-item:last-child { border-bottom: none; }
+  .gap-input { background: #fff; border: 1px solid #ccc; border-radius: 2px; color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 4px 10px; width: 180px; outline: none; transition: border-color 0.15s; }
+  .gap-input:focus { border-color: var(--dark); }
+  .gap-input.correct-input { border-color: #5a9e6f; background: #d4edda; color: #2d6a4f; }
+  .gap-input.incorrect-input { border-color: var(--rust); background: #fde8e3; }
+  .check-btn { background: var(--rust); border: none; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: 700; padding: 6px 14px; border-radius: 2px; cursor: pointer; margin-left: 8px; transition: background 0.15s; }
+  .check-btn:hover { background: #8f3214; }
+  .gap-feedback { font-size: 14px; font-weight: 700; margin-left: 8px; }
+  .gap-feedback.correct-fb { color: #2d6a4f; }
+  .gap-feedback.incorrect-fb { color: var(--rust); }
+  .matching-wrap { margin-bottom: 16px; }
+  .matching-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .match-item { padding: 16px 14px; border-radius: 3px; cursor: pointer; font-size: 17px; line-height: 1.5; transition: background 0.15s, border-color 0.15s; border: 2px solid transparent; display: flex; align-items: center; min-height: 72px; }
+  .match-item.phrase { background: var(--dark); color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; }
+  .match-item.def { background: #fff; color: var(--ink); border: 2px solid var(--cream); }
+  .match-item.selected { border-color: var(--rust) !important; }
+  .match-item.correct { background: #d4edda; border-color: #5a9e6f !important; color: #2d6a4f; pointer-events: none; }
+  .match-item.incorrect { border-color: var(--rust) !important; background: #fde8e3; }
+  .reset-btn { background: transparent; border: 1px solid var(--dark); color: var(--dark); padding: 6px 16px; font-size: 13px; font-family: 'Lato', sans-serif; border-radius: 2px; cursor: pointer; margin-top: 8px; transition: background 0.15s, color 0.15s; }
+  .reset-btn:hover { background: var(--dark); color: #fff; }
+  .phrase-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; padding: 14px; background: var(--dark); border-radius: 3px; }
+  .phrase-box span { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 2px; }
+  .choice-item { padding: 16px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .choice-item:last-child { border-bottom: none; }
+  .choice-stem { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 12px; }
+  .choice-stem .blank { border-bottom: 2px solid var(--rust); padding: 0 28px; }
+  .choice-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .choice-btn { background: #fff; border: 2px solid var(--cream); color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 8px 18px; border-radius: 3px; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+  .choice-btn:hover { border-color: var(--dark); }
+  .choice-btn.correct { background: #d4edda; border-color: #5a9e6f; color: #2d6a4f; pointer-events: none; }
+  .choice-btn.incorrect { border-color: var(--rust); background: #fde8e3; }
+  .sort-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 14px; background: var(--dark); border-radius: 3px; min-height: 56px; }
+  .sort-chip { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 2px; cursor: pointer; transition: background 0.15s; border: 2px solid transparent; }
+  .sort-chip:hover { background: rgba(255,255,255,0.16); }
+  .sort-chip.selected { border-color: var(--gold); }
+  .sort-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sort-col { background: #fff; border: 2px solid var(--cream); border-radius: 3px; padding: 14px; min-height: 110px; }
+  .sort-col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 10px; }
+  .sort-col-desc { font-size: 14px; color: #777; margin-bottom: 12px; line-height: 1.4; }
+  .sort-col .sort-chip { display: inline-block; margin: 0 6px 6px 0; }
+  .sort-col .sort-chip.correct { background: #d4edda; color: #2d6a4f; }
+  .sort-col .sort-chip.incorrect { background: #fde8e3; color: var(--rust); }
+  .dispatch-footer { background: var(--dark); padding: 32px 40px; text-align: center; border-top: 3px solid var(--gold); }
+  .dispatch-footer p { font-family: 'Lato', sans-serif; font-size: 15px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
+  .dispatch-footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 187.17 64.8">
+        <path d="M75.73.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M91.17.35h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21V.35Z" fill="#fff"/>
+        <path d="M107.17,9.15v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M133.04.23h4.68l7.45,17.63h-5.2l-1.25-3.15h-6.78l-1.25,3.15h-5.08L133.04.23ZM137.29,10.93l-1.95-4.95-1.98,4.95h3.93Z" fill="#fff"/>
+        <path d="M146.87.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M75.73,23.84h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,23.84h4.53l7.2,9.25v-9.25h4.8v17.51h-4.23l-7.5-9.6v9.6h-4.8v-17.51Z" fill="#fff"/>
+        <path d="M111.5,32.64v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M131.31,23.84h4.85v13.25h8.48v4.25h-13.33v-17.51Z" fill="#fff"/>
+        <path d="M146.87,23.84h4.85v17.51h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M153.6,38.74l2.7-3.23c1.75,1.38,3.65,2.1,5.68,2.1,1.33,0,2.03-.45,2.03-1.2v-.05c0-.75-.58-1.12-2.98-1.7-3.73-.85-6.6-1.9-6.6-5.48v-.05c0-3.25,2.58-5.6,6.78-5.6,2.98,0,5.3.8,7.2,2.33l-2.43,3.43c-1.6-1.15-3.35-1.73-4.9-1.73-1.18,0-1.75.48-1.75,1.13v.05c0,.8.6,1.15,3.05,1.7,4,.88,6.5,2.18,6.5,5.45v.05c0,3.58-2.83,5.7-7.08,5.7-3.1,0-6.03-.98-8.2-2.9Z" fill="#fff"/>
+        <path d="M171.24,23.84h4.85v6.55h6.23v-6.55h4.85v17.51h-4.85v-6.65h-6.23v6.65h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M75.73,46.97h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,46.97h6.78c6.23,0,9.85,3.6,9.85,8.65v.05c0,5.05-3.68,8.8-9.95,8.8h-6.68v-17.51ZM97.29,51.25v8.93h1.98c2.93,0,4.85-1.6,4.85-4.43v-.05c0-2.8-1.93-4.45-4.85-4.45h-1.98Z" fill="#fff"/>
+        <path d="M111.4,56.8v-9.83h4.9v9.73c0,2.53,1.28,3.73,3.23,3.73s3.25-1.15,3.25-3.6v-9.85h4.9v9.7c0,5.63-3.23,8.13-8.2,8.13s-8.08-2.53-8.08-8Z" fill="#fff"/>
+        <path d="M47.97,14.89c1.86,0,2.98-.12,4.72-.25-7.71,11.93-9.32,13.55-19.14,15.66,2.73,0,5.72-.62,8.2-.87-4.35,4.47-7.21,9.2-10.56,12.8-1.12,1.24-2.98,2.86-5.34,3.23-2.61.5-4.6.62-7.58,1.12,2.98.37,5.84.37,8.7.37-.37.36-.73.7-1.08,1.01-5.36,4.79-9.99,5.45-17.68,5.45-3.11,3.23-4.1,6.21-5.97,11.06h49.09c7.46,0,12.8-4.85,12.8-12.8V.35c-8.7,10.07-5.47,11.56-16.16,14.54Z" fill="#fff"/>
+        <path d="M64.13.35c-9.82,2.98-22.37,3.85-28.96,10.44-1.74,1.74-3.23,5.84-3.48,9.07-.37-2.11-.62-4.23-.12-6.96-6.71,3.85-13.42,8.33-18.14,13.79-2.49,2.86-2.36,7.08-2.49,10.69-.87-2.73-.99-4.6-.87-7.21-2.98,3.36-6.34,6.21-6.71,10.69-.37,3.48.62,6.59,1.12,10.44-1.12,2.49-3.36,5.84-4.47,9.32v3.85c2.86-9.57,8.95-19.14,18.52-29.08C29.21,24.34,43,12.53,64.13.35Z" fill="#D9AF62"/>
+      </svg>
+    </div>
+    <div class="masthead-label">After-Class Dispatch &ndash; Lesson 8</div>
+    <div class="masthead-course">Business English in the Polish Context</div>
+    <div class="masthead-title">Working From Both Sides:<br><em>Vocabulary from Lesson 8</em></div>
+    <div class="definition-block">
+      <div><span class="definition-word">dispatch</span><span class="definition-pron">/dɪˈspætʃ/</span></div>
+      <div class="definition-pos">noun</div>
+      <div class="definition-text">1. A message or report sent quickly to its destination &ndash; especially one sent by a journalist from abroad, or between military officers.</div>
+      <div class="definition-text">2. Your after-class dispatch: everything from today's lesson, gathered in one place.</div>
+    </div>
+  </div>
+</header>
+<div class="meta-bar">
+  <div class="meta-item"><span>Lesson</span>8</div>
+  <div class="meta-item"><span>Date</span>12 August 2026</div>
+  <div class="meta-item"><span>Topic</span>Hybrid Work, Finance, Approximate Numbers, the US, Time Management</div>
+</div>
+<div class="back-nav">
+  <a href="index.html">&larr; Home</a>
+</div>
+<main class="body-wrap">
+  <div class="quizlet-card">
+    <div class="section-label">Your Quizlet Class</div>
+    <p>Your vocabulary is growing. After every lesson, new words and phrases are added to your Quizlet class. Go back, test yourself, and make them stick.</p>
+    <a class="quizlet-btn" href="https://quizlet.com/join/72BDBFDfB?i=4ie97k&x=1bqt" target="_blank">Open your Quizlet class &rarr;</a>
+  </div>
+  <div class="vocab-section">
+    <div class="section-label">Class Notes</div>
+    <h2>Lesson 8 &ndash; Vocabulary</h2>
+    <div class="vocab-stats" id="vocabStats"></div>
+    <div class="vocab-controls">
+      <div class="vocab-search"><input type="text" id="vocabSearch" placeholder="Search a term..." autocomplete="off"></div>
+      <div class="vocab-filters" id="vocabFilters"></div>
+    </div>
+    <div class="vocab-hint">Click any card to flip it and check the Polish gloss.</div>
+    <div id="vocabDashboard"></div>
+    <div class="vempty-state" id="vocabEmpty">No terms match your search.</div>
+  </div>
+  <div class="reading-intro">
+    <div class="section-label">Reading &amp; Listening</div>
+    <p>Listen to each recording and read the story. The target vocabulary from the lesson appears in the text. It is highlighted. Notice how each phrase is used in context.</p>
+  </div>
+  <div class="article-title">Two Places, One Team</div>
+  <div class="audio-card">
+    <audio id="audio-1" preload="metadata"><source src="lesson-8-story-1.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-1" onclick="togglePlay(1)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">Two Places, One Team</div>
+        <div class="audio-subtitle">Story 1 (Lesson 8)</div>
+        <div class="audio-duration" id="dur-1">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-1">0:00</span>
+      <div class="audio-progress" id="bar-1" onclick="seekAudio(event, 1)"><div class="audio-progress-fill" id="fill-1"></div></div>
+      <span class="audio-time total" id="tot-1">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Anna <u>used to</u> spend every weekday at her desk in the city, but under the new hybrid policy she only had <u>to commute to the office</u> three days a week and could <u>work from home</u> on the other two. She had recently moved into <u>a house in the country</u>, <u>halfway between Warsaw and Radom</u>, and being able to work from home twice a week turned out to be <u>a perk</u> she valued more than she had expected.</p>
+    <p><u>At work</u>, <u>the working environment</u> had shifted considerably since the policy changed. Anna's team occasionally worked with a partner office in Rotterdam, and she noticed that <u>the Dutch</u> rarely stayed late; in fact, most <u>Dutch people</u> she had met seemed surprised that some of her Warsaw colleagues still regularly <u>worked long hours</u>. Anna hoped <u>all these changes</u> at her own company would eventually bring Warsaw closer to that balance.</p>
+    <p>The following Monday, the <u>accounts receivable</u> team flagged a discrepancy with <u>accounts payable</u>: a supplier invoice had appeared twice in the system. Anna asked one of her analysts <u>to explain the situation to her</u>, and once he had <u>explained to her the difference between</u> the duplicate entry and the original invoice, the correction took only a few minutes. She later told the finance director that the mismatch had happened <u>because</u> a batch upload had failed halfway through the process, not <u>because of</u> any error on the supplier's side.</p>
+  </div>
+  <div class="story-divider"></div>
+  <div class="article-title">Explaining the Numbers to the US Office</div>
+  <div class="audio-card">
+    <audio id="audio-2" preload="metadata"><source src="lesson-8-story-2.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-2" onclick="togglePlay(2)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">Explaining the Numbers to the US Office</div>
+        <div class="audio-subtitle">Story 2 (Lesson 8)</div>
+        <div class="audio-duration" id="dur-2">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-2">0:00</span>
+      <div class="audio-progress" id="bar-2" onclick="seekAudio(event, 2)"><div class="audio-progress-fill" id="fill-2"></div></div>
+      <span class="audio-time total" id="tot-2">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Ahead of the call with the US office, Anna prepared a short summary in <u>plain language</u> rather than technical jargon, since not everyone on the call worked in finance. She added a little <u>illustrative language</u> to help explain the trend more clearly. The summary noted that overdue invoices had fallen by <u>roughly</u> fifteen percent, that the total outstanding balance was now <u>approximately</u> two million euros, and that the review process had taken <u>about</u> three weeks. One slide referred to an older system introduced <u>circa</u> 1995, long before the current one.</p>
+    <p>During the call, Anna explained how the reconciliation process worked <u>in the US</u> compared with Poland. One of the American colleagues mentioned that <u>the US population</u>'s growing use of digital payments had changed reporting requirements over the past decade, and that a recent shift in <u>US foreign policy</u> had indirectly disrupted a few of their international suppliers. He added, half-joking, that a recent case before <u>the US Supreme Court</u> had briefly confused the compliance team, and that a statement from <u>the US president</u> earlier that year had done much the same.</p>
+    <p>After the call, Anna found <u>an ad hoc task</u> waiting on her desk: a reconciliation query that needed an answer the same day. She decided <u>to postpone the less urgent items until Monday</u> and focus on <u>using her time to best effect</u> for the rest of the afternoon. Even so, she ended up with some work to do <u>after work</u> that evening. She later reminded a junior colleague not <u>to fetishise</u> long hours as proof of commitment &ndash; finishing the right tasks mattered far more than simply staying late.</p>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 1 &ndash; Complete the Phrase</h2>
+    <p class="exercise-intro">Each definition below has one key word missing from the phrase. Type the missing part in the box and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="gapfill-item" id="ex1-1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">A house located outside the city, often used for weekends or as a quieter alternative to city living: a house in the <input class="gap-input" data-answer="country|countryside" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex1-1')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-1"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">Situated at an equal distance between two places: <input class="gap-input" data-answer="halfway|midway" placeholder="______"> between Warsaw and Radom</div>
+      <button class="check-btn" onclick="checkGap('ex1-2')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-2"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">To travel between home and work on a regular, routine basis: to <input class="gap-input" data-answer="commute" placeholder="______"> to the office</div>
+      <button class="check-btn" onclick="checkGap('ex1-3')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-3"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">An informal word for an extra benefit connected with a job, in addition to salary: a <input class="gap-input" data-answer="perk|benefit" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex1-4')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-4"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">Money owed to a company by its customers, not yet received: accounts <input class="gap-input" data-answer="receivable" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex1-5')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-5"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-6">
+      <div class="exercise-number">6</div>
+      <div class="exercise-def">Money a company owes to its suppliers, not yet paid: accounts <input class="gap-input" data-answer="payable" placeholder="______"></div>
+      <button class="check-btn" onclick="checkGap('ex1-6')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-6"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 2 &ndash; Matching</h2>
+    <p class="exercise-intro">Match each word on the left with the definition that best captures its nuance on the right. Click a word to select it, then click the correct definition. Green means correct.</p>
+    <div class="matching-wrap" id="matching">
+      <div class="matching-col">
+        <div class="match-item phrase" data-id="1" data-group="ex2" onclick="selectMatch(this)">roughly</div>
+        <div class="match-item def" data-id="3" data-group="ex2" onclick="selectMatch(this)">The most common, neutral way of giving an approximate amount or number.</div>
+        <div class="match-item phrase" data-id="2" data-group="ex2" onclick="selectMatch(this)">approximately</div>
+        <div class="match-item def" data-id="5" data-group="ex2" onclick="selectMatch(this)">Language using examples, comparisons or images to make an idea clearer.</div>
+        <div class="match-item phrase" data-id="3" data-group="ex2" onclick="selectMatch(this)">about</div>
+        <div class="match-item def" data-id="1" data-group="ex2" onclick="selectMatch(this)">Approximately, without giving an exact figure.</div>
+        <div class="match-item phrase" data-id="4" data-group="ex2" onclick="selectMatch(this)">circa</div>
+        <div class="match-item def" data-id="2" data-group="ex2" onclick="selectMatch(this)">A more formal way of giving an inexact figure, common in reports and data.</div>
+        <div class="match-item phrase" data-id="5" data-group="ex2" onclick="selectMatch(this)">illustrative language</div>
+        <div class="match-item def" data-id="4" data-group="ex2" onclick="selectMatch(this)">Used mainly with dates, especially historical dates.</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetMatching('ex2')">Reset</button>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 3 &ndash; Gap Fill</h2>
+    <p class="exercise-intro">Complete each sentence using one of the phrases from the box below. Type your answer in the gap and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="phrase-box">
+      <span>US foreign policy</span>
+      <span>an ad hoc task</span>
+      <span>the US Supreme Court</span>
+      <span>in the US</span>
+      <span>the US president</span>
+      <span>the US population</span>
+    </div>
+    <div class="gapfill-item" id="gf1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">Reporting standards can vary significantly <input class="gap-input" data-answer="in the US" placeholder="____________"> compared with other markets.</div>
+      <button class="check-btn" onclick="checkGap('gf1')">Check</button>
+      <span class="gap-feedback" id="fb-gf1"></span>
+    </div>
+    <div class="gapfill-item" id="gf2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">A recent case before <input class="gap-input" data-answer="the US Supreme Court" placeholder="____________"> attracted attention across several industries.</div>
+      <button class="check-btn" onclick="checkGap('gf2')">Check</button>
+      <span class="gap-feedback" id="fb-gf2"></span>
+    </div>
+    <div class="gapfill-item" id="gf3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">An unexpected reconciliation query landed on Anna's desk as <input class="gap-input" data-answer="an ad hoc task" placeholder="____________">.</div>
+      <button class="check-btn" onclick="checkGap('gf3')">Check</button>
+      <span class="gap-feedback" id="fb-gf3"></span>
+    </div>
+    <div class="gapfill-item" id="gf4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">Analysts noted that <input class="gap-input" data-answer="the US population" placeholder="____________">'s growing use of digital payments was changing reporting requirements.</div>
+      <button class="check-btn" onclick="checkGap('gf4')">Check</button>
+      <span class="gap-feedback" id="fb-gf4"></span>
+    </div>
+    <div class="gapfill-item" id="gf5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">A shift in <input class="gap-input" data-answer="US foreign policy" placeholder="____________"> had indirect effects on some international suppliers.</div>
+      <button class="check-btn" onclick="checkGap('gf5')">Check</button>
+      <span class="gap-feedback" id="fb-gf5"></span>
+    </div>
+    <div class="gapfill-item" id="gf6">
+      <div class="exercise-number">6</div>
+      <div class="exercise-def">A statement from <input class="gap-input" data-answer="the US president" placeholder="____________"> earlier in the year briefly confused the compliance team.</div>
+      <button class="check-btn" onclick="checkGap('gf6')">Check</button>
+      <span class="gap-feedback" id="fb-gf6"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 4 &ndash; Choosing Between Confusable Forms</h2>
+    <p class="exercise-intro">This lesson contained several forms that are easy to get wrong. Choose the correct option in each sentence.</p>
+    <div class="choice-item" id="ch1">
+      <div class="choice-stem"><span class="blank"></span> are often associated with a strong work-life balance.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch1', this)">The Dutch</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch1', this)">Dutch</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch2">
+      <div class="choice-stem">She spent most of the afternoon <span class="blank"></span> finishing the report.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch2', this)">at work</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch2', this)">in work</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch3">
+      <div class="choice-stem">The meeting was postponed <span class="blank"></span> a scheduling conflict.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch3', this)">because of</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch3', this)">because</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch4">
+      <div class="choice-stem">The meeting was postponed <span class="blank"></span> several people were unavailable.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch4', this)">because</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch4', this)">because of</button>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 5 &ndash; Gap Fill</h2>
+    <p class="exercise-intro">Complete each sentence using one of the phrases from the box below. Type your answer in the gap and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="phrase-box">
+      <span>after work</span>
+      <span>to work long hours</span>
+      <span>all these changes</span>
+      <span>to fetishise</span>
+      <span>the working environment</span>
+    </div>
+    <div class="gapfill-item" id="gf7">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">Some managers tend <input class="gap-input" data-answer="to fetishise" placeholder="____________"> long working hours as a sign of commitment.</div>
+      <button class="check-btn" onclick="checkGap('gf7')">Check</button>
+      <span class="gap-feedback" id="fb-gf7"></span>
+    </div>
+    <div class="gapfill-item" id="gf8">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def"><input class="gap-input" data-answer="the working environment" placeholder="____________"> had shifted considerably since the new policy began.</div>
+      <button class="check-btn" onclick="checkGap('gf8')">Check</button>
+      <span class="gap-feedback" id="fb-gf8"></span>
+    </div>
+    <div class="gapfill-item" id="gf9">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">Anna still had a few things to finish <input class="gap-input" data-answer="after work" placeholder="____________"> that evening.</div>
+      <button class="check-btn" onclick="checkGap('gf9')">Check</button>
+      <span class="gap-feedback" id="fb-gf9"></span>
+    </div>
+    <div class="gapfill-item" id="gf10">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def"><input class="gap-input" data-answer="all these changes|all of these changes" placeholder="____________"> happened gradually, but together they transformed the department.</div>
+      <button class="check-btn" onclick="checkGap('gf10')">Check</button>
+      <span class="gap-feedback" id="fb-gf10"></span>
+    </div>
+    <div class="gapfill-item" id="gf11">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">A few colleagues in the Warsaw office still seem <input class="gap-input" data-answer="to work long hours" placeholder="____________">.</div>
+      <button class="check-btn" onclick="checkGap('gf11')">Check</button>
+      <span class="gap-feedback" id="fb-gf11"></span>
+    </div>
+  </div>
+</main>
+<footer class="dispatch-footer">
+  <p>Business English in the Polish Context &nbsp;&middot;&nbsp; Prepared for Gosia &nbsp;&middot;&nbsp; August 2026</p>
+</footer>
+<script>
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+[1, 2].forEach(function(n) {
+  const audio = document.getElementById('audio-' + n);
+  if (!audio) return;
+  audio.addEventListener('loadedmetadata', function() {
+    document.getElementById('dur-' + n).textContent = formatTime(audio.duration);
+    document.getElementById('tot-' + n).textContent = formatTime(audio.duration);
+  });
+  audio.addEventListener('timeupdate', function() {
+    document.getElementById('cur-' + n).textContent = formatTime(audio.currentTime);
+    const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    document.getElementById('fill-' + n).style.width = pct + '%';
+  });
+  audio.addEventListener('ended', function() {
+    document.getElementById('play-' + n).classList.remove('playing');
+    document.getElementById('fill-' + n).style.width = '0%';
+    document.getElementById('cur-' + n).textContent = '0:00';
+  });
+});
+function togglePlay(n) {
+  const audio = document.getElementById('audio-' + n);
+  const btn = document.getElementById('play-' + n);
+  [1, 2].forEach(function(other) {
+    if (other === n) return;
+    const otherAudio = document.getElementById('audio-' + other);
+    const otherBtn = document.getElementById('play-' + other);
+    if (otherAudio && !otherAudio.paused) {
+      otherAudio.pause();
+      otherBtn.classList.remove('playing');
+    }
+  });
+  if (audio.paused) { audio.play(); btn.classList.add('playing'); }
+  else { audio.pause(); btn.classList.remove('playing'); }
+}
+function seekAudio(e, n) {
+  const audio = document.getElementById('audio-' + n);
+  const bar = document.getElementById('bar-' + n);
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+}
+let selectedPhrase = {};
+let selectedDef = {};
+function selectMatch(el) {
+  if (el.classList.contains('correct')) return;
+  const group = el.dataset.group || 'default';
+  const isPhrase = el.classList.contains('phrase');
+  const isDef = el.classList.contains('def');
+  if (isPhrase) {
+    document.querySelectorAll('.match-item.phrase.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPhrase[group] = el;
+  } else if (isDef) {
+    document.querySelectorAll('.match-item.def.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedDef[group] = el;
+  }
+  if (selectedPhrase[group] && selectedDef[group]) {
+    if (selectedPhrase[group].dataset.id === selectedDef[group].dataset.id) {
+      selectedPhrase[group].classList.remove('selected');
+      selectedDef[group].classList.remove('selected');
+      selectedPhrase[group].classList.add('correct');
+      selectedDef[group].classList.add('correct');
+    } else {
+      const p = selectedPhrase[group], d = selectedDef[group];
+      p.classList.remove('selected');
+      d.classList.remove('selected');
+      p.classList.add('incorrect');
+      d.classList.add('incorrect');
+      setTimeout(() => {
+        p.classList.remove('incorrect');
+        d.classList.remove('incorrect');
+      }, 800);
+    }
+    selectedPhrase[group] = null;
+    selectedDef[group] = null;
+  }
+}
+function resetMatching(group) {
+  const g = group || 'default';
+  document.querySelectorAll('.match-item[data-group="' + g + '"]').forEach(el => {
+    el.classList.remove('selected', 'correct', 'incorrect');
+  });
+  selectedPhrase[g] = null;
+  selectedDef[g] = null;
+}
+function checkGap(id) {
+  const item = document.getElementById(id);
+  const input = item.querySelector('.gap-input');
+  const fb = document.getElementById('fb-' + id);
+  const acceptable = input.dataset.answer.toLowerCase().split('|').map(s => s.trim());
+  const given = input.value.toLowerCase().trim();
+  if (acceptable.includes(given)) {
+    fb.textContent = '✓ Correct';
+    fb.className = 'gap-feedback correct-fb';
+    input.classList.add('correct-input');
+    input.classList.remove('incorrect-input');
+  } else {
+    fb.textContent = '✗ Try again';
+    fb.className = 'gap-feedback incorrect-fb';
+    input.classList.add('incorrect-input');
+    input.classList.remove('correct-input');
+  }
+}
+function checkChoice(id, btn) {
+  const correct = btn.dataset.correct === '1';
+  if (correct) {
+    const wrap = document.getElementById(id);
+    wrap.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('incorrect'));
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('incorrect');
+    setTimeout(() => btn.classList.remove('incorrect'), 800);
+  }
+}
+</script>
+<script>
+// ── VOCAB DASHBOARD (Lesson 8) ──
+const VOCAB_CATS = [
+  { key: "location", label: "Location &amp; Commuting", emoji: "🟠", color: "var(--vc-location)" },
+  { key: "finance", label: "Finance", emoji: "🔵", color: "var(--vc-finance)" },
+  { key: "cause", label: "Cause &amp; Explanation", emoji: "🟣", color: "var(--vc-cause)" },
+  { key: "numbers", label: "Approximate Numbers", emoji: "🟢", color: "var(--vc-numbers)" },
+  { key: "language", label: "Language &amp; Communication", emoji: "🟪", color: "var(--vc-language)" },
+  { key: "worktime", label: "Working Time &amp; Culture", emoji: "🟡", color: "var(--vc-worktime)" },
+  { key: "allplural", label: "All + Plural Noun", emoji: "🌸", color: "var(--vc-allplural)" },
+  { key: "us", label: "Talking About the US", emoji: "🟤", color: "var(--vc-us)" },
+  { key: "tasks", label: "Tasks &amp; Time Management", emoji: "🟧", color: "var(--vc-tasks)" },
+  { key: "attitudes", label: "Attitudes to Work", emoji: "⚫", color: "var(--vc-attitudes)" }
+];
+
+const VOCAB_DATA = [
+  { cat: "location", term: "a house in the country", gloss: "dom poza miastem / dom na wsi", ex: "I'm spending this week at my house in the country." },
+  { cat: "location", term: "halfway between A and B", gloss: "w połowie drogi między A i B", ex: "The office is halfway between Warsaw and Łódź." },
+  { cat: "location", term: "to commute to the office", gloss: "dojeżdżać do biura", ex: "I only have to commute to the office once a week." },
+  { cat: "location", term: "to work from home", gloss: "pracować z domu", ex: "Employees can work from home several days a week." },
+  { cat: "location", term: "a perk", gloss: "benefit / dodatkowa korzyść związana z pracą", ex: "Flexible working hours are an important perk for many employees." },
+  { cat: "location", term: "used to + verb", gloss: "kiedyś coś robić / kiedyś coś było", ex: "We used to have more flexibility about where we worked." },
+
+  { cat: "finance", term: "accounts payable", gloss: "zobowiązania / zobowiązania wobec dostawców", ex: "The accounts payable team processes invoices from suppliers." },
+  { cat: "finance", term: "accounts receivable", gloss: "należności / kwoty należne firmie od klientów", ex: "She is responsible for monitoring accounts receivable." },
+
+  { cat: "cause", term: "because + clause", gloss: "ponieważ", ex: "We changed the schedule because several people were unavailable." },
+  { cat: "cause", term: "because of + noun", gloss: "z powodu / ze względu na", ex: "The meeting was postponed because of technical problems." },
+  { cat: "cause", term: "to explain something to somebody", gloss: "wyjaśnić coś komuś", ex: "Could you explain the new procedure to me?" },
+  { cat: "cause", term: "to explain to somebody the difference between A and B", gloss: "wyjaśnić komuś różnicę między A i B", ex: "Can you explain to me the difference between these two options?" },
+
+  { cat: "numbers", term: "roughly", gloss: "mniej więcej / około", ex: "The project will take roughly three months." },
+  { cat: "numbers", term: "approximately", gloss: "około / w przybliżeniu", ex: "The company employs approximately 500 people." },
+  { cat: "numbers", term: "about", gloss: "około", ex: "The meeting lasted about an hour." },
+  { cat: "numbers", term: "circa", gloss: "około – głównie przy datach, zwłaszcza historycznych", ex: "The building dates from circa 1900." },
+
+  { cat: "language", term: "plain language", gloss: "prosty, zrozumiały język", ex: "The report should be written in plain language so that everyone can understand it." },
+  { cat: "language", term: "illustrative language", gloss: "obrazowy język / język oparty na przykładach i porównaniach", ex: "She uses illustrative language to make complex ideas easier to understand." },
+
+  { cat: "worktime", term: "the working environment", gloss: "środowisko pracy", ex: "Expectations can vary considerably depending on the working environment." },
+  { cat: "worktime", term: "at work", gloss: "w pracy", ex: "People in some countries spend more time at work than in others." },
+  { cat: "worktime", term: "the Dutch", gloss: "Holendrzy", ex: "The Dutch are often associated with a strong work-life balance." },
+  { cat: "worktime", term: "Dutch people", gloss: "Holendrzy / osoby z Holandii", ex: "Many Dutch people work fewer hours than employees in some other countries." },
+  { cat: "worktime", term: "to work long hours", gloss: "pracować przez wiele godzin / długo pracować", ex: "Managers sometimes work long hours during particularly busy periods." },
+
+  { cat: "allplural", term: "all these changes", gloss: "wszystkie te zmiany", ex: "All these changes happened within a few months." },
+
+  { cat: "us", term: "in the US", gloss: "w USA", ex: "The company has several offices in the US." },
+  { cat: "us", term: "the US population", gloss: "ludność USA", ex: "A large part of the US population lives in urban areas." },
+  { cat: "us", term: "US foreign policy", gloss: "polityka zagraniczna USA", ex: "The article discusses changes in US foreign policy." },
+  { cat: "us", term: "the US Supreme Court", gloss: "Sąd Najwyższy USA", ex: "The case eventually reached the US Supreme Court." },
+  { cat: "us", term: "the US president", gloss: "prezydent USA", ex: "The decision was announced by the US president." },
+
+  { cat: "tasks", term: "to postpone something until Monday", gloss: "przełożyć coś na poniedziałek", ex: "We can postpone the less urgent tasks until Monday." },
+  { cat: "tasks", term: "to use your time to best effect", gloss: "wykorzystać swój czas jak najlepiej / możliwie najefektywniej", ex: "I try to use my time to best effect when I am in the office." },
+  { cat: "tasks", term: "an ad hoc task", gloss: "zadanie doraźne / zadanie pojawiające się na bieżąco", ex: "Unexpected ad hoc tasks can disrupt the whole day." },
+  { cat: "tasks", term: "after work", gloss: "po pracy", ex: "I still have a few things to finish after work today." },
+
+  { cat: "attitudes", term: "to fetishise something", gloss: "nadmiernie idealizować coś / przywiązywać do czegoś przesadne znaczenie", ex: "Some companies fetishise long working hours instead of focusing on results." }
+];
+
+const VOCAB_NOTES = [
+  { cat: "allplural", html: "✅ <strong>all these changes</strong><br>✅ <strong>all of these changes</strong><br>🚫 all these of changes" }
+];
+
+const VOCAB_WARNINGS = [
+  { cat: "worktime", label: "Do not say", line: "in work", fix: "Say: at work &ndash; \"in work\" is not standard British or American usage in this sense." }
+];
+
+let vocabActiveCat = "all";
+
+function vocabBuildStats() {
+  const el = document.getElementById('vocabStats');
+  el.innerHTML = `
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_DATA.length}</div><div class="vocab-stat-label">Vocabulary Items</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_CATS.length}</div><div class="vocab-stat-label">Topic Areas</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_NOTES.length + VOCAB_WARNINGS.length}</div><div class="vocab-stat-label">Usage Notes</div></div>`;
+}
+
+function vocabBuildFilters() {
+  const el = document.getElementById('vocabFilters');
+  let html = `<button class="vocab-chip active" data-cat="all" onclick="vocabSetFilter('all')"><span class="vdot" style="background:var(--gold)"></span>All</button>`;
+  VOCAB_CATS.forEach(c => {
+    html += `<button class="vocab-chip" data-cat="${c.key}" onclick="vocabSetFilter('${c.key}')"><span class="vdot" style="background:${c.color}"></span>${c.emoji} ${c.label}</button>`;
+  });
+  el.innerHTML = html;
+}
+
+function vocabSetFilter(key) {
+  vocabActiveCat = key;
+  document.querySelectorAll('.vocab-chip').forEach(c => c.classList.toggle('active', c.dataset.cat === key));
+  vocabApplyFilters();
+}
+
+function vocabBuildDashboard() {
+  const container = document.getElementById('vocabDashboard');
+  let html = '';
+  VOCAB_CATS.forEach(cat => {
+    const items = VOCAB_DATA.filter(d => d.cat === cat.key);
+    const notes = VOCAB_NOTES.filter(n => n.cat === cat.key);
+    const warnings = VOCAB_WARNINGS.filter(w => w.cat === cat.key);
+    if (!items.length) return;
+
+    html += `<div class="vocab-cat-block" data-cat="${cat.key}">
+      <div class="vocab-cat-head"><span class="vbar" style="background:${cat.color}"></span><span class="vname">${cat.emoji} ${cat.label}</span><span class="vcount">${items.length} item${items.length > 1 ? 's' : ''}</span></div>
+      <div class="vocab-grid">`;
+
+    items.forEach((item, i) => {
+      const id = cat.key + '-' + i;
+      html += `<div class="vflip-card" data-term="${item.term.toLowerCase()}" onclick="this.classList.toggle('vflipped')">
+        <div class="vflip-inner">
+          <div class="vflip-face vflip-front" style="--vcat-color:${cat.color}">
+            <div class="vterm">${item.term}</div>
+            <div class="vexample">${item.ex}</div>
+            <div class="vflip-flag">Tap to see gloss</div>
+          </div>
+          <div class="vflip-face vflip-back" style="--vcat-color:${cat.color}">
+            <div><div class="vgloss-label">Polish</div><div class="vgloss">${item.gloss}</div></div>
+            <div class="vflip-tap">Tap to flip back</div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    warnings.forEach(w => {
+      html += `<div class="vwarning-card"><div class="vw-label">${w.label}</div><div class="vw-line">🚫 ${w.line}</div><div class="vw-fix">${w.fix}</div></div>`;
+    });
+    notes.forEach(n => {
+      html += `<div class="vnote-card">${n.html}</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function vocabApplyFilters() {
+  const q = document.getElementById('vocabSearch').value.trim().toLowerCase();
+  let anyVisible = false;
+  document.querySelectorAll('.vocab-cat-block').forEach(block => {
+    const cat = block.dataset.cat;
+    const catMatch = (vocabActiveCat === 'all' || vocabActiveCat === cat);
+    let hasVisible = false;
+    block.querySelectorAll('.vflip-card').forEach(card => {
+      const show = catMatch && (!q || card.dataset.term.includes(q));
+      card.style.display = show ? '' : 'none';
+      if (show) hasVisible = true;
+    });
+    block.querySelectorAll('.vnote-card, .vwarning-card').forEach(extra => {
+      extra.style.display = (catMatch && !q) ? '' : 'none';
+    });
+    block.classList.toggle('vhidden', !hasVisible);
+    if (hasVisible) anyVisible = true;
+  });
+  document.getElementById('vocabEmpty').classList.toggle('vvisible', !anyVisible);
+}
+
+vocabBuildStats();
+vocabBuildFilters();
+vocabBuildDashboard();
+document.getElementById('vocabSearch').addEventListener('input', vocabApplyFilters);
+</script>
+</body>
+</html>
