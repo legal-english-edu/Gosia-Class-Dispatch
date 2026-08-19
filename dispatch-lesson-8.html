@@ -71,6 +71,7 @@
     --vc-us: #4AE0A8;
     --vc-tasks: #C79A6A;
     --vc-attitudes: #9AA0C7;
+    --vc-outcomes: #C77B5C;
   }
   .vocab-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
   .vocab-stat { background: rgba(255,255,255,0.05); border-radius: 3px; padding: 14px 16px; border-top: 2px solid var(--gold); }
@@ -284,7 +285,7 @@
   <div class="article-body">
     <p>Anna <u>used to</u> spend every weekday at her desk in the city, but under the new hybrid policy she only had <u>to commute to the office</u> three days a week and could <u>work from home</u> on the other two. She had recently moved into <u>a house in the country</u>, <u>halfway between Warsaw and Radom</u>, and being able to work from home twice a week turned out to be <u>a perk</u> she valued more than she had expected.</p>
     <p><u>At work</u>, <u>the working environment</u> had shifted considerably since the policy changed. Anna's team occasionally worked with a partner office in Rotterdam, and she noticed that <u>the Dutch</u> rarely stayed late; in fact, most <u>Dutch people</u> she had met seemed surprised that some of her Warsaw colleagues still regularly <u>worked long hours</u>. Anna hoped <u>all these changes</u> at her own company would eventually bring Warsaw closer to that balance.</p>
-    <p>The following Monday, the <u>accounts receivable</u> team flagged a discrepancy with <u>accounts payable</u>: a supplier invoice had appeared twice in the system. Anna asked one of her analysts <u>to explain the situation to her</u>, and once he had <u>explained to her the difference between</u> the duplicate entry and the original invoice, the correction took only a few minutes. She later told the finance director that the mismatch had happened <u>because</u> a batch upload had failed halfway through the process, not <u>because of</u> any error on the supplier's side.</p>
+    <p>The following Monday, the <u>accounts receivable</u> team <u>flagged a discrepancy</u> with <u>accounts payable</u>: a supplier invoice had appeared twice in the system. Anna asked one of her analysts <u>to explain the situation to her</u>, and once he had <u>explained to her the difference between</u> <u>the duplicate entry</u> and the original invoice, the correction took only a few minutes. She later told the finance director that the mismatch had happened <u>because</u> a batch upload had failed halfway through the process, not <u>because of</u> any error on the supplier's side.</p>
   </div>
   <div class="story-divider"></div>
   <div class="article-title">Explaining the Numbers to the US Office</div>
@@ -309,8 +310,8 @@
   </div>
   <div class="article-body">
     <p>Ahead of the call with the US office, Anna prepared a short summary in <u>plain language</u> rather than technical jargon, since not everyone on the call worked in finance. She added a little <u>illustrative language</u> to help explain the trend more clearly. The summary noted that overdue invoices had fallen by <u>roughly</u> fifteen percent, that the total outstanding balance was now <u>approximately</u> two million euros, and that the review process had taken <u>about</u> three weeks. One slide referred to an older system introduced <u>circa</u> 1995, long before the current one.</p>
-    <p>During the call, Anna explained how the reconciliation process worked <u>in the US</u> compared with Poland. One of the American colleagues mentioned that <u>the US population</u>'s growing use of digital payments had changed reporting requirements over the past decade, and that a recent shift in <u>US foreign policy</u> had indirectly disrupted a few of their international suppliers. He added, half-joking, that a recent case before <u>the US Supreme Court</u> had briefly confused the compliance team, and that a statement from <u>the US president</u> earlier that year had done much the same.</p>
-    <p>After the call, Anna found <u>an ad hoc task</u> waiting on her desk: a reconciliation query that needed an answer the same day. She decided <u>to postpone the less urgent items until Monday</u> and focus on <u>using her time to best effect</u> for the rest of the afternoon. Even so, she ended up with some work to do <u>after work</u> that evening. She later reminded a junior colleague not <u>to fetishise</u> long hours as proof of commitment &ndash; finishing the right tasks mattered far more than simply staying late.</p>
+    <p>During the call, Anna explained how the <u>reconciliation process</u> worked <u>in the US</u> compared with Poland. One of the American colleagues mentioned that <u>the US population</u>'s growing use of digital payments had changed reporting requirements over the past decade, and that a recent shift in <u>US foreign policy</u> had indirectly <u>disrupted</u> a few of their international suppliers. He added, half-joking, that a recent case before <u>the US Supreme Court</u> had briefly confused the compliance team, and that a statement from <u>the US president</u> earlier that year had done much the same.</p>
+    <p>After the call, Anna found <u>an ad hoc task</u> waiting on her desk: a reconciliation <u>query</u> that needed an answer the same day. She decided <u>to postpone the less urgent items until Monday</u> and focus on <u>using her time to best effect</u> for the rest of the afternoon. Even so, she <u>ended up with</u> some work to do <u>after work</u> that evening. She later reminded a junior colleague not <u>to fetishise</u> long hours as <u>proof of commitment</u> &ndash; finishing the right tasks mattered far more than simply staying late.</p>
   </div>
   <div class="exercise-section">
     <div class="section-label">Practice</div>
@@ -635,7 +636,8 @@ const VOCAB_CATS = [
   { key: "allplural", label: "All + Plural Noun", emoji: "🌸", color: "var(--vc-allplural)" },
   { key: "us", label: "Talking About the US", emoji: "🟤", color: "var(--vc-us)" },
   { key: "tasks", label: "Tasks &amp; Time Management", emoji: "🟧", color: "var(--vc-tasks)" },
-  { key: "attitudes", label: "Attitudes to Work", emoji: "⚫", color: "var(--vc-attitudes)" }
+  { key: "attitudes", label: "Attitudes to Work", emoji: "⚫", color: "var(--vc-attitudes)" },
+  { key: "outcomes", label: "Outcomes &amp; Effects", emoji: "🟫", color: "var(--vc-outcomes)" }
 ];
 
 const VOCAB_DATA = [
@@ -648,6 +650,10 @@ const VOCAB_DATA = [
 
   { cat: "finance", term: "accounts payable", gloss: "zobowiązania / zobowiązania wobec dostawców", ex: "The accounts payable team processes invoices from suppliers." },
   { cat: "finance", term: "accounts receivable", gloss: "należności / kwoty należne firmie od klientów", ex: "She is responsible for monitoring accounts receivable." },
+  { cat: "finance", term: "to flag a discrepancy", gloss: "zgłosić rozbieżność / zasygnalizować niezgodność", ex: "The accounts receivable team flagged a discrepancy with accounts payable." },
+  { cat: "finance", term: "a duplicate entry", gloss: "zdublowany wpis / powielony zapis", ex: "The system showed a duplicate entry for the same invoice." },
+  { cat: "finance", term: "the reconciliation process", gloss: "proces uzgadniania (kont)", ex: "She explained how the reconciliation process worked in the US." },
+  { cat: "finance", term: "a query", gloss: "zapytanie / pytanie (często dotyczące niezgodności)", ex: "An unexpected query landed on her desk that afternoon." },
 
   { cat: "cause", term: "because + clause", gloss: "ponieważ", ex: "We changed the schedule because several people were unavailable." },
   { cat: "cause", term: "because of + noun", gloss: "z powodu / ze względu na", ex: "The meeting was postponed because of technical problems." },
@@ -681,7 +687,11 @@ const VOCAB_DATA = [
   { cat: "tasks", term: "an ad hoc task", gloss: "zadanie doraźne / zadanie pojawiające się na bieżąco", ex: "Unexpected ad hoc tasks can disrupt the whole day." },
   { cat: "tasks", term: "after work", gloss: "po pracy", ex: "I still have a few things to finish after work today." },
 
-  { cat: "attitudes", term: "to fetishise something", gloss: "nadmiernie idealizować coś / przywiązywać do czegoś przesadne znaczenie", ex: "Some companies fetishise long working hours instead of focusing on results." }
+  { cat: "attitudes", term: "to fetishise something", gloss: "nadmiernie idealizować coś / przywiązywać do czegoś przesadne znaczenie", ex: "Some companies fetishise long working hours instead of focusing on results." },
+  { cat: "attitudes", term: "proof of commitment", gloss: "dowód zaangażowania", ex: "Staying late is not always proof of commitment." },
+
+  { cat: "outcomes", term: "to disrupt something", gloss: "zakłócić coś", ex: "The change in policy disrupted the usual schedule." },
+  { cat: "outcomes", term: "to end up with something", gloss: "ostatecznie mieć coś / skończyć z czymś (zwykle nieplanowanym)", ex: "She ended up with extra work after the meeting." }
 ];
 
 const VOCAB_NOTES = [
