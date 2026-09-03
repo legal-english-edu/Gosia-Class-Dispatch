@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>After-Class Dispatch &ndash; Lesson 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f7f4ef;
+    --rust: #b5421a;
+    --gold: #D9AF62;
+    --cream: #ede9e0;
+    --dark: #1E2650;
+    --mid: #2a3060;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: var(--paper); color: var(--ink); font-family: 'Lato', sans-serif; font-size: 17px; line-height: 1.7; }
+  .masthead { background-color: var(--dark); padding: 48px 40px 36px; max-width: 100%; position: relative; overflow: hidden; }
+  .masthead::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
+  .masthead-inner { max-width: 680px; margin: 0 auto; }
+  .masthead-logo { display: block; width: 148px; margin-bottom: 28px; }
+  .masthead-logo svg { width: 100%; height: auto; display: block; }
+  .masthead-label { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .masthead-course { font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; margin-bottom: 20px; text-transform: uppercase; }
+  .masthead-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 46px); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 24px; letter-spacing: -0.01em; }
+  .masthead-title em { font-style: italic; color: var(--gold); }
+  .definition-block { max-width: 480px; border-left: 2px solid var(--rust); padding-left: 20px; margin-top: 24px; }
+  .definition-word { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: #ffffff; letter-spacing: 0.03em; }
+  .definition-pron { font-family: 'Lato', sans-serif; font-size: 15px; color: #9a9080; margin-left: 6px; }
+  .definition-pos { font-family: 'Lato', sans-serif; font-size: 14px; font-style: italic; color: var(--gold); margin-bottom: 6px; margin-top: 2px; }
+  .definition-text { font-family: 'Lato', sans-serif; font-size: 17px; color: #b0a898; line-height: 1.6; }
+  .definition-text + .definition-text { margin-top: 4px; }
+  .meta-bar { background-color: var(--rust); padding: 10px 40px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .meta-item { font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+  .meta-item span { color: rgba(255,255,255,0.5); margin-right: 6px; }
+  .back-nav { background: var(--gold); padding: 14px 40px; }
+  .back-nav a { font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark); text-decoration: none; }
+  .back-nav a:hover { color: var(--ink); }
+  .body-wrap { max-width: 680px; margin: 0 auto; padding: 56px 40px 80px; }
+  .quizlet-card { background: var(--mid); border-radius: 3px; padding: 32px 36px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 16px; }
+  .quizlet-card .section-label { color: var(--gold); margin-bottom: 4px; }
+  .quizlet-card p { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .quizlet-btn { display: inline-block; background: var(--gold); color: var(--dark); font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border-radius: 2px; text-decoration: none; align-self: flex-start; transition: background 0.15s; }
+  .quizlet-btn:hover { background: #c49a4e; }
+  .vocab-section { background: var(--dark); border-radius: 3px; padding: 32px 36px; margin-bottom: 48px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .vocab-section h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .vocab-entry { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .vocab-entry:last-child { border-bottom: none; }
+  .vocab-phrase { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+  .vocab-pos { font-size: 17px; font-style: italic; color: rgba(255,255,255,0.45); margin-bottom: 4px; font-family: 'Lato', sans-serif; }
+  .vocab-pl { font-size: 17px; color: var(--gold); font-style: italic; margin-bottom: 6px; opacity: 0.75; }
+  .vocab-def { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 6px; }
+  .vocab-def strong { color: var(--gold); font-weight: 700; }
+  .vocab-example { font-size: 17px; color: rgba(255,255,255,0.5); font-style: italic; line-height: 1.5; }
+  .vocab-subhead { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin: 30px 0 4px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.12); }
+  .vocab-subhead:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
+  .correct-line { color: #8fcf9f; }
+  .incorrect-line { color: #e08a6a; }
+  /* ── VOCAB DASHBOARD ── */
+  :root {
+    --vc-workload: #E0954A;
+    --vc-meetings: #4AA8E0;
+    --vc-responsibility: #E04A8C;
+    --vc-relationships: #7DBB8C;
+    --vc-tone: #BC9DE0;
+    --vc-culture: #E0C24A;
+    --vc-numbers: #4AE0A8;
+  }
+  .vocab-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .vocab-stat { background: rgba(255,255,255,0.05); border-radius: 3px; padding: 14px 16px; border-top: 2px solid var(--gold); }
+  .vocab-stat-num { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; color: #fff; line-height: 1; }
+  .vocab-stat-label { font-family: 'Lato', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 6px; }
+  .vocab-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; }
+  .vocab-search { flex: 1 1 200px; position: relative; }
+  .vocab-search input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 999px; padding: 10px 18px 10px 38px; font-family: 'Lato', sans-serif; font-size: 16px; color: #fff; outline: none; transition: border-color 0.15s; }
+  .vocab-search input::placeholder { color: rgba(255,255,255,0.4); }
+  .vocab-search input:focus { border-color: var(--gold); }
+  .vocab-search::before { content: ''; position: absolute; left: 14px; top: 50%; width: 13px; height: 13px; transform: translateY(-50%); border: 1.5px solid rgba(255,255,255,0.45); border-radius: 50%; background: linear-gradient(45deg, transparent 46%, rgba(255,255,255,0.45) 47%, rgba(255,255,255,0.45) 53%, transparent 54%) no-repeat; }
+  .vocab-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vocab-chip { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 13.5px; letter-spacing: 0.03em; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; white-space: nowrap; }
+  .vocab-chip .vdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .vocab-chip:hover { border-color: var(--gold); }
+  .vocab-chip.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  .vocab-hint { font-size: 14px; color: rgba(255,255,255,0.35); font-style: italic; margin-bottom: 22px; }
+  .vocab-cat-block { margin-bottom: 34px; }
+  .vocab-cat-block.vhidden { display: none; }
+  .vocab-cat-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .vocab-cat-head .vbar { width: 4px; height: 18px; border-radius: 2px; }
+  .vocab-cat-head span.vname { font-size: 12.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+  .vocab-cat-head span.vcount { font-size: 12.5px; color: rgba(255,255,255,0.35); }
+  .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .vflip-card { perspective: 1200px; height: 190px; cursor: pointer; }
+  .vflip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(.4,.2,.2,1); transform-style: preserve-3d; }
+  .vflip-card.vflipped .vflip-inner { transform: rotateY(180deg); }
+  .vflip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 4px; padding: 18px 18px 16px; display: flex; flex-direction: column; justify-content: space-between; }
+  .vflip-front { background: rgba(255,255,255,0.05); border-top: 3px solid var(--vcat-color, var(--gold)); }
+  .vflip-back { background: rgba(255,255,255,0.1); border-top: 3px solid var(--vcat-color, var(--gold)); transform: rotateY(180deg); }
+  .vterm { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 20px; color: var(--gold); line-height: 1.25; }
+  .vexample { font-size: 16px; color: rgba(255,255,255,0.6); font-style: italic; line-height: 1.45; }
+  .vgloss { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 19px; color: #fff; line-height: 1.3; }
+  .vgloss-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); font-weight: 700; margin-bottom: 4px; }
+  .vflip-flag { align-self: flex-start; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vflip-tap { align-self: flex-end; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.3); font-weight: 700; }
+  .vnote-card, .vwarning-card { grid-column: 1 / -1; background: rgba(255,255,255,0.04); border: 1px dashed rgba(217,175,98,0.4); border-radius: 4px; padding: 16px 18px; font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .vnote-card strong { color: var(--gold); font-weight: 700; }
+  .vwarning-card { border-color: rgba(224,128,102,0.5); }
+  .vwarning-card .vw-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #e08a6a; margin-bottom: 4px; }
+  .vwarning-card .vw-line { color: #e08a6a; font-family: 'Lato', sans-serif; font-size: 17px; }
+  .vwarning-card .vw-fix { color: rgba(255,255,255,0.75); font-family: 'Lato', sans-serif; font-size: 17px; margin-top: 6px; }
+  .vempty-state { text-align: center; padding: 30px; color: rgba(255,255,255,0.35); font-style: italic; font-size: 15px; display: none; }
+  .vempty-state.vvisible { display: block; }
+  @media (max-width: 640px) { .vocab-stats { grid-template-columns: 1fr 1fr; } }
+  .audio-card { background: var(--dark); border: 1px solid rgba(200,150,62,0.25); border-radius: 3px; padding: 24px 28px; margin-bottom: 32px; display: flex; flex-direction: column; gap: 16px; }
+  .audio-card-header { display: flex; align-items: flex-start; gap: 16px; }
+  .audio-play-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--rust); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
+  .audio-play-btn:hover { background: #c94d20; }
+  .audio-play-btn svg { width: 16px; height: 16px; fill: #ffffff; margin-left: 2px; }
+  .audio-play-btn.playing svg.icon-play { display: none; }
+  .audio-play-btn.playing svg.icon-pause { display: block !important; }
+  .audio-play-btn svg.icon-pause { display: none; }
+  .audio-meta { flex: 1; }
+  .audio-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: #ffffff; line-height: 1.3; margin-bottom: 4px; }
+  .audio-subtitle { font-family: 'Lato', sans-serif; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+  .audio-duration { font-family: 'Lato', sans-serif; font-size: 12px; color: #6a6058; margin-top: 6px; }
+  .audio-progress-wrap { display: flex; align-items: center; gap: 12px; }
+  .audio-time { font-family: 'Lato', sans-serif; font-size: 13px; color: #6a6058; width: 36px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .audio-time.total { text-align: right; }
+  .audio-progress { flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; cursor: pointer; }
+  .audio-progress-fill { height: 100%; background: var(--rust); border-radius: 2px; width: 0%; transition: width 0.1s linear; pointer-events: none; }
+  .reading-intro { margin-bottom: 32px; }
+  .reading-intro .section-label { color: var(--rust); margin-bottom: 8px; }
+  .reading-intro p { font-size: 17px; color: #666; line-height: 1.6; }
+  .article-title { font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 32px); font-weight: 700; color: var(--dark); line-height: 1.2; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 2px solid var(--gold); }
+  .article-body p { font-size: 17px; line-height: 1.75; color: var(--ink); margin-bottom: 20px; }
+  .article-body h3 { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--dark); margin: 32px 0 14px; }
+  .article-body u { text-decoration: none; border-bottom: 2px solid var(--rust); color: var(--rust); font-weight: 700; }
+  .story-divider { height: 1px; background: var(--cream); margin: 56px 0; }
+  .exercise-section { background: var(--cream); border-radius: 3px; padding: 32px 36px; margin-top: 24px; }
+  .exercise-section .section-label { color: var(--rust); margin-bottom: 6px; }
+  .exercise-section h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+  .exercise-intro { font-size: 17px; color: #555; margin-bottom: 24px; line-height: 1.6; }
+  .exercise-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 6px; }
+  .exercise-def { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 8px; }
+  .exercise-def strong { color: var(--rust); font-weight: 700; }
+  .gapfill-item { padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .gapfill-item:last-child { border-bottom: none; }
+  .gap-input { background: #fff; border: 1px solid #ccc; border-radius: 2px; color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 4px 10px; width: 180px; outline: none; transition: border-color 0.15s; }
+  .gap-input:focus { border-color: var(--dark); }
+  .gap-input.correct-input { border-color: #5a9e6f; background: #d4edda; color: #2d6a4f; }
+  .gap-input.incorrect-input { border-color: var(--rust); background: #fde8e3; }
+  .check-btn { background: var(--rust); border: none; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: 700; padding: 6px 14px; border-radius: 2px; cursor: pointer; margin-left: 8px; transition: background 0.15s; }
+  .check-btn:hover { background: #8f3214; }
+  .gap-feedback { font-size: 14px; font-weight: 700; margin-left: 8px; }
+  .gap-feedback.correct-fb { color: #2d6a4f; }
+  .gap-feedback.incorrect-fb { color: var(--rust); }
+  .matching-wrap { margin-bottom: 16px; }
+  .matching-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .match-item { padding: 16px 14px; border-radius: 3px; cursor: pointer; font-size: 17px; line-height: 1.5; transition: background 0.15s, border-color 0.15s; border: 2px solid transparent; display: flex; align-items: center; min-height: 72px; }
+  .match-item.phrase { background: var(--dark); color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; }
+  .match-item.def { background: #fff; color: var(--ink); border: 2px solid var(--cream); }
+  .match-item.selected { border-color: var(--rust) !important; }
+  .match-item.correct { background: #d4edda; border-color: #5a9e6f !important; color: #2d6a4f; pointer-events: none; }
+  .match-item.incorrect { border-color: var(--rust) !important; background: #fde8e3; }
+  .reset-btn { background: transparent; border: 1px solid var(--dark); color: var(--dark); padding: 6px 16px; font-size: 13px; font-family: 'Lato', sans-serif; border-radius: 2px; cursor: pointer; margin-top: 8px; transition: background 0.15s, color 0.15s; }
+  .reset-btn:hover { background: var(--dark); color: #fff; }
+  .phrase-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; padding: 14px; background: var(--dark); border-radius: 3px; }
+  .phrase-box span { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 2px; }
+  .choice-item { padding: 16px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  .choice-item:last-child { border-bottom: none; }
+  .choice-stem { font-size: 17px; color: var(--ink); line-height: 1.6; margin-bottom: 12px; }
+  .choice-stem .blank { border-bottom: 2px solid var(--rust); padding: 0 28px; }
+  .choice-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .choice-btn { background: #fff; border: 2px solid var(--cream); color: var(--ink); font-size: 17px; font-family: 'Lato', sans-serif; padding: 8px 18px; border-radius: 3px; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+  .choice-btn:hover { border-color: var(--dark); }
+  .choice-btn.correct { background: #d4edda; border-color: #5a9e6f; color: #2d6a4f; pointer-events: none; }
+  .choice-btn.incorrect { border-color: var(--rust); background: #fde8e3; }
+  .sort-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; padding: 14px; background: var(--dark); border-radius: 3px; min-height: 56px; }
+  .sort-chip { font-size: 15px; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 2px; cursor: pointer; transition: background 0.15s; border: 2px solid transparent; }
+  .sort-chip:hover { background: rgba(255,255,255,0.16); }
+  .sort-chip.selected { border-color: var(--gold); }
+  .sort-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sort-col { background: #fff; border: 2px solid var(--cream); border-radius: 3px; padding: 14px; min-height: 110px; }
+  .sort-col-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 10px; }
+  .sort-col-desc { font-size: 14px; color: #777; margin-bottom: 12px; line-height: 1.4; }
+  .sort-col .sort-chip { display: inline-block; margin: 0 6px 6px 0; }
+  .sort-col .sort-chip.correct { background: #d4edda; color: #2d6a4f; }
+  .sort-col .sort-chip.incorrect { background: #fde8e3; color: var(--rust); }
+  .dispatch-footer { background: var(--dark); padding: 32px 40px; text-align: center; border-top: 3px solid var(--gold); }
+  .dispatch-footer p { font-family: 'Lato', sans-serif; font-size: 15px; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
+  .dispatch-footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 187.17 64.8">
+        <path d="M75.73.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M91.17.35h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21V.35Z" fill="#fff"/>
+        <path d="M107.17,9.15v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M133.04.23h4.68l7.45,17.63h-5.2l-1.25-3.15h-6.78l-1.25,3.15h-5.08L133.04.23ZM137.29,10.93l-1.95-4.95-1.98,4.95h3.93Z" fill="#fff"/>
+        <path d="M146.87.35h4.85v13.25h8.48v4.25h-13.33V.35Z" fill="#fff"/>
+        <path d="M75.73,23.84h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,23.84h4.53l7.2,9.25v-9.25h4.8v17.51h-4.23l-7.5-9.6v9.6h-4.8v-17.51Z" fill="#fff"/>
+        <path d="M111.5,32.64v-.05c0-5.1,4-9.1,9.4-9.1,3.08,0,5.25.93,7.1,2.53l-2.85,3.45c-1.25-1.05-2.48-1.65-4.23-1.65-2.53,0-4.48,2.1-4.48,4.78v.05c0,2.85,1.98,4.88,4.75,4.88,1.2,0,2.1-.25,2.8-.73v-2.13h-3.43v-3.55h8.03v7.85c-1.85,1.55-4.4,2.73-7.6,2.73-5.45,0-9.5-3.75-9.5-9.05Z" fill="#fff"/>
+        <path d="M131.31,23.84h4.85v13.25h8.48v4.25h-13.33v-17.51Z" fill="#fff"/>
+        <path d="M146.87,23.84h4.85v17.51h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M153.6,38.74l2.7-3.23c1.75,1.38,3.65,2.1,5.68,2.1,1.33,0,2.03-.45,2.03-1.2v-.05c0-.75-.58-1.12-2.98-1.7-3.73-.85-6.6-1.9-6.6-5.48v-.05c0-3.25,2.58-5.6,6.78-5.6,2.98,0,5.3.8,7.2,2.33l-2.43,3.43c-1.6-1.15-3.35-1.73-4.9-1.73-1.18,0-1.75.48-1.75,1.13v.05c0,.8.6,1.15,3.05,1.7,4,.88,6.5,2.18,6.5,5.45v.05c0,3.58-2.83,5.7-7.08,5.7-3.1,0-6.03-.98-8.2-2.9Z" fill="#fff"/>
+        <path d="M171.24,23.84h4.85v6.55h6.23v-6.55h4.85v17.51h-4.85v-6.65h-6.23v6.65h-4.85v-17.51Z" fill="#fff"/>
+        <path d="M75.73,46.97h14.08v4.1h-9.28v2.68h8.4v3.83h-8.4v2.78h9.4v4.13h-14.21v-17.51Z" fill="#fff"/>
+        <path d="M92.44,46.97h6.78c6.23,0,9.85,3.6,9.85,8.65v.05c0,5.05-3.68,8.8-9.95,8.8h-6.68v-17.51ZM97.29,51.25v8.93h1.98c2.93,0,4.85-1.6,4.85-4.43v-.05c0-2.8-1.93-4.45-4.85-4.45h-1.98Z" fill="#fff"/>
+        <path d="M111.4,56.8v-9.83h4.9v9.73c0,2.53,1.28,3.73,3.23,3.73s3.25-1.15,3.25-3.6v-9.85h4.9v9.7c0,5.63-3.23,8.13-8.2,8.13s-8.08-2.53-8.08-8Z" fill="#fff"/>
+        <path d="M47.97,14.89c1.86,0,2.98-.12,4.72-.25-7.71,11.93-9.32,13.55-19.14,15.66,2.73,0,5.72-.62,8.2-.87-4.35,4.47-7.21,9.2-10.56,12.8-1.12,1.24-2.98,2.86-5.34,3.23-2.61.5-4.6.62-7.58,1.12,2.98.37,5.84.37,8.7.37-.37.36-.73.7-1.08,1.01-5.36,4.79-9.99,5.45-17.68,5.45-3.11,3.23-4.1,6.21-5.97,11.06h49.09c7.46,0,12.8-4.85,12.8-12.8V.35c-8.7,10.07-5.47,11.56-16.16,14.54Z" fill="#fff"/>
+        <path d="M64.13.35c-9.82,2.98-22.37,3.85-28.96,10.44-1.74,1.74-3.23,5.84-3.48,9.07-.37-2.11-.62-4.23-.12-6.96-6.71,3.85-13.42,8.33-18.14,13.79-2.49,2.86-2.36,7.08-2.49,10.69-.87-2.73-.99-4.6-.87-7.21-2.98,3.36-6.34,6.21-6.71,10.69-.37,3.48.62,6.59,1.12,10.44-1.12,2.49-3.36,5.84-4.47,9.32v3.85c2.86-9.57,8.95-19.14,18.52-29.08C29.21,24.34,43,12.53,64.13.35Z" fill="#D9AF62"/>
+      </svg>
+    </div>
+    <div class="masthead-label">After-Class Dispatch &ndash; Lesson 10</div>
+    <div class="masthead-course">Business English in the Polish Context</div>
+    <div class="masthead-title">Crossing Borders, Making an Impression:<br><em>Vocabulary from Lesson 10</em></div>
+    <div class="definition-block">
+      <div><span class="definition-word">dispatch</span><span class="definition-pron">/dɪˈspætʃ/</span></div>
+      <div class="definition-pos">noun</div>
+      <div class="definition-text">1. A message or report sent quickly to its destination &ndash; especially one sent by a journalist from abroad, or between military officers.</div>
+      <div class="definition-text">2. Your after-class dispatch: everything from today's lesson, gathered in one place.</div>
+    </div>
+  </div>
+</header>
+<div class="meta-bar">
+  <div class="meta-item"><span>Lesson</span>10</div>
+  <div class="meta-item"><span>Date</span>26 August 2026</div>
+  <div class="meta-item"><span>Topic</span>International Teams, Frequency, Conditionals, First Impressions, Presentations</div>
+</div>
+<div class="back-nav">
+  <a href="index.html">&larr; Home</a>
+</div>
+<main class="body-wrap">
+  <div class="quizlet-card">
+    <div class="section-label">Your Quizlet Class</div>
+    <p>Your vocabulary is growing. After every lesson, new words and phrases are added to your Quizlet class. Go back, test yourself, and make them stick.</p>
+    <a class="quizlet-btn" href="https://quizlet.com/join/72BDBFDfB?i=4ie97k&x=1bqt" target="_blank">Open your Quizlet class &rarr;</a>
+  </div>
+  <div class="vocab-section">
+    <div class="section-label">Class Notes</div>
+    <h2>Lesson 10 &ndash; Vocabulary</h2>
+    <div class="vocab-stats" id="vocabStats"></div>
+    <div class="vocab-controls">
+      <div class="vocab-search"><input type="text" id="vocabSearch" placeholder="Search a term..." autocomplete="off"></div>
+      <div class="vocab-filters" id="vocabFilters"></div>
+    </div>
+    <div class="vocab-hint">Click any card to flip it and check the Polish gloss.</div>
+    <div id="vocabDashboard"></div>
+    <div class="vempty-state" id="vocabEmpty">No terms match your search.</div>
+  </div>
+  <div class="reading-intro">
+    <div class="section-label">Reading &amp; Listening</div>
+    <p>Listen to each recording and read the story. The target vocabulary from the lesson appears in the text. It is highlighted. Notice how each phrase is used in context.</p>
+  </div>
+  <div class="article-title">New Faces on the International Team</div>
+  <div class="audio-card">
+    <audio id="audio-1" preload="metadata"><source src="lesson-10-story-1.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-1" onclick="togglePlay(1)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">New Faces on the International Team</div>
+        <div class="audio-subtitle">Story 1 (Lesson 10)</div>
+        <div class="audio-duration" id="dur-1">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-1">0:00</span>
+      <div class="audio-progress" id="bar-1" onclick="seekAudio(event, 1)"><div class="audio-progress-fill" id="fill-1"></div></div>
+      <span class="audio-time total" id="tot-1">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Since her department expanded, Anna had grown used to working in <u>an international working environment</u>. She still preferred to <u>work in the office</u> most days, although she sometimes chose to <u>work from home</u> on Fridays, like several colleagues on her team. She now <u>worked with colleagues from different countries</u> almost every week, and she <u>reported to</u> a manager based in the regional office rather than someone in her own building.</p>
+    <p>Anna had <u>worked for the same company</u> for many years, but the pace of change still surprised her sometimes. International calls now happened <u>more frequently than before</u>, and everyone on the team, not only the managers, was expected to join them. She knew she still used English, but <u>not as much as</u> some of her colleagues, who switched between languages without thinking twice.</p>
+    <p>"<u>When my English is better, I will</u> feel more confident on these calls," Anna told herself one afternoon. She also found herself wondering how things might be different right now. "<u>If my English were better, I would</u> probably raise these points myself instead of waiting for someone else to notice them first."</p>
+    <p>A few days later, while checking the outstanding balances report, she noticed that the regional totals <u>didn't add up</u>. The explanation in her colleague's email <u>didn't fit</u> what she remembered from their last conversation either. "<u>If I remember correctly</u>, we agreed on how these figures should be calculated only last week," she said during the call, and the mistake was corrected within minutes. <u>So far</u>, raising issues early like this had never caused her any trouble.</p>
+  </div>
+  <div class="story-divider"></div>
+  <div class="article-title">Before the Big Presentation</div>
+  <div class="audio-card">
+    <audio id="audio-2" preload="metadata"><source src="lesson-10-story-2.m4a" type="audio/mp4"></audio>
+    <div class="audio-card-header">
+      <button class="audio-play-btn" id="play-2" onclick="togglePlay(2)">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="audio-meta">
+        <div class="audio-title">Before the Big Presentation</div>
+        <div class="audio-subtitle">Story 2 (Lesson 10)</div>
+        <div class="audio-duration" id="dur-2">Loading&hellip;</div>
+      </div>
+    </div>
+    <div class="audio-progress-wrap">
+      <span class="audio-time" id="cur-2">0:00</span>
+      <div class="audio-progress" id="bar-2" onclick="seekAudio(event, 2)"><div class="audio-progress-fill" id="fill-2"></div></div>
+      <span class="audio-time total" id="tot-2">&ndash;</span>
+    </div>
+  </div>
+  <div class="article-body">
+    <p>Before her first video call with the new regional team, Anna thought carefully about how to <u>make a good first impression</u>. She had heard that in that office, people say you should <u>care about how you look</u> on camera, so she made sure her lighting and background were tidy. She also remembered that colleagues there expect you to <u>look smart</u>, even for an online meeting.</p>
+    <p>The new regional director had a reputation as <u>a direct person</u>, someone known for <u>communicating directly</u> and expecting the same in return. Anna reminded herself that his directness was simply <u>a trait</u>, not a sign that he had a problem with her specifically, and she planned a short comment about the weather to <u>break the ice</u> before the meeting turned serious.</p>
+    <p>A few days later, Anna had to <u>deliver a presentation in English</u> to the same team, summarising the outstanding invoices for the quarter. She remembered that a strong opening helps you <u>engage your audience</u> from the first slide, so she began with a short, direct question instead of a long introduction. She also remembered the advice a trainer had once given her: don't <u>focus on grammatical rules</u>, and don't <u>worry about your mistakes</u> if a sentence comes out slightly wrong.</p>
+    <p>Before showing any numbers, she <u>explained the rules regarding</u> how outstanding invoices were classified, then gave a short update <u>concerning</u> a change to the invoicing process. She made sure everyone understood <u>the purpose of the presentation</u> before opening the floor to questions, and by the end, nobody was confused about the figures.</p>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 1 &ndash; Complete the Phrase</h2>
+    <p class="exercise-intro">Each definition below has one key word missing. Type the missing word in the box and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="gapfill-item" id="ex1-1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">A word describing a workplace where colleagues are based in many different countries: an <input class="gap-input" data-answer="international" placeholder="______"> working environment</div>
+      <button class="check-btn" onclick="checkGap('ex1-1')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-1"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">The verb used when someone is officially your manager, or when you send them regular updates: to <input class="gap-input" data-answer="report" placeholder="______"> to someone</div>
+      <button class="check-btn" onclick="checkGap('ex1-2')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-2"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">A phrase used to say you do something less than another person: not as much <input class="gap-input" data-answer="as" placeholder="______"> someone</div>
+      <button class="check-btn" onclick="checkGap('ex1-3')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-3"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">A phrase describing something happening at a higher rate than in the past: more <input class="gap-input" data-answer="frequently" placeholder="______"> than before</div>
+      <button class="check-btn" onclick="checkGap('ex1-4')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-4"></span>
+    </div>
+    <div class="gapfill-item" id="ex1-5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">A short phrase meaning "until now": <input class="gap-input" data-answer="so" placeholder="______"> far</div>
+      <button class="check-btn" onclick="checkGap('ex1-5')">Check</button>
+      <span class="gap-feedback" id="fb-ex1-5"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 2 &ndash; Matching</h2>
+    <p class="exercise-intro">Match each phrase on the left with the definition that best explains it on the right. Click a phrase to select it, then click the correct definition. Green means correct.</p>
+    <div class="matching-wrap" id="matching">
+      <div class="matching-col">
+        <div class="match-item phrase" data-id="4" data-group="ex2" onclick="selectMatch(this)">a trait</div>
+        <div class="match-item def" data-id="2" data-group="ex2" onclick="selectMatch(this)">To have a neat, tidy appearance, especially through how you dress.</div>
+        <div class="match-item phrase" data-id="1" data-group="ex2" onclick="selectMatch(this)">to make a good first impression</div>
+        <div class="match-item def" data-id="6" data-group="ex2" onclick="selectMatch(this)">To do or say something informal that helps people feel more relaxed before a serious discussion.</div>
+        <div class="match-item phrase" data-id="6" data-group="ex2" onclick="selectMatch(this)">to break the ice</div>
+        <div class="match-item def" data-id="1" data-group="ex2" onclick="selectMatch(this)">To create a positive impression on people the first time they meet you.</div>
+        <div class="match-item phrase" data-id="2" data-group="ex2" onclick="selectMatch(this)">to look smart</div>
+        <div class="match-item def" data-id="3" data-group="ex2" onclick="selectMatch(this)">To pay attention to and make an effort with your appearance before an important event or meeting.</div>
+        <div class="match-item phrase" data-id="5" data-group="ex2" onclick="selectMatch(this)">a direct person</div>
+        <div class="match-item def" data-id="4" data-group="ex2" onclick="selectMatch(this)">A particular quality or characteristic that is part of someone's personality.</div>
+        <div class="match-item phrase" data-id="3" data-group="ex2" onclick="selectMatch(this)">to care about how you look</div>
+        <div class="match-item def" data-id="5" data-group="ex2" onclick="selectMatch(this)">Someone who says clearly and openly what they think, without avoiding difficult topics.</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetMatching('ex2')">Reset</button>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 3 &ndash; Gap Fill</h2>
+    <p class="exercise-intro">Complete each sentence using one of the phrases from the box below. Type your answer in the gap and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="phrase-box">
+      <span>worry about your mistakes</span>
+      <span>the purpose of the presentation</span>
+      <span>deliver a presentation in English</span>
+      <span>focus on grammatical rules</span>
+      <span>engage your audience</span>
+    </div>
+    <div class="gapfill-item" id="gf1">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">Next month, Marta has to <input class="gap-input" data-answer="deliver a presentation in English" placeholder="____________"> to the whole regional team.</div>
+      <button class="check-btn" onclick="checkGap('gf1')">Check</button>
+      <span class="gap-feedback" id="fb-gf1"></span>
+    </div>
+    <div class="gapfill-item" id="gf2">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">A strong opening question can help you <input class="gap-input" data-answer="engage your audience" placeholder="____________"> from the very first slide.</div>
+      <button class="check-btn" onclick="checkGap('gf2')">Check</button>
+      <span class="gap-feedback" id="fb-gf2"></span>
+    </div>
+    <div class="gapfill-item" id="gf3">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">When speaking under pressure, try not to <input class="gap-input" data-answer="focus on grammatical rules" placeholder="____________"> too much, and think about your message instead.</div>
+      <button class="check-btn" onclick="checkGap('gf3')">Check</button>
+      <span class="gap-feedback" id="fb-gf3"></span>
+    </div>
+    <div class="gapfill-item" id="gf4">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">Even experienced speakers make mistakes, but try not to <input class="gap-input" data-answer="worry about your mistakes" placeholder="____________"> because an audience rarely notices small errors.</div>
+      <button class="check-btn" onclick="checkGap('gf4')">Check</button>
+      <span class="gap-feedback" id="fb-gf4"></span>
+    </div>
+    <div class="gapfill-item" id="gf5">
+      <div class="exercise-number">5</div>
+      <div class="exercise-def">Before showing any figures, make sure everyone understands <input class="gap-input" data-answer="the purpose of the presentation" placeholder="____________">.</div>
+      <button class="check-btn" onclick="checkGap('gf5')">Check</button>
+      <span class="gap-feedback" id="fb-gf5"></span>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 4 &ndash; Choosing Between Confusable Forms</h2>
+    <p class="exercise-intro">This lesson contained several forms that are easy to get wrong, especially fixed grammar patterns and prepositions. Choose the correct option in each sentence.</p>
+    <div class="choice-item" id="ch1">
+      <div class="choice-stem">When my English is better, I <span class="blank"></span> more confident in meetings.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch1', this)">will feel</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch1', this)">would feel</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch2">
+      <div class="choice-stem">If my English were better, I <span class="blank"></span> more comfortable giving presentations.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch2', this)">would feel</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch2', this)">will feel</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch3">
+      <div class="choice-stem">The two totals in this report are different &ndash; the numbers just <span class="blank"></span>.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch3', this)">don't add up</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch3', this)">don't fit</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch4">
+      <div class="choice-stem">The plan the consultants proposed just <span class="blank"></span> with our company's usual way of working.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch4', this)">doesn't fit</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch4', this)">doesn't add up</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch5">
+      <div class="choice-stem"><span class="blank"></span>, we agreed on this figure last week.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch5', this)">If I remember correctly</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch5', this)">If I remember well</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch6">
+      <div class="choice-stem">She prefers to <span class="blank"></span> with her team, especially when there's a problem to solve.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch6', this)">communicate directly</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch6', this)">communicate direct</button>
+      </div>
+    </div>
+    <div class="choice-item" id="ch7">
+      <div class="choice-stem">We received an email <span class="blank"></span> the new deadline.</div>
+      <div class="choice-options">
+        <button class="choice-btn" data-correct="1" onclick="checkChoice('ch7', this)">regarding</button>
+        <button class="choice-btn" data-correct="0" onclick="checkChoice('ch7', this)">regards</button>
+      </div>
+    </div>
+  </div>
+  <div class="exercise-section">
+    <div class="section-label">Practice</div>
+    <h2>Exercise 5 &ndash; Gap Fill</h2>
+    <p class="exercise-intro">Complete each sentence using one of the phrases from the box below. Type your answer in the gap and click <em>Check</em>. Green means correct, red means try again.</p>
+    <div class="phrase-box">
+      <span>work with colleagues from different countries</span>
+      <span>explained the rules regarding</span>
+      <span>work from home</span>
+      <span>worked for the same company</span>
+    </div>
+    <div class="gapfill-item" id="gf6">
+      <div class="exercise-number">1</div>
+      <div class="exercise-def">Some employees choose to <input class="gap-input" data-answer="work from home" placeholder="____________"> on Fridays to avoid the morning commute.</div>
+      <button class="check-btn" onclick="checkGap('gf6')">Check</button>
+      <span class="gap-feedback" id="fb-gf6"></span>
+    </div>
+    <div class="gapfill-item" id="gf7">
+      <div class="exercise-number">2</div>
+      <div class="exercise-def">It has become completely normal to <input class="gap-input" data-answer="work with colleagues from different countries" placeholder="____________"> on a weekly video call.</div>
+      <button class="check-btn" onclick="checkGap('gf7')">Check</button>
+      <span class="gap-feedback" id="fb-gf7"></span>
+    </div>
+    <div class="gapfill-item" id="gf8">
+      <div class="exercise-number">3</div>
+      <div class="exercise-def">She has <input class="gap-input" data-answer="worked for the same company" placeholder="____________"> for more than ten years and knows its culture well.</div>
+      <button class="check-btn" onclick="checkGap('gf8')">Check</button>
+      <span class="gap-feedback" id="fb-gf8"></span>
+    </div>
+    <div class="gapfill-item" id="gf9">
+      <div class="exercise-number">4</div>
+      <div class="exercise-def">Before the workshop began, the trainer <input class="gap-input" data-answer="explained the rules regarding" placeholder="____________"> questions during the session.</div>
+      <button class="check-btn" onclick="checkGap('gf9')">Check</button>
+      <span class="gap-feedback" id="fb-gf9"></span>
+    </div>
+  </div>
+</main>
+<footer class="dispatch-footer">
+  <p>Business English in the Polish Context &nbsp;&middot;&nbsp; Prepared for Gosia &nbsp;&middot;&nbsp; August 2026</p>
+</footer>
+<script>
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+[1, 2].forEach(function(n) {
+  const audio = document.getElementById('audio-' + n);
+  if (!audio) return;
+  audio.addEventListener('loadedmetadata', function() {
+    document.getElementById('dur-' + n).textContent = formatTime(audio.duration);
+    document.getElementById('tot-' + n).textContent = formatTime(audio.duration);
+  });
+  audio.addEventListener('timeupdate', function() {
+    document.getElementById('cur-' + n).textContent = formatTime(audio.currentTime);
+    const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    document.getElementById('fill-' + n).style.width = pct + '%';
+  });
+  audio.addEventListener('ended', function() {
+    document.getElementById('play-' + n).classList.remove('playing');
+    document.getElementById('fill-' + n).style.width = '0%';
+    document.getElementById('cur-' + n).textContent = '0:00';
+  });
+});
+function togglePlay(n) {
+  const audio = document.getElementById('audio-' + n);
+  const btn = document.getElementById('play-' + n);
+  [1, 2].forEach(function(other) {
+    if (other === n) return;
+    const otherAudio = document.getElementById('audio-' + other);
+    const otherBtn = document.getElementById('play-' + other);
+    if (otherAudio && !otherAudio.paused) {
+      otherAudio.pause();
+      otherBtn.classList.remove('playing');
+    }
+  });
+  if (audio.paused) { audio.play(); btn.classList.add('playing'); }
+  else { audio.pause(); btn.classList.remove('playing'); }
+}
+function seekAudio(e, n) {
+  const audio = document.getElementById('audio-' + n);
+  const bar = document.getElementById('bar-' + n);
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+}
+let selectedPhrase = {};
+let selectedDef = {};
+function selectMatch(el) {
+  if (el.classList.contains('correct')) return;
+  const group = el.dataset.group || 'default';
+  const isPhrase = el.classList.contains('phrase');
+  const isDef = el.classList.contains('def');
+  if (isPhrase) {
+    document.querySelectorAll('.match-item.phrase.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPhrase[group] = el;
+  } else if (isDef) {
+    document.querySelectorAll('.match-item.def.selected[data-group="' + group + '"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedDef[group] = el;
+  }
+  if (selectedPhrase[group] && selectedDef[group]) {
+    if (selectedPhrase[group].dataset.id === selectedDef[group].dataset.id) {
+      selectedPhrase[group].classList.remove('selected');
+      selectedDef[group].classList.remove('selected');
+      selectedPhrase[group].classList.add('correct');
+      selectedDef[group].classList.add('correct');
+    } else {
+      const p = selectedPhrase[group], d = selectedDef[group];
+      p.classList.remove('selected');
+      d.classList.remove('selected');
+      p.classList.add('incorrect');
+      d.classList.add('incorrect');
+      setTimeout(() => {
+        p.classList.remove('incorrect');
+        d.classList.remove('incorrect');
+      }, 800);
+    }
+    selectedPhrase[group] = null;
+    selectedDef[group] = null;
+  }
+}
+function resetMatching(group) {
+  const g = group || 'default';
+  document.querySelectorAll('.match-item[data-group="' + g + '"]').forEach(el => {
+    el.classList.remove('selected', 'correct', 'incorrect');
+  });
+  selectedPhrase[g] = null;
+  selectedDef[g] = null;
+}
+function checkGap(id) {
+  const item = document.getElementById(id);
+  const input = item.querySelector('.gap-input');
+  const fb = document.getElementById('fb-' + id);
+  const acceptable = input.dataset.answer.toLowerCase().split('|').map(s => s.trim());
+  const given = input.value.toLowerCase().trim();
+  if (acceptable.includes(given)) {
+    fb.textContent = '✓ Correct';
+    fb.className = 'gap-feedback correct-fb';
+    input.classList.add('correct-input');
+    input.classList.remove('incorrect-input');
+  } else {
+    fb.textContent = '✗ Try again';
+    fb.className = 'gap-feedback incorrect-fb';
+    input.classList.add('incorrect-input');
+    input.classList.remove('correct-input');
+  }
+}
+function checkChoice(id, btn) {
+  const correct = btn.dataset.correct === '1';
+  if (correct) {
+    const wrap = document.getElementById(id);
+    wrap.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('incorrect'));
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('incorrect');
+    setTimeout(() => btn.classList.remove('incorrect'), 800);
+  }
+}
+</script>
+<script>
+// ── VOCAB DASHBOARD (Lesson 10) ──
+const VOCAB_CATS = [
+  { key: "international", label: "Working in an International Environment", emoji: "🟠", color: "#E0954A" },
+  { key: "frequency", label: "Frequency &amp; Comparisons", emoji: "🟢", color: "#7DBB8C" },
+  { key: "hypothetical", label: "Real &amp; Hypothetical Situations", emoji: "🔵", color: "#4AA8E0" },
+  { key: "impressions", label: "First Impressions &amp; Communication Style", emoji: "🟣", color: "#BC9DE0" },
+  { key: "sense", label: "When Something Doesn't Make Sense", emoji: "🟡", color: "#E0C24A" },
+  { key: "presentations", label: "Giving Presentations", emoji: "🔴", color: "#E0524A" },
+  { key: "remembering", label: "Remembering &amp; Checking", emoji: "🟤", color: "#A9764A" }
+];
+
+const VOCAB_DATA = [
+  { cat: "international", term: "to work in the office / from home", gloss: "pracować w biurze / z domu", ex: "I usually work in the office, but on Fridays I sometimes work from home." },
+  { cat: "international", term: "to work with colleagues from different countries", gloss: "pracować ze współpracownikami z różnych krajów", ex: "She regularly works with colleagues from Germany, the UK and India." },
+  { cat: "international", term: "an international working environment", gloss: "międzynarodowe środowisko pracy", ex: "English is essential in our international working environment." },
+  { cat: "international", term: "to work for a company", gloss: "pracować dla / w firmie", ex: "I have worked for the same company since 2008." },
+  { cat: "international", term: "to report to someone", gloss: "podlegać komuś / raportować komuś", ex: "Kinga and Gosia report to the same manager." },
+
+  { cat: "frequency", term: "not as much as someone", gloss: "nie tak dużo jak ktoś", ex: "I use English at work, but not as much as some of my colleagues." },
+  { cat: "frequency", term: "more frequently than before", gloss: "częściej niż wcześniej", ex: "We are going to have international meetings more frequently than before." },
+  { cat: "frequency", term: "so far", gloss: "jak dotąd / do tej pory", ex: "We haven't had many problems so far." },
+
+  { cat: "hypothetical", term: "When my English is better, I will&hellip;", gloss: "Kiedy mój angielski będzie lepszy, &hellip;", ex: "When my English is better, I will feel more confident during meetings." },
+  { cat: "hypothetical", term: "If my English were better, I would&hellip;", gloss: "Gdyby mój angielski był lepszy, &hellip;", ex: "If my English were better, I would feel more comfortable giving presentations." },
+
+  { cat: "impressions", term: "to make a good first impression", gloss: "zrobić dobre pierwsze wrażenie", ex: "Clear communication can help you make a good first impression on a new team." },
+  { cat: "impressions", term: "to look smart", gloss: "wyglądać elegancko / schludnie", ex: "You don't need to dress formally, but it is important to look smart." },
+  { cat: "impressions", term: "to care about how you look", gloss: "przywiązywać wagę do swojego wyglądu", ex: "Some people care a lot about how they look when meeting clients." },
+  { cat: "impressions", term: "a direct person", gloss: "bezpośrednia osoba", ex: "She is a very direct person, so you always know what she thinks." },
+  { cat: "impressions", term: "to communicate directly", gloss: "komunikować się bezpośrednio", ex: "I tend to communicate directly, especially when we need to solve a problem quickly." },
+  { cat: "impressions", term: "a trait", gloss: "cecha", ex: "Being direct can be a useful trait in some business situations." },
+  { cat: "impressions", term: "to break the ice", gloss: "przełamać pierwsze lody", ex: "A short informal conversation can break the ice before a difficult meeting." },
+
+  { cat: "sense", term: "it doesn't add up", gloss: "to się nie zgadza / to nie ma sensu", ex: "The figures in these two reports don't add up." },
+  { cat: "sense", term: "it doesn't fit", gloss: "to nie pasuje", ex: "His explanation doesn't fit what we heard from the client." },
+
+  { cat: "presentations", term: "to deliver a presentation in English", gloss: "wygłosić / przeprowadzić prezentację po angielsku", ex: "Next month she has to deliver a presentation in English to the regional management team." },
+  { cat: "presentations", term: "to engage your audience / participants", gloss: "zaangażować odbiorców / uczestników", ex: "Questions and short examples can help you engage your audience from the beginning." },
+  { cat: "presentations", term: "to focus on grammatical rules", gloss: "koncentrować się na zasadach gramatycznych", ex: "When speaking, try not to focus too much on grammatical rules." },
+  { cat: "presentations", term: "to worry about your mistakes", gloss: "martwić się swoimi błędami", ex: "Many learners worry too much about their mistakes and become less fluent." },
+  { cat: "presentations", term: "to explain the rules regarding something", gloss: "wyjaśnić zasady dotyczące czegoś", ex: "At the beginning, he explained the rules regarding questions and answers." },
+  { cat: "presentations", term: "regarding / concerning something", gloss: "dotyczący / w sprawie czegoś", ex: "We received some new information concerning the next stage of the project." },
+  { cat: "presentations", term: "the aim / goal / objective / purpose of a presentation", gloss: "cel prezentacji", ex: "At the beginning, make sure everyone understands the purpose of the presentation." },
+
+  { cat: "remembering", term: "if I remember correctly", gloss: "jeśli dobrze pamiętam", ex: "If I remember correctly, we discussed this issue at our last meeting." }
+];
+
+const VOCAB_NOTES = [
+  { cat: "hypothetical", html: "<strong>When + present, will + verb</strong> describes a future situation you expect to happen. <strong>If + past, would + verb</strong> describes an imagined or hypothetical situation." },
+  { cat: "impressions", html: "In British English, <strong>smart</strong> can mean elegancki / schludny. In American English, <strong>smart</strong> more commonly means inteligentny." },
+  { cat: "sense", html: "<strong>It doesn't add up</strong> often suggests that facts, numbers or explanations are inconsistent. <strong>It doesn't fit</strong> is broader: something is not suitable or does not match the situation." },
+  { cat: "presentations", html: "Don't begin a presentation by apologising unnecessarily, for example with &ldquo;Sorry, my English isn't very good&rdquo; or &ldquo;Sorry, I'm not very good at presentations.&rdquo; Start confidently and move straight to your message." }
+];
+
+const VOCAB_WARNINGS = [
+  { cat: "remembering", label: "Common Mistake", line: "If I remember well", fix: "&#10003; If I remember correctly" }
+];
+
+function vocabBuildStats() {
+  const el = document.getElementById('vocabStats');
+  el.innerHTML = `
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_DATA.length}</div><div class="vocab-stat-label">Vocabulary Items</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_CATS.length}</div><div class="vocab-stat-label">Topic Areas</div></div>
+    <div class="vocab-stat"><div class="vocab-stat-num">${VOCAB_NOTES.length + VOCAB_WARNINGS.length}</div><div class="vocab-stat-label">Usage Notes</div></div>`;
+}
+
+function vocabBuildFilters() {
+  const el = document.getElementById('vocabFilters');
+  let html = `<button class="vocab-chip active" data-cat="all" onclick="vocabSetFilter('all')"><span class="vdot" style="background:var(--gold)"></span>All</button>`;
+  VOCAB_CATS.forEach(c => {
+    html += `<button class="vocab-chip" data-cat="${c.key}" onclick="vocabSetFilter('${c.key}')"><span class="vdot" style="background:${c.color}"></span>${c.emoji} ${c.label}</button>`;
+  });
+  el.innerHTML = html;
+}
+
+function vocabSetFilter(key) {
+  vocabActiveCat = key;
+  document.querySelectorAll('.vocab-chip').forEach(c => c.classList.toggle('active', c.dataset.cat === key));
+  vocabApplyFilters();
+}
+
+function vocabBuildDashboard() {
+  const container = document.getElementById('vocabDashboard');
+  let html = '';
+  VOCAB_CATS.forEach(cat => {
+    const items = VOCAB_DATA.filter(d => d.cat === cat.key);
+    const notes = VOCAB_NOTES.filter(n => n.cat === cat.key);
+    const warnings = VOCAB_WARNINGS.filter(w => w.cat === cat.key);
+    if (!items.length) return;
+
+    html += `<div class="vocab-cat-block" data-cat="${cat.key}">
+      <div class="vocab-cat-head"><span class="vbar" style="background:${cat.color}"></span><span class="vname">${cat.emoji} ${cat.label}</span><span class="vcount">${items.length} item${items.length > 1 ? 's' : ''}</span></div>
+      <div class="vocab-grid">`;
+
+    items.forEach((item, i) => {
+      const id = cat.key + '-' + i;
+      html += `<div class="vflip-card" data-term="${item.term.toLowerCase()}" onclick="this.classList.toggle('vflipped')">
+        <div class="vflip-inner">
+          <div class="vflip-face vflip-front" style="--vcat-color:${cat.color}">
+            <div class="vterm">${item.term}</div>
+            <div class="vexample">${item.ex}</div>
+            <div class="vflip-flag">Tap to see gloss</div>
+          </div>
+          <div class="vflip-face vflip-back" style="--vcat-color:${cat.color}">
+            <div><div class="vgloss-label">Polish</div><div class="vgloss">${item.gloss}</div></div>
+            <div class="vflip-tap">Tap to flip back</div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    warnings.forEach(w => {
+      html += `<div class="vwarning-card"><div class="vw-label">${w.label}</div><div class="vw-line">🚫 ${w.line}</div><div class="vw-fix">${w.fix}</div></div>`;
+    });
+    notes.forEach(n => {
+      html += `<div class="vnote-card">${n.html}</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function vocabApplyFilters() {
+  const q = document.getElementById('vocabSearch').value.trim().toLowerCase();
+  let anyVisible = false;
+  document.querySelectorAll('.vocab-cat-block').forEach(block => {
+    const cat = block.dataset.cat;
+    const catMatch = (vocabActiveCat === 'all' || vocabActiveCat === cat);
+    let hasVisible = false;
+    block.querySelectorAll('.vflip-card').forEach(card => {
+      const show = catMatch && (!q || card.dataset.term.includes(q));
+      card.style.display = show ? '' : 'none';
+      if (show) hasVisible = true;
+    });
+    block.querySelectorAll('.vnote-card, .vwarning-card').forEach(extra => {
+      extra.style.display = (catMatch && !q) ? '' : 'none';
+    });
+    block.classList.toggle('vhidden', !hasVisible);
+    if (hasVisible) anyVisible = true;
+  });
+  document.getElementById('vocabEmpty').classList.toggle('vvisible', !anyVisible);
+}
+
+let vocabActiveCat = 'all';
+vocabBuildStats();
+vocabBuildFilters();
+vocabBuildDashboard();
+document.getElementById('vocabSearch').addEventListener('input', vocabApplyFilters);
+</script>
+</body>
+</html>
